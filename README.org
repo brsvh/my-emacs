@@ -1,0 +1,38 @@
+* My Emacs
+
+  [WIP] My-Emacs is an ever-changing Emacs flavour.
+
+** Getting started
+
+   I use ~package.el~ and [[https://github.com/jwiegley/use-package][use-package.el]] to manage Emacs packages and customization, my configuration will automatically install depend on packages after Emacs first startup. So only one thing need to do, clone this repo to the correct path.
+
+   #+begin_src shell
+     git clone https://github.com/brsvh/my-emacs ${XDG_CONIG_HOME:-.config}/emacs
+   #+end_src
+
+*** Dependencies
+
+    Some prerequisites need to be confirmed before start.
+
+    *Required*
+
+    - GNU Emacs, 27+
+
+    *Optional*
+
+    - /Python3/
+    - ~watchexec~
+
+*** Screenshot
+
+    [[https://github.com/brsvh/my-emacs/blob/screenshot/init-file.png?raw=true]]
+
+** Reference
+
+   Here is a list of blogs/configurations that I’ have grabbed code from or absorbed ideas from.
+
+   - [[https://github.com/hlissner/doom-emacs][Doom Emacs]]
+   - [[https://github.com/nasyxx/emacs.d][Nasy’s Emacs configuration]]
+   - [[https://github.com/seagle0128/.emacs.d][Centaur Emacs]]
+   - [[https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/emacs-init.org][Protesilaos Starvrou’ Emacs configuration document]]
+   - [[https://github.com/DiegoVicen/my-emacs][Diego Vicente Emacs configuration]]
