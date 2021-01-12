@@ -32,6 +32,15 @@
 
 ;;; Code:
 
+(defgroup my nil
+  "My Emacs customize."
+  :group 'emacs)
+
+(defcustom my-icon (display-graphic-p)
+  "Use icons or not."
+  :group 'my
+  :type  'boolean)
+
 ;; I would like to use early initialization support, it requires Emacs
 ;; version greater than 27.1.  But I also have machine install Emacs
 ;; with "feature/native-comp" master, so I can't do Emacs version
@@ -69,6 +78,34 @@
 ;; Don't store eln cache in eln-cache under `user-emacs-directory'.
 (when (boundp 'comp-eln-load-path)
   (push (concat my-cache-dir "eln-cache/") comp-eln-load-path))
+
+;; `gnutls' provides support for SSL/TLS connections, using the GnuTLS
+;; library.
+(with-eval-after-load 'gnutls
+  ;; `use-package' does this for us normally.
+  (eval-when-compile
+    (require 'gnutls))
+
+  ;; Do not allow insecure TLS connections.
+  (setq gnutls-verify-error t)
+
+  ;; Bump the required security level for TLS to an acceptably modern
+  ;; value.
+  (setq gnutls-min-prime-bits 3072))
+
+(defun my-no-query-on-http-kill (buffer)
+  "Disable query-on-exit for all network connections in BUFFER.
+This prevents Emacs shutdown from being interrupted just because
+there is a pending network request."
+    (prog1 buffer
+      (set-process-query-on-exit-flag
+       (get-buffer-process buffer) nil)))
+
+;; `url-http' is a library for making HTTP requests.
+(with-eval-after-load 'url-http
+  (eval-when-compile
+    (require 'url-http))
+  (advice-add #'url-http :filter-return #'my-no-query-on-http-kill))
 
 ;; `package.el' is Emacs built-in package manager, its default
 ;; behavior is a bit annoying.  Load it now.
@@ -450,7 +487,59 @@
 ;; whole.
 (setq delete-selection-mode t)
 
+;;; Key-bindings:
+
+(require 'general)
+(general-define-key
+ :prefix "C-c"
+ "e" '(:ignore t :which-key "edit")
+ "f" '(:ignore t :which-key "file")
+ "v" '(:ignore t :which-key "vcs"))
+
 ;;; Interface Enhancement:
+
+;; Ensure binding the IBuffer keymap, and customize face.
+(use-package ibuffer
+  :general
+  ("C-x C-b" 'ibuffer)
+  ([remap list-buffers] 'ibuffer)
+  (:keymaps 'ibuffer-mode-map
+            "C-x C-f" 'counsel-find-file)
+  :custom
+  (ibuffer-filter-group-name-face
+  '(:inherit (font-lock-string-face bold))))
+
+;; Show more awesome icons in IBuffer buffer.
+(use-package all-the-icons-ibuffer
+  :when my-icon
+  :straight t
+  :blackout t
+  :after ibuffer
+  :hook (ibuffer-mode-hook . all-the-icons-ibuffer-mode))
+
+;; Show buffer list grouped by `projectile'.
+(use-package ibuffer-projectile
+  :straight t
+  :blackout t
+  :after (ibuffer projectile)
+  :functions (ibuffer-projectile-set-filter-groups
+	      buffer-do-sort-by-alphabetic)
+  :preface
+  (defun my--ibuffer-sort ()
+    (ibuffer-projectile-set-filter-groups)
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic)))
+  :hook (ibuffer-mode-hook . my--ibuffer-sort)
+  :custom
+  (ibuffer-projectile-prefix
+   (if my-icon
+       (concat
+        (all-the-icons-octicon "file-directory"
+                               :face ibuffer-filter-group-name-face
+                               :v-adjust 0.0
+                               :height 1.0)
+        " ")
+     "Project: ")))
 
 ;; `prescient-persist-mode' provides usage statistics to be saved
 ;; between Emacs sessions.
@@ -461,18 +550,92 @@
   :custom
   (prescient-save-file (concat my-cache-dir "prescient-save.el")))
 
+;; `ivy' is a generic completion mechanism for Emacs.
+(use-package ivy
+  :straight counsel
+  :blackout (ivy-mode)
+  :hook (after-init-hook . ivy-mode)
+  :custom
+  (ivy-count-format            "%d of %d ")
+  (ivy-fixed-height-minibuffer t)
+  (ivy-height                  14)
+  (ivy-initial-inputs-alist    nil)
+  (ivy-re-builders-alist       '((t . ivy--regex-fuzzy)
+				 (t . ivy--regex-plus)
+				 (t . ivy--regex-ignore-order)))
+  (ivy-use-virtual-buffers     t)
+  (ivy-use-selectable-prompt   t))
+
+;; Use hydra frontend for `ivy-mode'.
+(use-package ivy-hydra
+  :when (featurep 'ivy)
+  :straight t
+  :blackout t
+  :commands ivy-hydra-read-action
+  :custom (ivy-read-action-function #'ivy-hydra-read-action))
+
+;; Ensure use `ivy-prescient-mode' provides sorting and filtering
+;; methods for `ivy-mode' by `prescient.el'.
+(use-package ivy-prescient
+  :when (featurep 'ivy)
+  :straight t
+  :blackout ivy-prescient-mode
+  :hook (ivy-mode-hook . ivy-prescient-mode)
+  :custom-face
+  (ivy-minibuffer-match-face-1 ((t (:inherit font-lock-doc-face :foreground nil)))))
+
+;; `ivy-rich' provides rich transformers for commands from `ivy' and
+;; `counsel'.
+(use-package ivy-rich
+  :straight t
+  :blackout t
+  :hook (ivy-mode-hook . ivy-rich-mode)
+  :custom
+  (ivy-rich-parse-remote-buffer nil))
+
+;; Show more awesome icons for `ivy-mode', mainly use in
+;; `counsel-find-file' and `ivy-buffer-switch'.
+(use-package all-the-icons-ivy-rich
+  :when my-icon
+  :straight t
+  :blackout t
+  :hook (ivy-mode-hook . all-the-icons-ivy-rich-mode)
+  :custom
+  (all-the-icons-ivy-rich-icon-size 0.8))
+
+;; `counsel' provide versions of common Emacs commands that are
+;; customised to make the best use of `ivy'.
+(use-package counsel
+  :straight t
+  :blackout (counsel-mode)
+  :hook (after-init-hook . counsel-mode))
+
 ;; `winner-mode' is a global minor mode, allow undo or redo changes in
 ;; the window configuration.
 (use-package winner
   :blackout (winner)
   :general
   (:prefix "C-c e"
-           ""        '(:ignore t :which-key "edit")
-           "<left>"  '(winner-undo :which-key "undo")
-           "<right>" '(winner-redo :which-key "redo"))
+           "C-p" '(winner-undo :which-key "winner undo")
+           "C-n" '(winner-redo :which-key "winner redo"))
   :hook (after-init-hook . winner-mode)
   :custom
   (winner-dont-bind-my-keys t))
+
+;; By default, Emacs will show built-in help buffer when press C-h C-h.
+;; I hope it display which-key buffer after do same behavoir.
+;; The follow config include:
+;;   1. bind go back and forward in help buffer.
+;;   2. display `help-mode' buffer with popup way.
+(use-package help-mode
+  :general
+  ("C-h C-h" 'nil)
+  (help-mode-map
+   ("<" 'help-go-back)
+   (">" 'help-go-forward))
+  :config
+  (push '(help-mode :select t :size 0.7 :align 'below :autoclose t)
+          shackle-rules))
 
 ;; Standard Emacs command `occur' lists all lines of the current
 ;; buffer that match a regexp that you give it.  The matching lines
@@ -481,8 +644,63 @@
 (use-package replace
   :commands occur
   :config
-  (push '(occur-mode :select t :size 0.5 :align 'below :autoclose t)
+  (push '(occur-mode :select t :align 'below :autoclose t)
         shackle-rules))
+
+;; `zoom' provides fixed and automatic balanced window layout for
+;; Emacs.
+(use-package zoom
+  :straight t
+  :blackout (zoom-mode)
+  :hook (after-init-hook . zoom-mode)
+  :custom
+  (zoom-size '(0.618 . 0.618)))
+
+;;; File Manager:
+
+;; `dired' can shows a directory (folder) listing that you can use to
+;; perform various operations on files and subdirectories in this
+;; directory.
+(use-package dired
+  :general
+  ("C-x d" 'dired)
+  (:prefix "C-c f"
+	   "O" '(dired :which-key "open directory"))
+  :custom
+  (dired-recursive-deletes 'always)
+  (dired-recursive-copies 'always)
+  (ls-lisp-use-insert-directory-program t)
+  ;; Show directory first.
+  (dired-listing-switches "-alh --group-directories-first"))
+
+;; `diredfl' provides colourful dired.
+(use-package diredfl
+  :straight t
+  :hook (dired-mode-hook . diredfl-mode))
+
+;; Use `dired-quick-sort' provides sort in `dired-mode'.
+(use-package dired-quick-sort
+  :straight t
+  :general
+  (dired-mode-map "S" 'hydra-dired-quick-sort/body))
+
+;; Use `dired-git-info' to show git info in `dired'.
+(use-package dired-git-info
+  :straight t
+  :general
+  (dired-mode-map ")" 'dired-git-info-mode))
+
+;; Use `all-the-icons' in `dired-mode' by `all-the-icons-dired'.
+(use-package all-the-icons-dired
+  :straight (all-the-icons-dired :type   git
+  				 :host   github
+   				 :repo   "brsvh/all-the-icons-dired"
+				 :branch "patch")
+  :blackout (all-the-icons-dired-mode)
+  :hook (dired-mode-hook . all-the-icons-dired-mode)
+  :custom-face
+  (all-the-icons-dired-dir-face ((t (:height 0.8))))
+  (all-the-icons-dired-file-face ((t (:height 0.8)))))
 
 ;;; Navigation:
 
@@ -518,7 +736,10 @@
   :hook (after-init-hook . projectile-mode)
   :general
   ("C-c p" '(:keymap projectile-command-map
-             :which-key "+project")))
+		     :which-key "+project"))
+  :config
+  (when (featurep 'ivy)
+    (setq projectile-completion-system 'ivy)))
 
 ;;; Programming:
 
@@ -565,7 +786,6 @@
 (use-package company
   :straight t
   :blackout t
-  :defer t
   :functions (company-dabbrev-ignore-case company-dabbrev-downcase)
   :commands company-cancel
   :hook (after-init-hook . global-company-mode)
@@ -623,7 +843,10 @@
   (flycheck-emacs-lisp-load-path 'inherit)
   (flycheck-indication-mode (if (display-graphic-p)
                                 'right-fringe
-                              'right-margin)))
+                              'right-margin))
+  :config
+  (push '("*Flycheck errors*" :select t :size 0.5 :align 'below :autoclose t)
+        shackle-rules))
 
 ;; Key Cheat Sheet:
 
@@ -665,6 +888,23 @@
   :custom
   (mood-line-show-eol-style            t)
   (mood-line-show-encoding-information t))
+
+;; `all-the-icons.el' is a utility package to collect various Icon
+;; Fonts and propertize them within Emacs.
+(use-package all-the-icons
+  :when my-icon
+  :straight t
+  :functions
+  (all-the-icons-icon-for-buffer
+   all-the-icons-icon-for-dir
+   all-the-icons-icon-for-file
+   all-the-icons-icon-for-mode
+   all-the-icons-icon-for-url
+   all-the-icons-alltheicon
+   all-the-icons-faicon
+   all-the-icons-fileicon
+   all-the-icons-oction
+   all-the-icons-wicon))
 
 ;;; Theme:
 
