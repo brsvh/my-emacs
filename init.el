@@ -505,7 +505,7 @@ there is a pending network request."
 (require 'general)
 (general-define-key
  :prefix "C-c"
- "a" '(:ignore t :which-key "app")
+ "a" '(:ignore t :which-key "run")
  "b" '(:ignore t :which-key "buffer")
  "e" '(:ignore t :which-key "edit")
  "f" '(:ignore t :which-key "file")
@@ -735,7 +735,9 @@ there is a pending network request."
                                "*Help*"
                                "*Warnings*"
                                "*Messages*"
-			       "*Flycheck errors*")))
+                               "*Flycheck errors*"
+			       "*Kill Ring*"
+			       "*cheatsheet*")))
 
 ;;; File Manager:
 
@@ -899,8 +901,8 @@ there is a pending network request."
   :hook (after-init-hook . global-hl-todo-mode)
   :general
   (:prefix "C-c g"
-	   "N" '(hl-todo-next :which-key "next todo")
-	   "P" '(hl-todo-previous :which-key "previous todo")))
+           "N" '(hl-todo-next :which-key "next todo")
+           "P" '(hl-todo-previous :which-key "previous todo")))
 
 ;; `dimmer' provides a minor mode that indicates which buffer is
 ;; currently active by dimming the faces in the other buffers.
@@ -918,18 +920,117 @@ there is a pending network request."
 
 ;;; Editing:
 
+;; A Collection of Ridiculously Useful eXtensions for Emacs.
+(use-package crux
+  :straight t
+  :general
+  ("C-k" '(crux-smart-kill-line :which-key "kill line"))
+  (:prefix "C-c a"
+	   "e" '(crux-eval-and-replace :which-key "eval")
+	   "o" '(crux-open-with :which-key "open with")
+	   "u" '(crux-view-url  :which-key "view url"))
+  (:prefix "C-c b"
+	   "D" '(crux-delete-file-and-buffer :which-key "delete current file")
+	   "K" '(crux-kill-other-buffers :which-key "kill other buffers"))
+  (:prefix "C-c e"
+	   "M-u" '(crux-upcase-region :which-key "upcase region")
+	   "M-l" '(curx-downcase-region :which-key "downcase region")
+	   "M-c" '(crux-capitalize-region :which-key "capitalize region"))
+  (:prefix "C-c f"
+	   "r" '(crux-recentf-find-file :which-key "open recentf file"))
+  (:prefix "C-c f M"
+	   ""  '(:ignore t :which-key "My Emacs")
+	   "i" '(crux-find-user-init-file :which-key "open init file")
+	   "c" '(crux-find-user-custom-file :which-key "open custom file")))
+
+;; Edit as sudoer.
+(use-package sudo-edit
+  :straight t
+  :general
+  (:prefix "C-c f"
+	   "s" '(sudo-edit :which-key "sudo edit")
+	   "S" '(sudo-edit-find-file :which-key "sudo open")))
+
 ;; Mark, edit multiple lines at once.
+;;
+;; * Mark one more occurrence
+;;
+;; | mc/mark-next-like-this            | Adds a cursor and region at the next part of the buffer       |
+;; |                                   | forwards that matches the current region.                     |
+;; | mc/mark-next-word-like-this       | Like `mc/mark-next-like-this` but only for whole words.       |
+;; | mc/mark-next-symbol-like-this     | Like `mc/mark-next-like-this` but only for whole symbols.     |
+;; | mc/mark-previous-like-this        | Adds a cursor and region at the next part of the buffer       |
+;; |                                   | backwards that matches the current region.                    |
+;; | mc/mark-previous-word-like-this   | Like `mc/mark-previous-like-this` but only for whole words.   |
+;; | mc/mark-previous-symbol-like-this | Like `mc/mark-previous-like-this` but only for whole symbols. |
+;; | mc/mark-more-like-this-extended   | Use arrow keys to quickly mark/skip next/previous occurances. |
+;; | mc/add-cursor-on-click            | Bind to a mouse event to add cursors by clicking.             |
+;; |                                   | See tips-section.                                             |
+;;
+;; * Mark many occurrences
+;;
+;; | mc/mark-all-like-this                  | Marks all parts of the buffer that matches the current region.        |
+;; | mc/mark-all-words-like-this            | Like `mc/mark-all-like-this` but only for whole words.                |
+;; | mc/mark-all-symbols-like-this          | Like `mc/mark-all-like-this` but only for whole symbols.              |
+;; | mc/mark-all-in-region                  | Prompts for a string to match in the region, adding cursors           |
+;; |                                        | to all of them.                                                       |
+;; | mc/mark-all-like-this-in-defun         | Marks all parts of the current defun that matches the current region. |
+;; | mc/mark-all-words-like-this-in-defun   | Like `mc/mark-all-like-this-in-defun` but only for whole words.       |
+;; | mc/mark-all-symbols-like-this-in-defun | Like `mc/mark-all-like-this-in-defun` but only for whole symbols.     |
+;; | mc/mark-all-like-this-dwim             | Tries to be smart about marking everything you want. Can be           |
+;; |                                        | pressed multiple times.                                               |
 (use-package multiple-cursors
   :straight t
   :general
   ;; TODO expand more cases.
+  (:prefix "C-c e m"
+           ""    '(:ignore t :which-key "multi-edit")
+           "a"   '(mc/mark-all-like-this
+                   :which-key "mark all")
+           "p"   '(mc/mark-previous-like-this
+                   :which-key "mark previous")
+           "n"   '(mc/mark-next-like-this
+                   :which-key "mark next")
+           "P"   '(mc/unmark-previous-like-this
+                   :which-key "unmark previous")
+           "N"   '(mc/unmark-next-like-this
+                   :which-key "unmark next")
+           "["   '(mc/cycle-backward
+                   :which-key "cycle backward")
+           "]"   '(mc/cycle-forward
+                   :which-key "cycle forward")
+           "m"   '(mc/mark-more-like-this-extended
+                   :which-key "mark extended")
+           "h"   '(mc-hide-unmatched-lines-mode
+                   :which-key "hide unmatch")
+           "\\"  '(mc/vertical-align-with-space
+                   :which-key "alight space")
+           "#"   '(mc/insert-numbers
+                   :which-key "insert number")
+           "^"   '(mc/edit-beginnings-of-lines
+                   :which-key "edit begin")
+           "$"   '(mc/edit-ends-of-lines
+                   :which-key "edit end")))
+
+;; `undo-fu' is yet another `undo-tree'.
+(use-package undo-fu
+  :straight t
+  :general
+  ("C-/" '(undo-fu-only-undo :which-key "undo"))
   (:prefix "C-c e"
-           "c"   '(mc/edit-lines :which-key "edit lines")
-           "C->" '(mc/mark-next-like-this
-                   :which-key "mark next edit")
-           "C-<" '(mc/mark-previous-like-this
-                   :which-key "mark previous edit")
-           "C-c" '(mc/mark-all-like-this "mark all")))
+           "u" '(undo-fu-only-undo :which-key "undo")
+           "R" '(undo-fu-only-redo :which-key "redo")))
+
+;; Kill-ring:
+
+;; `browse-kill-ring' provides insert item from kill-ring.
+(use-package browse-kill-ring
+  :straight t
+  :general
+  ("C-c e k" '(browse-kill-ring :which-key "kill ring"))
+  :config
+  (push '("*Kill Ring*" :select t :size 0.4 :align 'below :autoclose t)
+        shackle-rules))
 
 ;;; Project management:
 
@@ -1099,6 +1200,12 @@ there is a pending network request."
   :straight t
   :blackout (which-key-posframe-mode)
   :hook (which-key-mode-hook . which-key-posframe-mode))
+
+;; `key-assist' is a tool for creating my own Emacs cheatsheet.
+(use-package key-assist
+  :straight t
+  :general
+  ("C-c h c" '(key-assist :which-key "cheatsheet")))
 
 ;;; Config Management:
 
