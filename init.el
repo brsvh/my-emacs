@@ -494,9 +494,16 @@ there is a pending network request."
 (require 'general)
 (general-define-key
  :prefix "C-c"
+ "a" '(:ignore t :which-key "app")
+ "b" '(:ignore t :which-key "buffer")
  "e" '(:ignore t :which-key "edit")
  "f" '(:ignore t :which-key "file")
- "v" '(:ignore t :which-key "vcs"))
+ "m" '(:ingore t :which-key "major")
+ "v" '(:ignore t :which-key "vcs")
+ "o" '(:ignore t :which-key "org")
+ "p" '(:ignore t :which-key "project")
+ "w" '(:ignore t :which-key "window")
+ "W" '(:ignore t :which-key "workspace"))
 
 ;; `hydra' can be used to tie related commands into a family of short
 ;; bindings with a common prefix.
@@ -682,7 +689,15 @@ there is a pending network request."
   :blackout (zoom-mode)
   :hook (after-init-hook . zoom-mode)
   :custom
-  (zoom-size '(0.618 . 0.618)))
+  (zoom-size '(0.618 . 0.618))
+  (zoom-ignored-major-modes '(occur-mode
+			      help-mode))
+  (zoom-ignored-buffer-names '("*Backtrace*"
+			       "*Compile-Log*"
+			       "*Error*"
+			       "*Help*"
+			       "*Warnings*"
+			       "*Messages*")))
 
 ;;; File Manager:
 
@@ -770,8 +785,7 @@ there is a pending network request."
   :blackout t
   :hook (after-init-hook . projectile-mode)
   :general
-  ("C-c p" '(:keymap projectile-command-map
-		     :which-key "+project"))
+  ("C-c p" 'projectile-command-map)
   :config
   (when (featurep 'ivy)
     (setq projectile-completion-system 'ivy)))
