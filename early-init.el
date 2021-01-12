@@ -73,8 +73,8 @@ it, because it maybe changed."
 
 ;; Emacs will render an 80x55 frame by default, reducing the height to
 ;; 40.
-(push '(height . 40) default-frame-alist)
-(push '(width  . 80) default-frame-alist)
+(push '(height . 50) default-frame-alist)
+(push '(width  . 120) default-frame-alist)
 
 ;; Each Emacs buffer normally has a menu bar at the top, it can use to
 ;; perform common operations. I don't need it.
