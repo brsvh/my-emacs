@@ -41,6 +41,11 @@
   :group 'my
   :type  'boolean)
 
+(defcustom my-posframe (display-graphic-p)
+  "Use posframe or not."
+  :group 'my
+  :type 'boolean)
+
 ;; I would like to use early initialization support, it requires Emacs
 ;; version greater than 27.1.  But I also have machine install Emacs
 ;; with "feature/native-comp" master, so I can't do Emacs version
@@ -246,9 +251,6 @@ there is a pending network request."
   :straight t)
 
 (use-package general
-  :straight t)
-
-(use-package hydra
   :straight t)
 
 (use-package use-package-hydra
@@ -496,6 +498,22 @@ there is a pending network request."
  "f" '(:ignore t :which-key "file")
  "v" '(:ignore t :which-key "vcs"))
 
+;; `hydra' can be used to tie related commands into a family of short
+;; bindings with a common prefix.
+(use-package hydra
+  :straight t)
+
+;; `hydra-posframe' shows hydra hints on posframe.
+(use-package hydra-posframe
+  :when my-posframe
+  :straight (hydra-posframe :type git
+			    :host github
+			    :repo "Ladicle/hydra-posframe")
+  :hook (after-init-hook . hydra-posframe-mode)
+  :custom
+  (hydra-posframe-parameters '((left-fringe  . 12)
+			       (right-fringe . 12))))
+
 ;;; Interface Enhancement:
 
 ;; Ensure binding the IBuffer keymap, and customize face.
@@ -603,6 +621,16 @@ there is a pending network request."
   :custom
   (all-the-icons-ivy-rich-icon-size 0.8))
 
+;; `ivy-posframe' let `ivy' use `posframe' to show its candidate menu.
+(use-package ivy-posframe
+  :when my-posframe
+  :straight t
+  :blackout (ivy-posframe-mode)
+  :hook (after-init-hook . ivy-posframe-mode)
+  :custom
+  (ivy-posframe-parameters '((left-fringe  . 12)
+			     (right-fringe . 12))))
+
 ;; `counsel' provide versions of common Emacs commands that are
 ;; customised to make the best use of `ivy'.
 (use-package counsel
@@ -701,6 +729,13 @@ there is a pending network request."
   :custom-face
   (all-the-icons-dired-dir-face ((t (:height 0.8))))
   (all-the-icons-dired-file-face ((t (:height 0.8)))))
+
+;; `dired-posframe' make `dired' use `posframe', it will preview file and show contents vai `posframe'.
+(use-package dired-posframe
+  :when my-posframe
+  :straight t
+  :blackout (dired-posframe-mode)
+  :hook (dired-mode-hook . dired-posframe-mode))
 
 ;;; Navigation:
 
@@ -814,8 +849,18 @@ there is a pending network request."
 
 ;; Documentation popups support for `company'.
 (use-package company-quickhelp
+  :unless my-posframe
   :straight t
+  :blackout (company-quickhelp-mode)
   :hook (company-mode-hook . company-quickhelp-mode))
+
+;; `company-posframe' let `company' use child frame as its candidate
+;; menu.
+(use-package company-posframe
+  :when my-posframe
+  :straight t
+  :blackout (company-posframe-mode)
+  :hook (company-mode-hook . company-posframe-mode))
 
 ;;; Error Checking:
 
@@ -848,6 +893,15 @@ there is a pending network request."
   (push '("*Flycheck errors*" :select t :size 0.5 :align 'below :autoclose t)
         shackle-rules))
 
+;; `flycheck-posframe' display `flycheck' error messages via
+;; `posframe'.
+(use-package flycheck-posframe
+  :when my-posframe
+  :straight t
+  :blackout (flycheck-posframe-mode)
+  :hook (flycheck-mode-hook . flycheck-posframe-mode)
+  :config (flycheck-posframe-configure-pretty-defaults))
+
 ;; Key Cheat Sheet:
 
 ;; Emacs keybinding system is powerful, we can bind thousands of
@@ -864,6 +918,13 @@ there is a pending network request."
   (which-key-show-early-on-C-h    t)
   (which-key-idle-delay           most-positive-fixnum)
   (which-key-idle-secondary-delay 1e-100))
+
+;; `which-key-posframe' use posframe to show which-key popup.
+(use-package which-key-posframe
+  :when my-posframe
+  :straight t
+  :blackout (which-key-posframe-mode)
+  :hook (which-key-mode-hook . which-key-posframe-mode))
 
 ;;; Config Management:
 
@@ -882,12 +943,55 @@ there is a pending network request."
 ;; `mood-line' is a minimal mode-line configuration that aims to
 ;; replicate some of the features of the `doom-modeline' package.
 (use-package mood-line
+  :disabled
   :straight t
   :blackout (mood-line-mode)
   :hook (after-init-hook . mood-line-mode)
   :custom
   (mood-line-show-eol-style            t)
   (mood-line-show-encoding-information t))
+
+;; Awesome and modern modeline: `doom-modeline'.
+(use-package doom-modeline
+  :straight t
+  :blackout t
+  :hook (after-init-hook . doom-modeline-mode)
+  :custom
+  (doom-modeline-height 25)
+  (doom-modeline-bar-width 5)
+  (doom-modeline-window-width-limit fill-column)
+  (doom-modeline-project-detection 'project)
+  (doom-modeline-buffer-file-name-style 'auto)
+  (doom-modeline-icon my-icon)
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-buffer-modification-icon t)
+  (doom-modeline-unicode-fallback nil)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-enable-word-count nil)
+  (doom-modeline-continuous-word-count-modes '(gfm-mode
+                                               markdown-mode
+                                               org-mode))
+  (doom-modeline-buffer-encoding t)
+  (doom-modeline-indent-info nil)
+  (doom-modeline-checker-simple-format t)
+  (doom-modeline-number-limit 99)
+  (doom-modeline-vcs-max-length 12)
+  (doom-modeline-workspace-name t)
+  (doom-modeline-display-default-persp-name nil)
+  (doom-modeline-persp-icon t)
+  (doom-modeline-lsp t)
+  (doom-modeline-github nil)
+  (doom-modeline-github-interval (* 30 60))
+  (doom-modeline-modal-icon t)
+  (doom-modeline-mu4e nil)
+  (doom-modeline-gnus t)
+  (doom-modeline-gnus-timer 2)
+  (doom-modeline-gnus-excluded-groups '("dummy.group"))
+  (doom-modeline-irc t)
+  (doom-modeline-irc-stylize 'identity)
+  (doom-modeline-env-version t)
+  (doom-modeline-env-load-string "..."))
 
 ;; `all-the-icons.el' is a utility package to collect various Icon
 ;; Fonts and propertize them within Emacs.
