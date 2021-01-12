@@ -163,7 +163,7 @@ there is a pending network request."
 (defvar straight-vc-git-default-clone-depth)
 (defvar straight-check-for-modifications)
 (defvar my-straight-dir (concat my-cache-dir
-				"straight/repos/straight.el/"))
+                                "straight/repos/straight.el/"))
 
 ;; Customize `straight' behaviors.
 (setq straight-base-dir my-cache-dir
@@ -249,6 +249,7 @@ there is a pending network request."
 ;; ":blackout", ":genreal" and ":hydra".
 (use-package blackout
   :straight t)
+(require 'blackout)
 
 (use-package general
   :straight t)
@@ -487,6 +488,18 @@ there is a pending network request."
 ;; whole.
 (setq delete-selection-mode t)
 
+;; Inhibit display `visual-line-mode' in major/minor mode list.
+(blackout visual-line-mode)
+
+;; Normally when word-wrap is on, Emacs only breaks lines after
+;; whitespace characters.  When this option is turned on, Emacs also
+;; breaks lines after characters that have the "|" category (defined
+;; in `characters.el').  This is useful for allowing breaking after
+;; CJK characters and improves the word-wrapping for CJK text mixed
+;; with Latin text. It only available on Emacs 28 and above.
+(unless (version< emacs-version "28.0")
+  (setq word-wrap-by-category t))
+
 ;;; Key-bindings:
 
 (require 'general)
@@ -514,12 +527,12 @@ there is a pending network request."
 (use-package hydra-posframe
   :when my-posframe
   :straight (hydra-posframe :type git
-			    :host github
-			    :repo "Ladicle/hydra-posframe")
+                            :host github
+                            :repo "Ladicle/hydra-posframe")
   :hook (after-init-hook . hydra-posframe-mode)
   :custom
   (hydra-posframe-parameters '((left-fringe  . 12)
-			       (right-fringe . 12))))
+                               (right-fringe . 12))))
 
 ;;; Interface Enhancement:
 
@@ -548,7 +561,7 @@ there is a pending network request."
   :blackout t
   :after (ibuffer projectile)
   :functions (ibuffer-projectile-set-filter-groups
-	      buffer-do-sort-by-alphabetic)
+              buffer-do-sort-by-alphabetic)
   :preface
   (defun my--ibuffer-sort ()
     (ibuffer-projectile-set-filter-groups)
@@ -586,8 +599,8 @@ there is a pending network request."
   (ivy-height                  14)
   (ivy-initial-inputs-alist    nil)
   (ivy-re-builders-alist       '((t . ivy--regex-fuzzy)
-				 (t . ivy--regex-plus)
-				 (t . ivy--regex-ignore-order)))
+                                 (t . ivy--regex-plus)
+                                 (t . ivy--regex-ignore-order)))
   (ivy-use-virtual-buffers     t)
   (ivy-use-selectable-prompt   t))
 
@@ -636,7 +649,7 @@ there is a pending network request."
   :hook (after-init-hook . ivy-posframe-mode)
   :custom
   (ivy-posframe-parameters '((left-fringe  . 12)
-			     (right-fringe . 12))))
+                             (right-fringe . 12))))
 
 ;; `counsel' provide versions of common Emacs commands that are
 ;; customised to make the best use of `ivy'.
@@ -646,15 +659,15 @@ there is a pending network request."
   :hook (after-init-hook . counsel-mode)
   :general
   (:prefix "C-c f"
-	   "f" '(counsel-find-file :which-key "open file"))
+           "f" '(counsel-find-file :which-key "open file"))
   (:prefix "C-c h"
-	   "b" 'counsel-descbinds
-	   "f" 'counsel-describe-function
-	   "l" 'counsel-load-library
-	   "s" 'counsel-describe-symbol
-	   "t" 'counsel-load-theme
-	   "v" 'counsel-describe-variable
-	   "F" 'counsel-describe-face))
+           "b" 'counsel-descbinds
+           "f" 'counsel-describe-function
+           "l" 'counsel-load-library
+           "s" 'counsel-describe-symbol
+           "t" 'counsel-load-theme
+           "v" 'counsel-describe-variable
+           "F" 'counsel-describe-face))
 
 ;; `winner-mode' is a global minor mode, allow undo or redo changes in
 ;; the window configuration.
@@ -674,10 +687,10 @@ there is a pending network request."
   :straight t
   :general
   (:prefix "C-c b"
-	   "C-n" '(buf-move-down  :which-key "move to down")
-	   "C-p" '(buf-move-up    :which-key "move to up")
-	   "C-f" '(buf-move-right :which-key "move to right")
-	   "C-b" '(buf-move-left  :which-key "move to left"))
+           "C-n" '(buf-move-down  :which-key "move to down")
+           "C-p" '(buf-move-up    :which-key "move to up")
+           "C-f" '(buf-move-right :which-key "move to right")
+           "C-b" '(buf-move-left  :which-key "move to left"))
   :custom
   (buffer-move-stay-after-swap t))
 
@@ -715,13 +728,14 @@ there is a pending network request."
   :custom
   (zoom-size '(0.618 . 0.618))
   (zoom-ignored-major-modes '(occur-mode
-			      help-mode))
+                              help-mode))
   (zoom-ignored-buffer-names '("*Backtrace*"
-			       "*Compile-Log*"
-			       "*Error*"
-			       "*Help*"
-			       "*Warnings*"
-			       "*Messages*")))
+                               "*Compile-Log*"
+                               "*Error*"
+                               "*Help*"
+                               "*Warnings*"
+                               "*Messages*"
+			       "*Flycheck errors*")))
 
 ;;; File Manager:
 
@@ -732,7 +746,7 @@ there is a pending network request."
   :general
   ("C-x d" 'dired)
   (:prefix "C-c f"
-	   "O" '(dired :which-key "open directory"))
+           "O" '(dired :which-key "open directory"))
   :custom
   (dired-recursive-deletes 'always)
   (dired-recursive-copies 'always)
@@ -760,9 +774,9 @@ there is a pending network request."
 ;; Use `all-the-icons' in `dired-mode' by `all-the-icons-dired'.
 (use-package all-the-icons-dired
   :straight (all-the-icons-dired :type   git
-  				 :host   github
-   				 :repo   "brsvh/all-the-icons-dired"
-				 :branch "patch")
+                                 :host   github
+                                 :repo   "brsvh/all-the-icons-dired"
+                                 :branch "patch")
   :blackout (all-the-icons-dired-mode)
   :hook (dired-mode-hook . all-the-icons-dired-mode)
   :custom-face
@@ -782,10 +796,10 @@ there is a pending network request."
 (use-package windmove
   :general
   (:prefix "C-c w"
-	   "C-n" 'windmove-up
-	   "C-p" 'windmove-down
-	   "C-f" 'windmove-right
-	   "C-b" 'windmove-left))
+           "C-n" 'windmove-up
+           "C-p" 'windmove-down
+           "C-f" 'windmove-right
+           "C-b" 'windmove-left))
 
 ;; `winum' provides navigate windows and frames using numbers.
 (use-package winum
@@ -799,18 +813,18 @@ there is a pending network request."
 ;; based on indentation.
 (use-package block-nav
   :straight '(block-nav :type git
-			:host github
-			:repo "nixin72/block-nav.el")
+                        :host github
+                        :repo "nixin72/block-nav.el")
   :general
   (:prefix "C-c g"
-	   "n"   '(block-nav-next-block
-		   :which-key "next block")
-	   "p"   '(block-nav-previous-block
-		   :which-key "previous block")
-	   "C-n" '(block-nav-next-indentation-level
-		   :which-key "next indentation")
-	   "C-p" '(block-nav-previous-indentation-level
-		   :which-key "previous indentation")))
+           "n"   '(block-nav-next-block
+                   :which-key "next block")
+           "p"   '(block-nav-previous-block
+                   :which-key "previous block")
+           "C-n" '(block-nav-next-indentation-level
+                   :which-key "next indentation")
+           "C-p" '(block-nav-previous-indentation-level
+                   :which-key "previous indentation")))
 
 ;; `avy' provides some commands that can jumping to visible text using
 ;; a char-based decision tree.
@@ -818,16 +832,16 @@ there is a pending network request."
   :straight t
   :general
   (:prefix "C-c g"
-	   "c" 'avy-goto-char
-	   "l" 'avy-goto-line
-	   "w" 'avy-goto-word-1))
+           "c" 'avy-goto-char
+           "l" 'avy-goto-line
+           "w" 'avy-goto-word-1))
 
 ;; `imenu' produces menus for accessing locations in documents,
 ;; typically in the current buffer.
 (use-package imenu
   :general
   (:prefix "C-c g"
-	   "i" 'imenu))
+           "i" 'imenu))
 
 ;; `anzu' is an Emacs port of anzu.vim.  `anzu.el' provides a minor
 ;; mode which displays current match and total matches information in
@@ -840,9 +854,9 @@ there is a pending network request."
   ([remap query-replace] 'anzu-query-replace)
   ([remap query-replace-regexp] 'anzu-query-replace-regexp)
   (:prefix "C-c e"
-	   "r" '(:ignore t :which-key "replace")
-	   "r c" 'anzu-query-replace-at-cursor
-	   "r t" 'anzu-query-replace-at-cursor-thing))
+           "r" '(:ignore t :which-key "replace")
+           "r c" 'anzu-query-replace-at-cursor
+           "r t" 'anzu-query-replace-at-cursor-thing))
 
 ;; `swiper' is an alternative to isearch that uses ivy to show an
 ;; overview of all matches.
@@ -850,9 +864,9 @@ there is a pending network request."
   :straight counsel
   :general
   (:prefix "C-c e"
-	   "s"   '(:ignore t  :which-key "search")
-	   "s s" '(swiper     :which-key "search")
-	   "s S" '(swiper-all :which-key "search in all buffers")))
+           "s"   '(:ignore t  :which-key "search")
+           "s s" '(swiper     :which-key "search")
+           "s S" '(swiper-all :which-key "search in all buffers")))
 
 ;; By default, Emacs will goto the beginning of line when press
 ;; C-a. `mwim' provides better cursor jump experience.
@@ -877,6 +891,45 @@ there is a pending network request."
 (use-package hl-line
   :blackout (global-hl-line-mode hl-line-mode)
   :hook (after-init-hook . global-hl-line-mode))
+
+;; Hightlight TODO and similar keywords in comments and strings
+;; TODO FIXME BUG DONE PROG
+(use-package hl-todo
+  :straight t
+  :hook (after-init-hook . global-hl-todo-mode)
+  :general
+  (:prefix "C-c g"
+	   "N" '(hl-todo-next :which-key "next todo")
+	   "P" '(hl-todo-previous :which-key "previous todo")))
+
+;; `dimmer' provides a minor mode that indicates which buffer is
+;; currently active by dimming the faces in the other buffers.
+(use-package dimmer
+  :straight t
+  :blackout (dimmer-mode)
+  :hook (after-init-hook . dimmer-mode)
+  :config
+  (dimmer-configure-hydra)
+  ;; TODO Uncomment this line after activate `magit'
+  ;; (dimmer-configure-magit)
+  (dimmer-configure-org)
+  (dimmer-configure-posframe)
+  (dimmer-configure-which-key))
+
+;;; Editing:
+
+;; Mark, edit multiple lines at once.
+(use-package multiple-cursors
+  :straight t
+  :general
+  ;; TODO expand more cases.
+  (:prefix "C-c e"
+           "c"   '(mc/edit-lines :which-key "edit lines")
+           "C->" '(mc/mark-next-like-this
+                   :which-key "mark next edit")
+           "C-<" '(mc/mark-previous-like-this
+                   :which-key "mark previous edit")
+           "C-c" '(mc/mark-all-like-this "mark all")))
 
 ;;; Project management:
 
