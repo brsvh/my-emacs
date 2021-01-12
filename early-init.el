@@ -116,6 +116,12 @@ it, because it maybe changed."
 ;; anyway. This increases memory usage, however!
 (setq inhibit-compacting-font-caches t)
 
+;; The blinking cursor is distracting, but also interferes with cursor
+;; settings in some minor modes that try to change it buffer-locally
+;; (like treemacs) and can cause freezing for folks (esp on macOS)
+;; with customized & color cursors.
+(setq blink-cursor-mode nil)
+
 ;; Don't blink the paren matching the one at point, it's too
 ;; distracting.
 (setq blink-matching-paren nil)
