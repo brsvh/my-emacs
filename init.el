@@ -102,9 +102,9 @@
   "Disable query-on-exit for all network connections in BUFFER.
 This prevents Emacs shutdown from being interrupted just because
 there is a pending network request."
-    (prog1 buffer
-      (set-process-query-on-exit-flag
-       (get-buffer-process buffer) nil)))
+  (prog1 buffer
+    (set-process-query-on-exit-flag
+     (get-buffer-process buffer) nil)))
 
 ;; `url-http' is a library for making HTTP requests.
 (with-eval-after-load 'url-http
@@ -545,7 +545,7 @@ there is a pending network request."
             "C-x C-f" 'counsel-find-file)
   :custom
   (ibuffer-filter-group-name-face
-  '(:inherit (font-lock-string-face bold))))
+   '(:inherit (font-lock-string-face bold))))
 
 ;; Show more awesome icons in IBuffer buffer.
 (use-package all-the-icons-ibuffer
@@ -707,7 +707,7 @@ there is a pending network request."
    (">" 'help-go-forward))
   :config
   (push '(help-mode :select t :size 0.7 :align 'below :autoclose t)
-          shackle-rules))
+        shackle-rules))
 
 ;; Standard Emacs command `occur' lists all lines of the current
 ;; buffer that match a regexp that you give it.  The matching lines
@@ -736,8 +736,8 @@ there is a pending network request."
                                "*Warnings*"
                                "*Messages*"
                                "*Flycheck errors*"
-			       "*Kill Ring*"
-			       "*cheatsheet*")))
+                               "*Kill Ring*"
+                               "*cheatsheet*")))
 
 ;;; File Manager:
 
@@ -926,30 +926,30 @@ there is a pending network request."
   :general
   ("C-k" '(crux-smart-kill-line :which-key "kill line"))
   (:prefix "C-c a"
-	   "e" '(crux-eval-and-replace :which-key "eval")
-	   "o" '(crux-open-with :which-key "open with")
-	   "u" '(crux-view-url  :which-key "view url"))
+           "e" '(crux-eval-and-replace :which-key "eval")
+           "o" '(crux-open-with :which-key "open with")
+           "u" '(crux-view-url  :which-key "view url"))
   (:prefix "C-c b"
-	   "D" '(crux-delete-file-and-buffer :which-key "delete current file")
-	   "K" '(crux-kill-other-buffers :which-key "kill other buffers"))
+           "D" '(crux-delete-file-and-buffer :which-key "delete current file")
+           "K" '(crux-kill-other-buffers :which-key "kill other buffers"))
   (:prefix "C-c e"
-	   "M-u" '(crux-upcase-region :which-key "upcase region")
-	   "M-l" '(curx-downcase-region :which-key "downcase region")
-	   "M-c" '(crux-capitalize-region :which-key "capitalize region"))
+           "M-u" '(crux-upcase-region :which-key "upcase region")
+           "M-l" '(curx-downcase-region :which-key "downcase region")
+           "M-c" '(crux-capitalize-region :which-key "capitalize region"))
   (:prefix "C-c f"
-	   "r" '(crux-recentf-find-file :which-key "open recentf file"))
+           "r" '(crux-recentf-find-file :which-key "open recentf file"))
   (:prefix "C-c f M"
-	   ""  '(:ignore t :which-key "My Emacs")
-	   "i" '(crux-find-user-init-file :which-key "open init file")
-	   "c" '(crux-find-user-custom-file :which-key "open custom file")))
+           ""  '(:ignore t :which-key "My Emacs")
+           "i" '(crux-find-user-init-file :which-key "open init file")
+           "c" '(crux-find-user-custom-file :which-key "open custom file")))
 
 ;; Edit as sudoer.
 (use-package sudo-edit
   :straight t
   :general
   (:prefix "C-c f"
-	   "s" '(sudo-edit :which-key "sudo edit")
-	   "S" '(sudo-edit-find-file :which-key "sudo open")))
+           "s" '(sudo-edit :which-key "sudo edit")
+           "S" '(sudo-edit-find-file :which-key "sudo open")))
 
 ;; Mark, edit multiple lines at once.
 ;;
@@ -1053,6 +1053,12 @@ there is a pending network request."
 
 ;;; Programming:
 
+;; Wakatime service provides statistics and analysis of programming.
+(use-package wakatime-mode
+  :straight t
+  :blackout t
+  :hook (after-init-hook . global-wakatime-mode))
+
 ;; Smartparens is a minor mode for dealing with pairs in Emacs, it can
 ;; automatically insert pairs.
 (use-package smartparens
@@ -1109,8 +1115,8 @@ there is a pending network request."
             "C-n"   'company-select-next)
   :custom
   (company-backends '(company-capf
-                     (company-dabbrev-code company-keywords company-files)
-                     company-dabbrev))
+                      (company-dabbrev-code company-keywords company-files)
+                      company-dabbrev))
   (company-dabbrev-downcase nil)
   (company-dabbrev-ignore-case nil)
   (company-echo-delay (if (display-graphic-p) nil 0))
