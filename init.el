@@ -399,11 +399,9 @@ there is a pending network request."
 ;; with the style of `uniquify-buffer-name-style'.  While
 ;; `uniquify-strip-common-suffix' will remove the part of the file
 ;; system path they have in common.
-(use-package uniquify
-  :custom
-  (uniquify-buffer-name-style 'forward)
-  (uniquify-strip-common-suffix t)
-  (uniquify-after-kill-buffer-p t))
+(setq uniquify-buffer-name-style   'forward
+      uniquify-strip-common-suffix t
+      uniquify-after-kill-buffer-p t)
 
 ;; Get rid of assignment to free variable `shackle-rules'.
 (defvar shackle-rules '())
@@ -498,6 +496,8 @@ there is a pending network request."
  "b" '(:ignore t :which-key "buffer")
  "e" '(:ignore t :which-key "edit")
  "f" '(:ignore t :which-key "file")
+ "g" '(:ignore t :which-key "goto")
+ "h" '(:ignore t :which-key "help")
  "m" '(:ingore t :which-key "major")
  "v" '(:ignore t :which-key "vcs")
  "o" '(:ignore t :which-key "org")
@@ -643,19 +643,43 @@ there is a pending network request."
 (use-package counsel
   :straight t
   :blackout (counsel-mode)
-  :hook (after-init-hook . counsel-mode))
+  :hook (after-init-hook . counsel-mode)
+  :general
+  (:prefix "C-c f"
+	   "f" '(counsel-find-file :which-key "open file"))
+  (:prefix "C-c h"
+	   "b" 'counsel-descbinds
+	   "f" 'counsel-describe-function
+	   "l" 'counsel-load-library
+	   "s" 'counsel-describe-symbol
+	   "t" 'counsel-load-theme
+	   "v" 'counsel-describe-variable
+	   "F" 'counsel-describe-face))
 
 ;; `winner-mode' is a global minor mode, allow undo or redo changes in
 ;; the window configuration.
 (use-package winner
   :blackout (winner)
   :general
-  (:prefix "C-c e"
-           "C-p" '(winner-undo :which-key "winner undo")
-           "C-n" '(winner-redo :which-key "winner redo"))
+  (:prefix "C-c b"
+           "p" '(winner-undo :which-key "winner undo")
+           "n" '(winner-redo :which-key "winner redo"))
   :hook (after-init-hook . winner-mode)
   :custom
   (winner-dont-bind-my-keys t))
+
+;; `buffer-move' provides swap buffers without typing C-x b on each
+;; window.
+(use-package buffer-move
+  :straight t
+  :general
+  (:prefix "C-c b"
+	   "C-n" '(buf-move-down  :which-key "move to down")
+	   "C-p" '(buf-move-up    :which-key "move to up")
+	   "C-f" '(buf-move-right :which-key "move to right")
+	   "C-b" '(buf-move-left  :which-key "move to left"))
+  :custom
+  (buffer-move-stay-after-swap t))
 
 ;; By default, Emacs will show built-in help buffer when press C-h C-h.
 ;; I hope it display which-key buffer after do same behavoir.
@@ -754,6 +778,82 @@ there is a pending network request."
 
 ;;; Navigation:
 
+;; `windmove' provides move operations between windows.
+(use-package windmove
+  :general
+  (:prefix "C-c w"
+	   "C-n" 'windmove-up
+	   "C-p" 'windmove-down
+	   "C-f" 'windmove-right
+	   "C-b" 'windmove-left))
+
+;; `winum' provides navigate windows and frames using numbers.
+(use-package winum
+  :straight t
+  :blackout (winum-mode)
+  :hook (after-init-hook . winum-mode)
+  :config
+  (winum-set-keymap-prefix (kbd "C-c w")))
+
+;; `block-nav' provides some commands for navigating through code
+;; based on indentation.
+(use-package block-nav
+  :straight '(block-nav :type git
+			:host github
+			:repo "nixin72/block-nav.el")
+  :general
+  (:prefix "C-c g"
+	   "n"   '(block-nav-next-block
+		   :which-key "next block")
+	   "p"   '(block-nav-previous-block
+		   :which-key "previous block")
+	   "C-n" '(block-nav-next-indentation-level
+		   :which-key "next indentation")
+	   "C-p" '(block-nav-previous-indentation-level
+		   :which-key "previous indentation")))
+
+;; `avy' provides some commands that can jumping to visible text using
+;; a char-based decision tree.
+(use-package avy
+  :straight t
+  :general
+  (:prefix "C-c g"
+	   "c" 'avy-goto-char
+	   "l" 'avy-goto-line
+	   "w" 'avy-goto-word-1))
+
+;; `imenu' produces menus for accessing locations in documents,
+;; typically in the current buffer.
+(use-package imenu
+  :general
+  (:prefix "C-c g"
+	   "i" 'imenu))
+
+;; `anzu' is an Emacs port of anzu.vim.  `anzu.el' provides a minor
+;; mode which displays current match and total matches information in
+;; the mode-line in various search modes.
+(use-package anzu
+  :straight t
+  :blackout (global-anzu-mode anzu-mode)
+  :hook (after-init-hook . global-anzu-mode)
+  :general
+  ([remap query-replace] 'anzu-query-replace)
+  ([remap query-replace-regexp] 'anzu-query-replace-regexp)
+  (:prefix "C-c e"
+	   "r" '(:ignore t :which-key "replace")
+	   "r c" 'anzu-query-replace-at-cursor
+	   "r t" 'anzu-query-replace-at-cursor-thing))
+
+;; `swiper' is an alternative to isearch that uses ivy to show an
+;; overview of all matches.
+(use-package swiper
+  :straight counsel
+  :general
+  (:prefix "C-c e"
+	   "s"   '(:ignore t  :which-key "search")
+	   "s s" '(swiper     :which-key "search")
+	   "s S" '(swiper-all :which-key "search in all buffers")))
+
 ;; By default, Emacs will goto the beginning of line when press
 ;; C-a. `mwim' provides better cursor jump experience.
 (use-package mwim
@@ -765,6 +865,13 @@ there is a pending network request."
   ("<end>"  'mwim-end-of-code-or-line))
 
 ;;; Visual:
+
+;; Colorize color names in buffers.
+;; #000000 #ffffff #00ff00 #ff0000 #0000ff
+(use-package rainbow-mode
+  :straight t
+  :blackout (rainbow-mode)
+  :hook (after-init-hook . rainbow-mode))
 
 ;; Hightlight current line globally.
 (use-package hl-line
