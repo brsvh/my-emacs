@@ -1506,7 +1506,8 @@ Argument EVENT process event."
   (vterm-kill-buffer-on-exit t)
   :config
   (advice-add #'vterm--sentinel :override #'my-vterm--sentinel)
-  (push '(vterm-mode :select t :align 'below :autoclose t) shackle-rules))
+  (push '(vterm-mode :select t :size 0.3 :align 'below :autoclose t)
+	shackle-rules))
 
 ;;; Config Management:
 
