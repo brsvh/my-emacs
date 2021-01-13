@@ -511,6 +511,7 @@ there is a pending network request."
  "f" '(:ignore t :which-key "file")
  "g" '(:ignore t :which-key "goto")
  "h" '(:ignore t :which-key "help")
+ "l" '(:ignore t :which-key "language")
  "m" '(:ingore t :which-key "major")
  "v" '(:ignore t :which-key "vcs")
  "o" '(:ignore t :which-key "org")
@@ -728,16 +729,19 @@ there is a pending network request."
   :custom
   (zoom-size '(0.618 . 0.618))
   (zoom-ignored-major-modes '(occur-mode
-                              help-mode))
+                              help-mode
+			      lsp-ui-imenu-mode))
   (zoom-ignored-buffer-names '("*Backtrace*"
                                "*Compile-Log*"
                                "*Error*"
                                "*Help*"
                                "*Warnings*"
                                "*Messages*"
+			       "*xref*"
                                "*Flycheck errors*"
                                "*Kill Ring*"
-                               "*cheatsheet*")))
+                               "*cheatsheet*"
+			       "*lsp-help*")))
 
 ;;; File Manager:
 
@@ -1047,6 +1051,11 @@ there is a pending network request."
   :hook (after-init-hook . projectile-mode)
   :general
   ("C-c p" 'projectile-command-map)
+  (:prefix "C-c p"
+	   "4" '(:ignore t :which-key "find other")
+	   "5" '(:ignore t :which-key "find other")
+	   "s" '(:ignore t :which-key "grep")
+	   "x" '(:ignore t :which-key "shell"))
   :config
   (when (featurep 'ivy)
     (setq projectile-completion-system 'ivy)))
@@ -1058,6 +1067,13 @@ there is a pending network request."
   :straight t
   :blackout t
   :hook (after-init-hook . global-wakatime-mode))
+
+;; `xref' provides a somewhat generic infrastructure for cross
+;; referencing commands, in particular "find-definition".
+(use-package xref
+  :config
+  (push '("*xref*" :size 0.5 :align 'below :autoclose t)
+        shackle-rules))
 
 ;; Smartparens is a minor mode for dealing with pairs in Emacs, it can
 ;; automatically insert pairs.
@@ -1084,6 +1100,45 @@ there is a pending network request."
   (sp-pair "《" "》" :actions '(insert wrap autoskip navigate))
   (sp-pair "「" "」" :actions '(insert wrap autoskip navigate))
   (sp-pair "『" "』" :actions '(insert wrap autoskip navigate)))
+
+;; `indent-guid' use to show vertical lines to guide indentation.
+(use-package indent-guide
+  :straight t
+  :blackout (indent-guide-mode indent-guide-global-mode)
+  :hook (after-init-hook . indent-guide-global-mode))
+
+;; `lsp-mode' provides language server protocol support for Emacs.
+(use-package lsp-mode
+  :straight t
+  :blackout t
+  :defer t
+  :commands lsp
+  :hook (lsp-mode-hook . lsp-enable-which-key-integration)
+  :custom
+  (lsp-keymap-prefix (kbd "C-c l"))
+  :config
+  (push '("*lsp-help*" :size 0.5 :align 'below :autoclose t)
+        shackle-rules))
+
+;; Hight level UI modules of `lsp'.
+(use-package lsp-ui
+  :when (featurep 'lsp-mode)
+  :straight t
+  :blackout t
+  :defer t
+  :general
+  (lsp-ui-mode-map
+   [remap xref-find-definitions] 'lsp-ui-peek-find-definitions
+   [remap xref-find-references]  'lsp-ui-peek-find-references))
+
+;; Auto-format source code in many languages with one command.
+(use-package format-all
+  :straight t
+  :blackout (format-all-mode)
+  :commands (format-all-buffer)
+  :general
+  (:prefix "C-c l"
+	   "f" '(format-all-buffer :which-key "format buffer")))
 
 ;;; Completion:
 
@@ -1143,6 +1198,30 @@ there is a pending network request."
   :blackout (company-posframe-mode)
   :hook (company-mode-hook . company-posframe-mode))
 
+;;; Debugging:
+
+;; Just like `lsp-mode' provides editing features through the
+;; editor-independent language server protocol, its sister package
+;; `dap-mode' provides debugging features through the
+;; editor-independent debug adapter protocol and language-specific
+;; debugging servers called debug adapters. front-end of the sister
+;; debug adapter protocol. It is again client server like language
+;; sever protocol. `dap-mode' provides all of the traditional debugger
+;; features - breakpoints(conditions, hit count, etc), threads,
+;; locals.
+(use-package dap-mode
+  :straight t
+  :blackout t
+  :defer t)
+
+;; Documentation:
+
+;; `eldoc' is built-in package to shows function arguments / variable
+;; doc in minibuffer when coding.
+(use-package eldoc
+  :blackout t
+  :hook (prog-mode-hook . eldoc-mode))
+
 ;;; Error Checking:
 
 ;; `flycheck' provides syntax checking for Emacs, yet a more modern
@@ -1183,7 +1262,17 @@ there is a pending network request."
   :hook (flycheck-mode-hook . flycheck-posframe-mode)
   :config (flycheck-posframe-configure-pretty-defaults))
 
-;; Key Cheat Sheet:
+;;; Programming Language:
+
+;;; C/C++:
+
+;; `cc-mode' provides support of C and other languages with similar syntax.
+(use-package cc-mode
+  :hook
+  (c-mode-hook . lsp)
+  (c++-mode-hook . lsp))
+
+;;; Key Cheat Sheet:
 
 ;; Emacs keybinding system is powerful, we can bind thousands of
 ;; special behavior with key or keympas.  But sometimes I will forget
