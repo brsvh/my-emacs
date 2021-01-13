@@ -192,12 +192,86 @@ there is a pending network request."
 
 ;; Add `my-straight-dir' to `load-path', and require `straight'.
 (push my-straight-dir load-path)
+
+;; This assures the byte-compiler that we know what we are doing when
+;; we reference functions and variables from straight.el below. It
+;; does not actually do anything at runtime, since the `straight'
+;; feature has already been provided by loading straight.elc above.
 (require 'straight)
 
+;; In case this is a reinit, and straight.el was already loaded, we
+;; have to explicitly clear the caches.
+(straight--reset-caches)
+
+;; We start by registering the default recipe repositories. This is
+;; done first so that any dependencies of straight.el can be looked up
+;; correctly.
+
+;; This is kind of aggressive but we really don't have a good
+;; mechanism at present for customizing the default recipe
+;; repositories anyway. So don't even try to cater to that use case.
+(setq straight-recipe-repositories nil)
+
+(straight-use-recipes '(org-elpa :local-repo nil))
+
+(straight-use-recipes '(melpa :type git :host github
+                              :repo "melpa/melpa"
+                              :build nil))
+
+(if straight-recipes-gnu-elpa-use-mirror
+    (straight-use-recipes
+     '(gnu-elpa-mirror :type git :host github
+                       :repo "emacs-straight/gnu-elpa-mirror"
+                       :build nil))
+  (straight-use-recipes `(gnu-elpa :type git
+                                   :repo ,straight-recipes-gnu-elpa-url
+                                   :local-repo "elpa"
+                                   :build nil)))
+
+(straight-use-recipes '(el-get :type git :host github
+                               :repo "dimitri/el-get"
+                               :build nil))
+
+(if straight-recipes-emacsmirror-use-mirror
+    (straight-use-recipes
+     '(emacsmirror-mirror :type git :host github
+                          :repo "emacs-straight/emacsmirror-mirror"
+                          :build nil))
+  (straight-use-recipes '(emacsmirror :type git :host github
+                                      :repo "emacsmirror/epkgs"
+                                      :nonrecursive t
+                                      :build nil)))
+
+;; Then we register (and build) straight.el itself.
+(straight-use-package `(straight :type git :host github
+                                 :repo ,(format "%s/straight.el"
+                                                straight-repository-user)
+                                 :files ("straight*.el")
+                                 :branch ,straight-repository-branch))
+
+(if (straight--modifications 'check-on-save)
+    (straight-live-modifications-mode +1)
+  (straight-live-modifications-mode -1))
+
+(when (straight--modifications 'watch-files)
+  (straight-watcher-start))
+
+(if straight-use-symlinks
+    (straight-symlink-emulation-mode -1)
+  (straight-symlink-emulation-mode +1))
+
+(if straight-enable-package-integration
+    (straight-package-neutering-mode +1)
+  (straight-package-neutering-mode -1))
+
+(if straight-enable-use-package-integration
+    (straight-use-package-mode +1)
+  (straight-use-package-mode -1))
+
 ;; packages bootstrap.
-(with-temp-buffer
-  (insert-file-contents (concat my-straight-dir "bootstrap.el"))
-  (eval-region (search-forward "(require 'straight)") (point-max)))
+;; (with-temp-buffer
+;;  (insert-file-contents (concat my-straight-dir "bootstrap.el"))
+;;  (eval-region (search-forward "(require 'straight)") (point-max)))
 
 ;; Ensure `use-package' is installed and loaded.
 (straight-use-package 'use-package)
@@ -445,7 +519,7 @@ Also kill process in that window."
                 (winner-undo)))
           (setq window (caar shackle--popup-window-list))
           (setq buffer (cdar shackle--popup-window-list))
-          (setq process (get-buffer-process (buffer-name buffer)))
+          (setq process (get-buffer-process buffer))
           (when (and (window-live-p window)
                      (equal (window-buffer window) buffer))
             (if process
@@ -1079,6 +1153,7 @@ Also kill process in that window."
 ;; `xref' provides a somewhat generic infrastructure for cross
 ;; referencing commands, in particular "find-definition".
 (use-package xref
+  :defer t
   :config
   (push '("*xref*" :size 0.5 :align 'below :autoclose t)
         shackle-rules))
@@ -1111,10 +1186,20 @@ Also kill process in that window."
 
 ;; `indent-guide' use to show vertical lines to guide indentation.
 (use-package indent-guide
+  :disabled
   :straight t
   :blackout (indent-guide-mode indent-guide-global-mode)
+  ;; :hook (prog-mode-hook . indent-guide-mode))
   :hook (after-init-hook . indent-guide-global-mode)
-  :custom (indent-guide-global-mode '(not vterm-mode)))
+  :custom (indent-guide-global-mode '(not vterm-mode org-mode)))
+
+;; `highlight-indent-guides' is another indent guide.
+(use-package highlight-indent-guides
+  :straight t
+  :blackout highlight-indent-guides-mode
+  :hook (prog-mode-hook . highlight-indent-guides-mode)
+  :custom
+  (highlight-indent-guides-method 'column))
 
 ;; `lsp-mode' provides language server protocol support for Emacs.
 (use-package lsp-mode
@@ -1286,7 +1371,7 @@ Also kill process in that window."
   :config
   (push '("*ielm*" :select t :align 'below :autoclose t) shackle-rules))
 
-;;; Key Cheat Sheet:
+;;; Keys Cheat Sheet:
 
 ;; Emacs keybinding system is powerful, we can bind thousands of
 ;; special behavior with key or keympas.  But sometimes I will forget
@@ -1315,6 +1400,54 @@ Also kill process in that window."
   :straight t
   :general
   ("C-c h c" '(key-assist :which-key "cheatsheet")))
+
+;;; Note:
+
+;;; Org:
+
+;; Write notes, GTD, authoring, publish and wash dishes.
+(use-package org
+  :straight (org :host github :repo "emacs-straight/org-mode" :local-repo "org")
+  :hook (org-mode-hook . visual-line-mode)
+  :custom-face
+  (org-document-title        ((t (:height 2.25
+                                  :underline nil))))
+  (org-document-info         ((t (:height 1.375))))
+  (org-document-info-keyword ((t (:height 1.625))))
+
+  (org-level-1 ((t (:height 2.000))))
+  (org-level-2 ((t (:height 1.875))))
+  (org-level-3 ((t (:height 1.750))))
+  (org-level-4 ((t (:height 1.625))))
+  (org-level-5 ((t (:height 1.500))))
+  (org-level-6 ((t (:height 1.375))))
+  (org-level-7 ((t (:height 1.250))))
+  (org-level-8 ((t (:height 1.125))))
+  :custom
+  (org-pretty-entities t)
+  (org-ellipsis "↪")
+  (org-hide-emphasis-markers t)
+  (org-fontify-whole-heading-line t)
+  (org-fontify-done-headline t)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-src-fontify-natively t)
+  (org-todo-keywords '((sequence "TODO" "NEXT" "PROG" "WAIT" "FAIL" "DONE")))
+  (org-todo-keyword-faces '(("TODO" :foreground "salmon" :weight bold)
+                            ("NEXT" :foreground "deep sky blue" :weight bold)
+                            ("PROG" :foreground "magenta" :weight bold)
+                            ("WAIT" :foreground "peru" :weight bold)
+                            ("FAIL" :foreground "red" :weight bold)
+                            ("DONE" :foreground "forest green" :weight bold))))
+
+;; `org-variable-pitch' provides variable-pitch support for `org-mode'.
+(use-package org-variable-pitch
+  :straight t
+  :blackout (org-variable-pitch-minor-mode)
+  :hook (org-mode-hook . org-variable-pitch-minor-mode)
+  :custom-face
+  (variable-pitch ((t (:font "Cardo"))))
+  :custom
+  (org-variable-pitch-fixed-font "Consolas"))
 
 ;;; Version Control:
 
