@@ -426,7 +426,8 @@ there is a pending network request."
       window))
 
   (defun shackle-close-popup-window-hack (&rest _)
-    "Close current popup window via `C-g'."
+    "Close current popup window via `C-g'.
+Also kill process in that window."
     (setq shackle--popup-window-list
           (cl-loop for (window . buffer) in shackle--popup-window-list
                    if (and (window-live-p window)
@@ -434,7 +435,7 @@ there is a pending network request."
                    collect (cons window buffer)))
     (when (and (called-interactively-p 'interactive)
                (not (region-active-p)))
-      (let (window buffer)
+      (let (window buffer process)
         (if (one-window-p)
             (progn
               (setq window (selected-window))
@@ -444,8 +445,12 @@ there is a pending network request."
                 (winner-undo)))
           (setq window (caar shackle--popup-window-list))
           (setq buffer (cdar shackle--popup-window-list))
+          (setq process (get-buffer-process (buffer-name buffer)))
           (when (and (window-live-p window)
                      (equal (window-buffer window) buffer))
+            (if process
+                (when (process-live-p process)
+                  (kill-process process)))
             (delete-window window)
             (pop shackle--popup-window-list))))))
   :hook (after-init-hook . shackle-mode)
@@ -456,6 +461,7 @@ there is a pending network request."
   (shackle-default-rule nil)
   (shackle-rules '(("*Backtrace*"   :size 0.7 :align 'below :autoclose t :select t)
                    ("*Compile-Log*" :size 0.5 :align 'below :autoclose t)
+                   ("*Finder*"      :size 0.5 :align 'below :autoclose t)
                    ("*Error*"       :size 0.5 :align 'below :autoclose t)
                    ("*Help*"        :size 0.5 :align 'below :autoclose t)
                    ("*Warnings*"    :size 0.5 :align 'below :autoclose t)
@@ -730,18 +736,20 @@ there is a pending network request."
   (zoom-size '(0.618 . 0.618))
   (zoom-ignored-major-modes '(occur-mode
                               help-mode
-			      lsp-ui-imenu-mode))
+                              lsp-ui-imenu-mode
+                              vterm-mode
+                              eshell-mode))
   (zoom-ignored-buffer-names '("*Backtrace*"
                                "*Compile-Log*"
                                "*Error*"
                                "*Help*"
                                "*Warnings*"
                                "*Messages*"
-			       "*xref*"
+                               "*xref*"
                                "*Flycheck errors*"
                                "*Kill Ring*"
                                "*cheatsheet*"
-			       "*lsp-help*")))
+                               "*lsp-help*")))
 
 ;;; File Manager:
 
@@ -1052,10 +1060,10 @@ there is a pending network request."
   :general
   ("C-c p" 'projectile-command-map)
   (:prefix "C-c p"
-	   "4" '(:ignore t :which-key "find other")
-	   "5" '(:ignore t :which-key "find other")
-	   "s" '(:ignore t :which-key "grep")
-	   "x" '(:ignore t :which-key "shell"))
+           "4" '(:ignore t :which-key "find other")
+           "5" '(:ignore t :which-key "find other")
+           "s" '(:ignore t :which-key "grep")
+           "x" '(:ignore t :which-key "shell"))
   :config
   (when (featurep 'ivy)
     (setq projectile-completion-system 'ivy)))
@@ -1101,11 +1109,12 @@ there is a pending network request."
   (sp-pair "「" "」" :actions '(insert wrap autoskip navigate))
   (sp-pair "『" "』" :actions '(insert wrap autoskip navigate)))
 
-;; `indent-guid' use to show vertical lines to guide indentation.
+;; `indent-guide' use to show vertical lines to guide indentation.
 (use-package indent-guide
   :straight t
   :blackout (indent-guide-mode indent-guide-global-mode)
-  :hook (after-init-hook . indent-guide-global-mode))
+  :hook (after-init-hook . indent-guide-global-mode)
+  :custom (indent-guide-global-mode '(not vterm-mode)))
 
 ;; `lsp-mode' provides language server protocol support for Emacs.
 (use-package lsp-mode
@@ -1127,9 +1136,8 @@ there is a pending network request."
   :blackout t
   :defer t
   :general
-  (lsp-ui-mode-map
-   [remap xref-find-definitions] 'lsp-ui-peek-find-definitions
-   [remap xref-find-references]  'lsp-ui-peek-find-references))
+  ([remap xref-find-definitions] 'lsp-ui-peek-find-definitions)
+  ([remap xref-find-references]  'lsp-ui-peek-find-references))
 
 ;; Auto-format source code in many languages with one command.
 (use-package format-all
@@ -1138,7 +1146,7 @@ there is a pending network request."
   :commands (format-all-buffer)
   :general
   (:prefix "C-c l"
-	   "f" '(format-all-buffer :which-key "format buffer")))
+           "f" '(format-all-buffer :which-key "format buffer")))
 
 ;;; Completion:
 
@@ -1272,6 +1280,12 @@ there is a pending network request."
   (c-mode-hook . lsp)
   (c++-mode-hook . lsp))
 
+;;; Emacs Lisp:
+(use-package ielm
+  :commands ielm
+  :config
+  (push '("*ielm*" :select t :align 'below :autoclose t) shackle-rules))
+
 ;;; Key Cheat Sheet:
 
 ;; Emacs keybinding system is powerful, we can bind thousands of
@@ -1301,6 +1315,65 @@ there is a pending network request."
   :straight t
   :general
   ("C-c h c" '(key-assist :which-key "cheatsheet")))
+
+;;; Version Control:
+
+;;; Integration:
+
+;;; Console:
+
+;; `eshell' is Emacs built-in package that provides shell evaluate.
+(use-package eshell
+  :preface
+  (defun quarter-window-vertically ()
+    "create a new window a quarter size of the current window"
+    (split-window-vertically)
+    (other-window 1)
+    (split-window-vertically)
+    (other-window -1)
+    (delete-window))
+  
+  (defun open-mini-eshell ()
+    "open a mini-eshell in a small window at the bottom of the current window"
+    (interactive)
+    (quarter-window-vertically)
+    (other-window 1)
+    (eshell))
+  :general
+  (:prefix "C-c a"
+           "s" '(open-mini-eshell :which-key "eshell")
+           "S" '(eshell :which-key "eshell buffer"))
+  :config
+  (push '("*eshell*" :select t :align 'below :autoclose t) shackle-rules))
+
+;; A fully-fledged terminal emulator inside Emacs based on libvterm.
+(use-package vterm
+  :straight t
+  :preface
+  ;; HACK kill `shackle' window when vterm process exit.
+  (defun my-vterm--sentinel (process event)
+    "Sentinel of vterm PROCESS.
+Argument EVENT process event."
+    (let* ((buf (process-buffer process))
+           (window (get-buffer-window buf)))
+      (run-hook-with-args 'vterm-exit-functions
+                          (if (buffer-live-p buf) buf nil)
+                          event)
+      (if (and vterm-kill-buffer-on-exit (buffer-live-p buf))
+          (progn
+            (when window
+              (delete-window window))
+            (kill-buffer buf)))))
+  :commands (vterm vterm-other-window)
+  :general
+  ("C-c a t" '(vterm-other-window :which-key "vterm"))
+  ("C-c a T" '(vterm :which-key "vterm buffer"))
+  :custom
+  (vterm-shell "zsh")
+  (vterm-kill-buffer-on-exit t)
+  :config
+  (advice-add #'vterm--sentinel :override #'my-vterm--sentinel)
+  (push '(vterm-mode :select t :align 'below :autoclose t) shackle-rules))
 
 ;;; Config Management:
 
