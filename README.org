@@ -4,7 +4,7 @@
 
 ** Getting started
 
-   I use ~package.el~ and [[https://github.com/jwiegley/use-package][use-package.el]] to manage Emacs packages and customization, my configuration will automatically install depend on packages after Emacs first startup. So only one thing need to do, clone this repo to the correct path.
+   I use [[https://github.com/raxod502/straight.el][straight.el]] and [[https://github.com/jwiegley/use-package][use-package.el]] to manage Emacs packages and customization, my configuration will automatically install depend on packages after Emacs first startup. So only one thing need to do, clone this repo to the correct path.
 
    #+begin_src shell
      git clone https://github.com/brsvh/my-emacs ${XDG_CONIG_HOME:-.config}/emacs
@@ -25,7 +25,7 @@
 
 *** Screenshot
 
-    [[https://github.com/brsvh/my-emacs/blob/screenshot/init-file.png?raw=true]]
+    [[https://github.com/brsvh/my-emacs/blob/screenshot/my-emacs.png?raw=true]]
 
 ** Reference
 
