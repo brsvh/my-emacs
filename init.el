@@ -580,6 +580,29 @@ Also kill process in that window."
 (unless (version< emacs-version "28.0")
   (setq word-wrap-by-category t))
 
+;; Replace prettify symbol in `org-mode'.
+(use-package prog-mode
+  :custom
+  (prettify-symbols-alist '(("#+author:"       . "@")
+                            ("#+begin_center"  . "⟨")
+                            ("#+begin_comment" . "‹")
+                            ("#+begin_example" . "‡")
+                            ("#+begin_export"  . "«")
+                            ("#+begin_quote"   . "※")
+                            ("#+begin_src"     . "†")
+                            ("#+begin_verse"   . "”")
+                            ("#+end_center"    . "⟩")
+                            ("#+end_comment"   . "›")
+                            ("#+end_example"   . "‡")
+                            ("#+end_export"    . "»")
+                            ("#+end_quote"     . "※")
+                            ("#+end_src"       . "†")
+                            ("#+end_verse"     . "”")
+                            ("#+name:"         . "≈")
+                            ("#+tblfm:"        . "⇨")
+                            ("#+title:"        . "❧ ")
+                            ("#+property:"     . "☰ "))))
+
 ;;; Key-bindings:
 
 (require 'general)
@@ -1443,11 +1466,29 @@ Also kill process in that window."
 (use-package org-variable-pitch
   :straight t
   :blackout (org-variable-pitch-minor-mode)
-  :hook (org-mode-hook . org-variable-pitch-minor-mode)
+  :hook
+  (org-mode-hook . org-variable-pitch-minor-mode)
+  (org-variable-pitch-minor-mode-hook . prettify-symbols-mode)
   :custom-face
   (variable-pitch ((t (:font "Cardo"))))
   :custom
   (org-variable-pitch-fixed-font "Consolas"))
+
+;; `org-superstart-mode' provides prettify headings and plain lists in
+;; Org mode.
+(use-package org-superstar
+  :straight t
+  :when my-icon
+  :blackout t
+  :hook (org-mode-hook . org-superstar-mode)
+  :custom
+  (org-superstar-leading-bullet ?\s)
+  (org-superstar-leading-fallback ?\s)
+  (org-hide-leading-stars nil)
+  (org-superstar-headline-bullets-list '("§"))
+  (org-superstar-item-bullet-alist '((?* . ?○)
+                                     (?+ . ?▸)
+                                     (?- . ?●))))
 
 ;;; Version Control:
 
