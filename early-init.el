@@ -120,7 +120,7 @@ it, because it maybe changed."
 ;; settings in some minor modes that try to change it buffer-locally
 ;; (like treemacs) and can cause freezing for folks (esp on macOS)
 ;; with customized & color cursors.
-(setq blink-cursor-mode nil)
+(blink-cursor-mode -1)
 
 ;; Don't blink the paren matching the one at point, it's too
 ;; distracting.
