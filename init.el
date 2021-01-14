@@ -1579,7 +1579,6 @@ Argument EVENT process event."
   (LaTeX-mode-hook . visual-line-mode)
   (LaTeX-mode-hook . turn-on-reftex)
   (LaTeX-mode-hook . lsp)
-  (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
   :custom
   (TeX-master nil)
   (TeX-auto-save t)
@@ -1811,6 +1810,7 @@ Argument EVENT process event."
 (use-package pdf-tools
   :straight t
   :mode ("\\.pdf$" . pdf-view-mode)
+  :hook (pdf-view-mode-hook . auto-revert-mode)
   :config
   (pdf-tools-install)
   (push '(pdf-view-mode :align right :select nil) shackle-rules))
