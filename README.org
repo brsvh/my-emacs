@@ -30,6 +30,9 @@
 
     [[https://github.com/brsvh/my-emacs/blob/screenshot/my-emacs.png?raw=true]]
 
+    [[https://github.com/brsvh/my-emacs/blob/screenshot/latex.png?raw=true]]
+    
+    
 ** Reference
 
    Here is a list of blogs/configurations that I’ have grabbed code from or absorbed ideas from.
