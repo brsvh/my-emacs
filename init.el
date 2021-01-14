@@ -1579,6 +1579,7 @@ Argument EVENT process event."
   (LaTeX-mode-hook . visual-line-mode)
   (LaTeX-mode-hook . turn-on-reftex)
   (LaTeX-mode-hook . lsp)
+  (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
   :custom
   (TeX-master nil)
   (TeX-auto-save t)
@@ -1768,6 +1769,10 @@ Argument EVENT process event."
       ""
       TeX-run-command t t
       :help "Run an arbitrary command")))
+  (TeX-view-program-selection '((output-pdf "pdf-tools")))
+  (TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server t)
   :config
   (push '("\\`\\*.*output\\*\\'" :regexp t :align 'below :autoclose t)
         shackle-rules))
@@ -1798,6 +1803,17 @@ Argument EVENT process event."
   :hook (TeX-latex-mode-hook . company-auctex-bmode)
   :config
   (company-auctex-init))
+
+;;; PDF:
+
+;; `pdf-tools' provides major mode for rendering PDF files, much
+;; better than DocView, and has much richer set of features.
+(use-package pdf-tools
+  :straight t
+  :mode ("\\.pdf$" . pdf-view-mode)
+  :config
+  (pdf-tools-install)
+  (push '(pdf-view-mode :align right :select nil) shackle-rules))
 
 ;;; Config Management:
 
