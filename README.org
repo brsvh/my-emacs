@@ -21,7 +21,10 @@
     *Optional*
 
     - /Python3/
-    - ~watchexec~
+    - ~watchexec~ - provide speed up of ~straight~
+    - LSP language serveres
+      + ~clangd~ - lsp backend of C/C++ programming language.
+      + ~TexLab~ - lsp backend of LaTeX.
 
 *** Screenshot
 
