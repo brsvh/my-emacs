@@ -30,6 +30,19 @@
 ;; query:
 ;;   ^;;;;* \|^(use-package
 
+;; TODO Lists
+
+;; FIXME `TeX-output-mode' don't follow `zoom' rules and `shackle'
+;; rules.
+
+;; PROG prettify TeX mode and LaTeX mode.
+
+;; NEXT use `org-roam' feature.
+
+;; NEXT set valign of `org-mode'.
+
+;; NEXT set a better font of Chinese, include variabled and fixed.
+
 ;;; Code:
 
 (defgroup my nil
@@ -835,7 +848,8 @@ Also kill process in that window."
                               help-mode
                               lsp-ui-imenu-mode
                               vterm-mode
-                              eshell-mode))
+                              eshell-mode
+			      TeX-output-mode))
   (zoom-ignored-buffer-names '("*Backtrace*"
                                "*Compile-Log*"
                                "*Error*"
@@ -844,9 +858,11 @@ Also kill process in that window."
                                "*Messages*"
                                "*xref*"
                                "*Flycheck errors*"
+			       "*flycheck-posframe-buffer*"
                                "*Kill Ring*"
                                "*cheatsheet*"
-                               "*lsp-help*")))
+                               "*lsp-help*"))
+  (zoom-ignored-buffer-name-regexps '("\\`\\*.*output\\*\\'")))
 
 ;;; File Manager:
 
@@ -1367,6 +1383,8 @@ Also kill process in that window."
                               'right-margin))
   :config
   (push '("*Flycheck errors*" :select t :size 0.5 :align 'below :autoclose t)
+        shackle-rules)
+  (push '("*flycheck-posframe-buffer*" :select t :size 0.5 :align 'below :autoclose t)
         shackle-rules))
 
 ;; `flycheck-posframe' display `flycheck' error messages via
@@ -1549,6 +1567,237 @@ Argument EVENT process event."
   (advice-add #'vterm--sentinel :override #'my-vterm--sentinel)
   (push '(vterm-mode :select t :size 0.3 :align 'below :autoclose t)
 	shackle-rules))
+
+;;; LaTex:
+
+;; AUCTeX is THE TeX extension for Emacs.  Be careful with
+;; configuration because it overrides the built-in tex package.
+(use-package auctex
+  :straight t
+  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :hook
+  (LaTeX-mode-hook . visual-line-mode)
+  (LaTeX-mode-hook . turn-on-reftex)
+  (LaTeX-mode-hook . lsp)
+  :custom
+  (TeX-master nil)
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (reftex-plug-into-AUCTeX t)
+  (TeX-command-default "XeLaTeX")
+  (TeX-command-list
+   '(("XeLaTeX"
+      "%`xelatex%(mode)%' %t"
+      TeX-run-command nil t
+      :help "Run XeLaTeX")
+     ("Tectonic" "tectoinc %t"
+      TeX-run-command nil t
+      :help "Run tectoinc")
+     ("LatexMk"
+      "latexmk %(-PDF)%S%(mode) %(file-line-error) %(extraopts) %t"
+      TeX-run-latexmk nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode)
+      :help "Run LatexMk")
+     ("TeX"
+      "%(PDF)%(tex) %(file-line-error) %`%(extraopts) %S%(PDFout)%(mode)%' %t"
+      TeX-run-TeX nil
+      (plain-tex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run plain TeX")
+     ("LaTeX"
+      "%`%l%(mode)%' %T"
+      TeX-run-TeX nil
+      (latex-mode
+       doctex-mode)
+      :help "Run LaTeX")
+     ("Makeinfo"
+      "makeinfo %(extraopts) %t"
+      TeX-run-compile nil
+      (texinfo-mode)
+      :help "Run Makeinfo with Info output")
+     ("Makeinfo HTML"
+      "makeinfo %(extraopts) --html %t"
+      TeX-run-compile nil
+      (texinfo-mode)
+      :help "Run Makeinfo with HTML output")
+     ("AmSTeX"
+      "amstex %(PDFout) %`%(extraopts) %S%(mode)%' %t"
+      TeX-run-TeX nil
+      (ams-tex-mode)
+      :help "Run AMSTeX")
+     ("ConTeXt"
+      "%(cntxcom) --once --texutil %(extraopts) %(execopts)%t"
+      TeX-run-TeX nil
+      (context-mode)
+      :help "Run ConTeXt once")
+     ("ConTeXt Full"
+      "%(cntxcom) %(extraopts) %(execopts)%t"
+      TeX-run-TeX nil
+      (context-mode)
+      :help "Run ConTeXt until completion")
+     ("BibTeX"
+      "bibtex %s"
+      TeX-run-BibTeX nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       context-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run BibTeX")
+     ("Biber"
+      "biber %s"
+      TeX-run-Biber nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run Biber")
+     ("View"
+      "%V"
+      TeX-run-discard-or-function t t
+      :help "Run Viewer")
+     ("Print"
+      "%p"
+      TeX-run-command t t
+      :help "Print the file")
+     ("Queue"
+      "%q"
+      TeX-run-background nil t
+      :help "View the printer queue"
+      :visible TeX-queue-command)
+     ("File"
+      "%(o?)dvips %d -o %f "
+      TeX-run-dvips t
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Generate PostScript file")
+     ("Dvips"
+      "%(o?)dvips %d -o %f "
+      TeX-run-dvips nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Convert DVI file to PostScript")
+     ("Dvipdfmx"
+      "dvipdfmx %d"
+      TeX-run-dvipdfmx nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Convert DVI file to PDF with dvipdfmx")
+     ("Ps2pdf"
+      "ps2pdf %f"
+      TeX-run-ps2pdf nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Convert PostScript file to PDF")
+     ("Glossaries"
+      "makeglossaries %s"
+      TeX-run-command nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run makeglossaries to create glossary file")
+     ("Index"
+      "makeindex %s"
+      TeX-run-index nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run makeindex to create index file")
+     ("upMendex"
+      "upmendex %s"
+      TeX-run-index t
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run upmendex to create index file")
+     ("Xindy"
+      "texindy %s"
+      TeX-run-command nil
+      (plain-tex-mode
+       latex-mode
+       doctex-mode
+       texinfo-mode
+       ams-tex-mode)
+      :help "Run xindy to create index file")
+     ("Check"
+      "lacheck %s"
+      TeX-run-compile nil
+      (latex-mode)
+      :help "Check LaTeX file for correctness")
+     ("ChkTeX"
+      "chktex -v6 %s"
+      TeX-run-compile nil
+      (latex-mode)
+      :help "Check LaTeX file for common mistakes")
+     ("Spell"
+      "(TeX-ispell-document \"\")"
+      TeX-run-function nil t
+      :help "Spell-check the document")
+     ("Clean"
+      "TeX-clean"
+      TeX-run-function nil t
+      :help "Delete generated intermediate files")
+     ("Clean All"
+      "(TeX-clean t)"
+      TeX-run-function nil t
+      :help "Delete generated intermediate and output files")
+     ("Other"
+      ""
+      TeX-run-command t t
+      :help "Run an arbitrary command")))
+  :config
+  (push '("\\`\\*.*output\\*\\'" :regexp t :align 'below :autoclose t)
+        shackle-rules))
+
+;; Fast input methods to enter LaTeX environments and math with GNU
+;; Emacs.
+(use-package cdlatex
+  :straight t
+  :blackout t
+  :hook
+  (LaTeX-mode-hook . cdlatex-mode)
+  (org-mode-hook . org-cdlatex-mode))
+
+;; `auctex-latexmk' adds LatexMk support to AUCTeX.
+(use-package auctex-latexmk
+  :straight t
+  :blackout t
+  :after latex
+  :custom
+  (auctex-latexmk-inherit-TeX-PDF-mode t)
+  :config
+  (auctex-latexmk-setup))
+
+;; `company-auctex' provides auto-completion for `AucTeX'.
+(use-package company-auctex
+  :straight t
+  :blackout t
+  :hook (TeX-latex-mode-hook . company-auctex-bmode)
+  :config
+  (company-auctex-init))
 
 ;;; Config Management:
 
