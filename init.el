@@ -45,20 +45,6 @@
 
 ;;; Code:
 
-(defgroup my nil
-  "My Emacs customize."
-  :group 'emacs)
-
-(defcustom my-icon (display-graphic-p)
-  "Use icons or not."
-  :group 'my
-  :type  'boolean)
-
-(defcustom my-posframe (display-graphic-p)
-  "Use posframe or not."
-  :group 'my
-  :type 'boolean)
-
 ;; I would like to use early initialization support, it requires Emacs
 ;; version greater than 27.1.  But I also have machine install Emacs
 ;; with "feature/native-comp" master, so I can't do Emacs version
@@ -68,62 +54,25 @@
 
 ;;; Prologue:
 
-;; My environment respect XDG user directory specification, make Emacs
-;; do it too.  `xdg' provides XDG Base Directory Specification support
-;; in Emacs, load it.
 (require 'xdg)
 
-;; Define some constants for directory will be used next.
-(defconst my-dir user-emacs-directory
-  "The root directory of my Emacs config.")
+;; Ensure my directory definitions are bound.
+(unless (boundp 'my-dir)
+  (defconst my-dir user-emacs-directory
+    "The root directory of my Emacs config.")
 
-(defconst my-data-dir (expand-file-name "emacs/" (xdg-data-home))
-  "Directory for my data storage.")
+  (defconst my-data-dir (expand-file-name "emacs/" (xdg-data-home))
+    "Directory for my data storage.")
 
-(defconst my-cache-dir (expand-file-name "emacs/" (xdg-cache-home))
-  "Directory for my cache storage.")
+  (defconst my-cache-dir (expand-file-name "emacs/" (xdg-cache-home))
+    "Directory for my cache storage.")
 
-;; Emacs will save customization to `custom-file', it is
-;; `user-init-file' by default.  I don't want to it littering my
-;; `user-init-file', redirect it.
-(setq custom-file (concat my-dir "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file nil 'nomessage))
+  (defconst my-straight-dir (concat my-cache-dir
+                                  "straight/repos/straight.el/")
+    "Directory for `straight' data storage.")
 
-;; When use feature/native-comp branch, the native compilation is
-;; supported.
-
-;; Don't store eln cache in eln-cache under `user-emacs-directory'.
-(when (boundp 'comp-eln-load-path)
-  (push (concat my-cache-dir "eln-cache/") comp-eln-load-path))
-
-;; `gnutls' provides support for SSL/TLS connections, using the GnuTLS
-;; library.
-(with-eval-after-load 'gnutls
-  ;; `use-package' does this for us normally.
-  (eval-when-compile
-    (require 'gnutls))
-
-  ;; Do not allow insecure TLS connections.
-  (setq gnutls-verify-error t)
-
-  ;; Bump the required security level for TLS to an acceptably modern
-  ;; value.
-  (setq gnutls-min-prime-bits 3072))
-
-(defun my-no-query-on-http-kill (buffer)
-  "Disable query-on-exit for all network connections in BUFFER.
-This prevents Emacs shutdown from being interrupted just because
-there is a pending network request."
-  (prog1 buffer
-    (set-process-query-on-exit-flag
-     (get-buffer-process buffer) nil)))
-
-;; `url-http' is a library for making HTTP requests.
-(with-eval-after-load 'url-http
-  (eval-when-compile
-    (require 'url-http))
-  (advice-add #'url-http :filter-return #'my-no-query-on-http-kill))
+    ;; Ensure `my-straight-dir' in `load-path'.
+  (push my-straight-dir load-path))
 
 ;; `package.el' is Emacs built-in package manager, its default
 ;; behavior is a bit annoying.  Load it now.
@@ -169,126 +118,157 @@ there is a pending network request."
 ;; `package' time usage is 0.3s~ on my machine, so migrate to
 ;; `straight'.
 
-;; Get rid of assignment to free variables.
-(defvar straight-base-dir)
-(defvar straight-repository-branch)
-(defvar straight-build-dir)
-(defvar straight-vc-git-default-clone-depth)
-(defvar straight-check-for-modifications)
-(defvar my-straight-dir (concat my-cache-dir
-                                "straight/repos/straight.el/"))
-
-;; Customize `straight' behaviors.
-(setq straight-base-dir my-cache-dir
-      straight-repository-branch "develop"
-      straight-build-dir (format "build-%s/" emacs-version)
-      straight-vc-git-default-clone-depth 1)
-
-;; If watchexec and Python are installed, use file watchers to detect
-;; package modifications. This saves time at startup. Otherwise, use
-;; the ever-reliable find(1).
-(if (and (executable-find "watchexec")
-         (executable-find "python3"))
-    (setq straight-check-for-modifications
-          '(watch-files find-when-checking))
-  (setq straight-check-for-modifications
-        '(find-at-startup find-when-checking)))
-
-;; Download `straight' if it is not installed.
-(unless (file-directory-p my-straight-dir)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-       'silent 'inhibit-cookies)
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-
-;; Add `my-straight-dir' to `load-path', and require `straight'.
-(push my-straight-dir load-path)
-
-;; This assures the byte-compiler that we know what we are doing when
-;; we reference functions and variables from straight.el below. It
-;; does not actually do anything at runtime, since the `straight'
-;; feature has already been provided by loading straight.elc above.
 (require 'straight)
 
-;; In case this is a reinit, and straight.el was already loaded, we
-;; have to explicitly clear the caches.
-(straight--reset-caches)
+(unless (boundp 'my-straight-initialize-p)
+  ;; Download `straight' if it is not installed.
+  (unless (file-directory-p my-straight-dir)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
 
-;; We start by registering the default recipe repositories. This is
-;; done first so that any dependencies of straight.el can be looked up
-;; correctly.
+  ;; Add `my-straight-dir' to `load-path'.
+  (push my-straight-dir load-path)
 
-;; This is kind of aggressive but we really don't have a good
-;; mechanism at present for customizing the default recipe
-;; repositories anyway. So don't even try to cater to that use case.
-(setq straight-recipe-repositories nil)
+  ;; This assures the byte-compiler that we know what we are doing when
+  ;; we reference functions and variables from straight.el below. It
+  ;; does not actually do anything at runtime, since the `straight'
+  ;; feature has already been provided by loading straight.elc above.
+  (require 'straight)
 
-(straight-use-recipes '(org-elpa :local-repo nil))
+  ;; Customize `straight' behaviors.
+  (setq straight-base-dir my-cache-dir
+        ;; Use the develop branch of `straight'.
+        straight-repository-branch "develop"
+        ;; Reset the name of `straight' build directory include
+        ;; `emacs-version' infomation to save build history.
+        straight-build-dir (format "build-%s/" emacs-version)
+        ;; Set clone depth to 1 when use git protocol.
+        straight-vc-git-default-clone-depth 1
+        ;; This is kind of aggressive but we really don't have a good
+        ;; mechanism at present for customizing the default recipe
+        ;; repositories anyway. So don't even try to cater to that use
+        ;; case.
+        straight-recipe-repositories nil
+        ;; Use symlinks for building packages.
+        straight-use-symlinks t
+        ;; Enable integration with `package'.
+        straight-enable-package-integration t
+        ;; Enable integration with `use-package'.
+        straight-enable-use-package-integration t)
 
-(straight-use-recipes '(melpa :type git :host github
-                              :repo "melpa/melpa"
-                              :build nil))
+  ;; If watchexec and Python are installed, use file watchers to detect
+  ;; package modifications. This saves time at startup. Otherwise, use
+  ;; the ever-reliable find(1).
+  (if (and (executable-find "watchexec")
+           (executable-find "python3"))
+      (setq straight-check-for-modifications
+            '(watch-files find-when-checking))
+    (setq straight-check-for-modifications
+          '(find-at-startup find-when-checking)))
 
-(if straight-recipes-gnu-elpa-use-mirror
-    (straight-use-recipes
-     '(gnu-elpa-mirror :type git :host github
-                       :repo "emacs-straight/gnu-elpa-mirror"
-                       :build nil))
-  (straight-use-recipes `(gnu-elpa :type git
-                                   :repo ,straight-recipes-gnu-elpa-url
-                                   :local-repo "elpa"
-                                   :build nil)))
+  ;; In case this is a reinit, and straight.el was already loaded, we
+  ;; have to explicitly clear the caches.
+  (straight--reset-caches)
 
-(straight-use-recipes '(el-get :type git :host github
-                               :repo "dimitri/el-get"
-                               :build nil))
+  ;; Add Org Emacs lisp Package Archive recipes.
+  ;; (straight-use-recipes '(org-elpa
+  ;;                         :local-repo nil))
 
-(if straight-recipes-emacsmirror-use-mirror
-    (straight-use-recipes
-     '(emacsmirror-mirror :type git :host github
+  ;; Add Milkypostman’s Emacs Lisp Package Archive recipes.
+  (straight-use-recipes '(melpa
+                          :type git
+                          :host github
+                          :repo "melpa/melpa"
+                          :build nil))
+
+  ;; Add GNU ELPA Mirror recipes.
+  (straight-use-recipes '(gnu-elpa-mirror
+                          :type git :host github
+                          :repo "emacs-straight/gnu-elpa-mirror"
+                          :build nil))
+
+  ;; Add `el-get' recipes.
+  (straight-use-recipes '(el-get
+                          :type git
+                          :host github
+                          :repo "dimitri/el-get"
+                          :build nil))
+
+  ;; Add emacsmirror-mirror recipes.
+  (straight-use-recipes '(emacsmirror-mirror
+                          :type git
+                          :host github
                           :repo "emacs-straight/emacsmirror-mirror"
                           :build nil))
-  (straight-use-recipes '(emacsmirror :type git :host github
-                                      :repo "emacsmirror/epkgs"
-                                      :nonrecursive t
-                                      :build nil)))
 
-;; Then we register (and build) straight.el itself.
-(straight-use-package `(straight :type git :host github
-                                 :repo ,(format "%s/straight.el"
-                                                straight-repository-user)
-                                 :files ("straight*.el")
-                                 :branch ,straight-repository-branch))
+  ;; Register `straight' self as package.
+  (straight-use-package `(straight
+                          :type git
+                          :host github
+                          :repo ,(format "%s/straight.el"
+                                         straight-repository-user)
+                          :files ("straight*.el")
+                          :branch ,straight-repository-branch))
 
-(if (straight--modifications 'check-on-save)
-    (straight-live-modifications-mode +1)
-  (straight-live-modifications-mode -1))
+  ;; Make `straight' check for modifications when
+  ;; `straight--modifications' method is `check-on-save'.
+  (if (straight--modifications 'check-on-save)
+      (straight-live-modifications-mode +1)
+    (straight-live-modifications-mode -1))
 
-(when (straight--modifications 'watch-files)
-  (straight-watcher-start))
+  ;; When `straight--modifications' method is `check-on-save', use
+  ;; `watchexec' watch modifications.
+  (when (straight--modifications 'watch-files)
+    (straight-watcher-start))
 
-(if straight-use-symlinks
-    (straight-symlink-emulation-mode -1)
-  (straight-symlink-emulation-mode +1))
+  ;; Emulating symlinks in the software layer when use symlinks for
+  ;; building packages.
+  (if straight-use-symlinks
+      (straight-symlink-emulation-mode nil)
+    (straight-symlink-emulation-mode t))
 
-(if straight-enable-package-integration
-    (straight-package-neutering-mode +1)
-  (straight-package-neutering-mode -1))
+  ;; Enable integration for `package'.
+  (if straight-enable-package-integration
+      (straight-package-neutering-mode t)
+    (straight-package-neutering-mode nil))
 
-(if straight-enable-use-package-integration
-    (straight-use-package-mode +1)
-  (straight-use-package-mode -1))
+  ;; Enable integration for `use-package'.
+  (if straight-enable-use-package-integration
+      (straight-use-package-mode t)
+    (straight-use-package-mode nil)))
 
-;; packages bootstrap.
-;; (with-temp-buffer
-;;  (insert-file-contents (concat my-straight-dir "bootstrap.el"))
-;;  (eval-region (search-forward "(require 'straight)") (point-max)))
+;;; Customize:
+
+(defgroup my nil
+  "My Emacs customize."
+  :group 'emacs)
+
+(defcustom my-icon (display-graphic-p)
+  "Use icons or not."
+  :group 'my
+  :type  'boolean)
+
+(defcustom my-posframe (display-graphic-p)
+  "Use posframe or not."
+  :group 'my
+  :type 'boolean)
+
+;;; Package manager:
 
 ;; Ensure `use-package' is installed and loaded.
 (straight-use-package 'use-package)
+
+;; Get rid of reference to free variable warning of symbol name in
+;; `use-package' arguments.
 (require 'use-package)
+
+;; I use `use-package.el' to organize my Emacs configuration.
+;; `use-package' provides `use-package' macro that allows me to
+;; isolate package configuration by performance-oriented way.
 
 ;; Customize the default behaviors of `use-package'.
 (use-package use-package
@@ -332,17 +312,41 @@ there is a pending network request."
   (use-package-enable-imenu-support t)
   (use-package-expand-minimally     nil))
 
-;; Register some useful keywords of `use-package'.
-;; ":blackout", ":genreal" and ":hydra".
+;; The easy way to clean up Emacs mode lighters.
 (use-package blackout
   :straight t)
+
+;; Get rid of warning about directly use `blackout' function.
 (require 'blackout)
 
+;; Like the advice system, el-patch provides a way to customize the
+;; behavior of Emacs Lisp functions that do not provide enough
+;; variables and hooks to let you make them do what you want.  The
+;; advantage of using el-patch is that you will be notified if the
+;; definition of a function you are customizing changes, so that you
+;; are aware your customizations might need to be updated.
+
+;; Using the same mechanism, el-patch also provides a way to make
+;; lazy-loading packages much more easy, powerful, and robust.
+(use-package el-patch
+  :straight t)
+
+;; Get rid of warning about directly use `el-patch' function.
+(require 'el-patch)
+
+;; More convenient key definitions in Emacs.
 (use-package general
   :straight t)
 
+;; Adds the :hydra keyword to the `use-package' macro.
 (use-package use-package-hydra
   :straight t)
+
+; Feature `straight-x' from package `straight' provides
+;; experimental/unstable extensions to straight.el which are not yet
+;; ready for official inclusion.
+(use-package straight-x
+  :commands (straight-x-fetch-all))
 
 ;;; Better default:
 
@@ -366,6 +370,13 @@ there is a pending network request."
   (gcmh-lows-cons-threshold #x800000)
   (gcmh-high-cons-threshold most-positive-fixnum)
   (gcmh-idle-delay          30))
+
+;; Emacs will save customization to `custom-file', it is
+;; `user-init-file' by default.  I don't want to it littering my
+;; `user-init-file', redirect it.
+(setq custom-file (concat my-dir "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file nil 'nomessage))
 
 ;; Confirm with `y-or-n-p' when exit Emacs.
 (setq confirm-kill-emacs 'y-or-n-p)
@@ -427,6 +438,7 @@ there is a pending network request."
 (use-package super-save
   :straight t
   :blackout (super-save-mode)
+  :hook (after-init-hook . super-save-mode)
   :custom
   ;; Enable the additional feature of auto-saving buffers when Emacs
   ;; is idle.
@@ -1902,32 +1914,6 @@ Argument EVENT process event."
    all-the-icons-fileicon
    all-the-icons-oction
    all-the-icons-wicon))
-
-;;; Theme:
-
-;; The Modus themes are designed for accessible readability.  They
-;; conform with the highest standard for color contrast between any
-;; given combination of background and foreground values.  This
-;; corresponds to the WCAG AAA standard, which specifies a minimum
-;; rate of distance in relative luminance of 7:1.
-(use-package modus-themes
-  :straight t
-  ;; Why defer this package 0.5s?
-
-  ;; I should do theme settings in early initialization, but
-  ;; `straight' is not initialize during early initialization.
-  
-  ;; Load theme during initialization is expensive, so defer it 0.5s.
-  :defer 0.5
-  :config
-  ;; Customizations of modus theme.
-  (setq modus-themes-slanted-constructs t
-        modus-themes-bold-constructs    t
-        modus-themes-mode-line          '3d)
-
-  ;; Load the theme files before enabling a theme.
-  (modus-themes-load-themes)
-  (modus-themes-load-operandi))
 
 (provide 'init)
 ;;; init.el ends here
