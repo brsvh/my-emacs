@@ -861,7 +861,8 @@ Also kill process in that window."
 			       "*flycheck-posframe-buffer*"
                                "*Kill Ring*"
                                "*cheatsheet*"
-                               "*lsp-help*"))
+                               "*lsp-help*"
+			       "LSP Errors View"))
   (zoom-ignored-buffer-name-regexps '("\\`\\*.*output\\*\\'")))
 
 ;;; File Manager:
@@ -1250,7 +1251,9 @@ Also kill process in that window."
   :custom
   (lsp-keymap-prefix (kbd "C-c l"))
   :config
-  (push '("*lsp-help*" :size 0.5 :align 'below :autoclose t)
+  (push '("*lsp-help*" :size 0.5 :align below :autoclose t)
+        shackle-rules)
+  (push '("LSP Errors View" :align below :autoclose t)
         shackle-rules))
 
 ;; Hight level UI modules of `lsp'.
