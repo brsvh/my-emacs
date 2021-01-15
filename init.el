@@ -833,7 +833,7 @@ Also kill process in that window."
 (use-package replace
   :commands occur
   :config
-  (push '(occur-mode :select t :align 'below :autoclose t)
+  (push '(occur-mode :size 0.3 :select t :align right :autoclose t)
         shackle-rules))
 
 ;; `zoom' provides fixed and automatic balanced window layout for
@@ -862,7 +862,8 @@ Also kill process in that window."
                                "*Kill Ring*"
                                "*cheatsheet*"
                                "*lsp-help*"
-			       "LSP Errors View"))
+			       "LSP Errors View"
+			       "*Occur*"))
   (zoom-ignored-buffer-name-regexps '("\\`\\*.*output\\*\\'")))
 
 ;;; File Manager:
@@ -1593,9 +1594,9 @@ Argument EVENT process event."
       "%`xelatex%(mode)%' %t"
       TeX-run-command nil t
       :help "Run XeLaTeX")
-     ("Tectonic" "tectoinc %t"
+     ("Tectonic" "tectonic %t"
       TeX-run-command nil t
-      :help "Run tectoinc")
+      :help "Run tectonic")
      ("LatexMk"
       "latexmk %(-PDF)%S%(mode) %(file-line-error) %(extraopts) %t"
       TeX-run-latexmk nil
