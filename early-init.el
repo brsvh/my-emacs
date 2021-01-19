@@ -22,7 +22,12 @@
 ;; `package-load-list', and `package-user-dir'.
 
 ;; So in this file, I mainly do further configuration of UI and
-;; package initialization.
+;; package initialization.  About package initialization, I have
+;; migrated to `straight' now.
+
+;; To see the outline of this file, run M-x occur with the following
+;; query:
+;;   ^;;;;* \|^(
 
 ;;; Code:
 
@@ -31,9 +36,29 @@
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;; In noninteractive sessions, prioritize non-byte-compiled source
-;; files to prevent the use of stale byte-code. Otherwise, it saves us
-;; a little IO time to skip the mtime checks on every *.elc file.
+;; files to prevent the use of stale byte-code.  Otherwise, it saves
+;; us a little IO time to skip the mtime checks on every *.elc file.
 (setq load-prefer-newer noninteractive)
+
+;;; Advices:
+
+(defun my--fix-display-graphic-p (func &optional display)
+    "Apply DISPLAY to all formulated FUNC.
+Fix `display-graphic-p' so it works while early initialization."
+    (if display
+        (funcall func display)
+      ;; `display-graphic-p' lies by returning nil, but
+      ;; `initial-window-system' tells the truth (it is nil only if I
+      ;; am actually in a tty environment).
+      initial-window-system))
+
+;; I use `all-the-icons' to show more awesome icons, but I only
+;; activate it during graphic interface.  So I need ensure load it by
+;; `display-graphic-p', but this predicate can not work during early
+;; initialization.
+(advice-add #'display-graphic-p :around #'my--fix-display-graphic-p)
+
+;;; Optimization:
 
 (defvar my-initial-file-name-handler-alist file-name-handler-alist
   "A list used to restore `file-name-handler-alist'.")
@@ -46,10 +71,8 @@ it, because it maybe changed."
     (add-to-list 'my-initial-file-name-handler-alist handler))
   (setq file-name-handler-alist my-initial-file-name-handler-alist))
 
-;;; Optimization:
-
 ;; `file-name-handler-alist' is consulted on every require, load and
-;; various path/io functions. Get a minor speed up by nooping this.
+;; various path/io functions.  Get a minor speed up by nooping this.
 (unless (or noninteractive (daemonp))
   ;; set `file-name-handler-alist' to empty.
   (setq file-name-handler-alist nil)
@@ -58,19 +81,19 @@ it, because it maybe changed."
             #'my-restore-file-name-handler-alist
             -100))
 
-;; After Emacs 27, package initialization occurs before `user-init-file'
-;; is loaded, but after `early-init-file'. I don’t use `package.el', so
-;; prevent its’ initialization.
+;; After Emacs 27, package initialization occurs before
+;; `user-init-file' is loaded, but after `early-init-file'.  I don’t
+;; use `package.el', so prevent its’ initialization.
 (setq package-enable-at-startup nil)
 
 ;; Resizing the Emacs frame can be a terribly expensive part of
-;; changing the font. By inhibiting this, we easily halve startup
-;; times with fonts that are larger than the system default. This
+;; changing the font.  By inhibiting this, it easily halve startup
+;; times with fonts that are larger than the system default.  This
 ;; optimization is borrowed from Doom Emacs early-init.el.
 (setq frame-inhibit-implied-resize t)
 
 ;; Disable bidirectional text rendering for a modest performance
-;; boost. I've set this to `nil' in the past, but the
+;; boost.  I've set this to `nil' in the past, but the
 ;; `bidi-display-reordering's docs say that is an undefined state and
 ;; suggest this to be just as good:
 (setq bidi-display-reordering  'left-to-right
@@ -87,22 +110,22 @@ it, because it maybe changed."
 (setq fast-but-imprecise-scrolling t)
 
 ;; Font compacting can be terribly expensive, especially for rendering
-;; icon fonts on Windows. Whether disabling it has a notable affect on
-;; Linux and Mac hasn't been determined, but we inhibit it there
-;; anyway. This increases memory usage, however!
+;; icon fonts on Windows.  Whether disabling it has a notable affect
+;; on Linux and Mac hasn't been determined, but I inhibit it there
+;; anyway.  This increases memory usage, however!
 (setq inhibit-compacting-font-caches t)
 
-; Emacs "updates" its ui more often than it needs to, so we slow it down
-;; slightly from 0.5s:
+; Emacs "updates" its ui more often than it needs to, so I slow it down
+;; slightly from 0.5s.
 (setq idle-update-delay 1.0)
 
 ;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification
 ;; while receiving input, which should help with performance while
-;; scrolling.x
+;; scrolling.
 (setq redisplay-skip-fontification-on-input t)
 
-;; Remove command line options that aren't relevant to our current OS; means
-;; slightly less to process at startup.
+;; Remove command line options that aren't relevant to our current OS;
+;; means slightly less to process at startup.
 (setq command-line-x-option-alist nil)
 
 ;;; Prologue:
@@ -125,6 +148,8 @@ it, because it maybe changed."
 (defconst my-straight-dir (concat my-cache-dir
                                   "straight/repos/straight.el/")
   "Directory for `straight' data storage.")
+
+(message my-straight-dir)
 
 ;; Emacs will save customization to `custom-file', it is
 ;; `user-init-file' by default.  I don't want to it littering my
@@ -167,6 +192,44 @@ there is a pending network request."
     (require 'url-http))
   (advice-add #'url-http :filter-return #'my-no-query-on-http-kill))
 
+;;; Package initialization:
+
+;; Get rid of free variables reference.
+(defvar straight-base-dir)
+(defvar straight-repository-branch)
+(defvar straight-build-dir)
+(defvar straight-vc-git-default-clone-depth)
+(defvar straight-use-symlinks)
+(defvar straight-enable-package-integration)
+(defvar straight-enable-use-package-integration)
+(defvar straight-check-for-modifications)
+
+;; Customize `straight' behaviors.
+(setq straight-base-dir my-cache-dir
+      ;; Use the develop branch of `straight'.
+      straight-repository-branch "develop"
+      ;; Reset the name of `straight' build directory include
+      ;; `emacs-version' infomation to save build history.
+      straight-build-dir (format "build-%s/" emacs-version)
+      ;; Set clone depth to 1 when use git protocol.
+      straight-vc-git-default-clone-depth 1
+      ;; Use symlinks for building packages.
+      straight-use-symlinks t
+      ;; Enable integration with `package'.
+      straight-enable-package-integration t
+      ;; Enable integration with `use-package'.
+      straight-enable-use-package-integration t)
+
+;; If watchexec and Python are installed, use file watchers to detect
+;; package modifications.  This saves time at startup.  Otherwise, use
+;; the ever-reliable find(1).
+(if (and (executable-find "watchexec")
+         (executable-find "python3"))
+    (setq straight-check-for-modifications
+          '(watch-files find-when-checking))
+  (setq straight-check-for-modifications
+        '(find-at-startup find-when-checking)))
+
 ;; Download `straight' if it is not installed.
 (unless (file-directory-p my-straight-dir)
   (with-current-buffer
@@ -179,123 +242,40 @@ there is a pending network request."
 ;; Add `my-straight-dir' to `load-path'.
 (push my-straight-dir load-path)
 
-;;; Package initialization:
-
-;; This assures the byte-compiler that we know what we are doing when
-;; we reference functions and variables from straight.el below. It
-;; does not actually do anything at runtime, since the `straight'
-;; feature has already been provided by loading straight.elc above.
 (require 'straight)
 
-;; Customize `straight' behaviors.
-(setq straight-base-dir my-cache-dir
-      ;; Use the develop branch of `straight'.
-      straight-repository-branch "develop"
-      ;; Reset the name of `straight' build directory include
-      ;; `emacs-version' infomation to save build history.
-      straight-build-dir (format "build-%s/" emacs-version)
-      ;; Set clone depth to 1 when use git protocol.
-      straight-vc-git-default-clone-depth 1
-      ;; This is kind of aggressive but we really don't have a good
-      ;; mechanism at present for customizing the default recipe
-      ;; repositories anyway. So don't even try to cater to that use
-      ;; case.
-      straight-recipe-repositories nil
-      ;; Use symlinks for building packages.
-      straight-use-symlinks t
-      ;; Enable integration with `package'.
-      straight-enable-package-integration t
-      ;; Enable integration with `use-package'.
-      straight-enable-use-package-integration t)
+;; `straight' bootstrap.
+(with-temp-buffer
+  (insert-file-contents (concat my-straight-dir "bootstrap.el"))
+  (eval-region (search-forward "(require 'straight)") (point-max)))
 
-;; If watchexec and Python are installed, use file watchers to detect
-;; package modifications. This saves time at startup. Otherwise, use
-;; the ever-reliable find(1).
-(if (and (executable-find "watchexec")
-         (executable-find "python3"))
-    (setq straight-check-for-modifications
-          '(watch-files find-when-checking))
-  (setq straight-check-for-modifications
-        '(find-at-startup find-when-checking)))
+;; Whether Emacs built-in packages or third-party packages are
+;; prefered put their configuration and cache files to
+;; `user-emacs-directory'.  Because I follow the XDG Base
+;; Specification, I need change their behaviors.  `no-littering' has a
+;; collection of such configuration, directly use it.
 
-;; In case this is a reinit, and straight.el was already loaded, we
-;; have to explicitly clear the caches.
-(straight--reset-caches)
-
-;; Add Org Emacs lisp Package Archive recipes.
-;; (straight-use-recipes '(org-elpa
-;;                         :local-repo nil))
-
-;; Add Milkypostman’s Emacs Lisp Package Archive recipes.
-(straight-use-recipes '(melpa
-                        :type git
-                        :host github
-                        :repo "melpa/melpa"
-                        :build nil))
-
-;; Add GNU ELPA Mirror recipes.
-(straight-use-recipes '(gnu-elpa-mirror
-                        :type git :host github
-                        :repo "emacs-straight/gnu-elpa-mirror"
-                        :build nil))
-
-;; Add `el-get' recipes.
-(straight-use-recipes '(el-get
-                        :type git
-                        :host github
-                        :repo "dimitri/el-get"
-                        :build nil))
-
-;; Add emacsmirror-mirror recipes.
-(straight-use-recipes '(emacsmirror-mirror
-                        :type git
-                        :host github
-                        :repo "emacs-straight/emacsmirror-mirror"
-                        :build nil))
-
-;; Register `straight' self as package.
-(straight-use-package `(straight
-                        :type git
-                        :host github
-                        :repo ,(format "%s/straight.el"
-                                       straight-repository-user)
-                        :files ("straight*.el")
-                        :branch ,straight-repository-branch))
-
-;; Make `straight' check for modifications when
-;; `straight--modifications' method is `check-on-save'.
-(if (straight--modifications 'check-on-save)
-    (straight-live-modifications-mode +1)
-  (straight-live-modifications-mode -1))
-
-;; When `straight--modifications' method is `check-on-save', use
-;; `watchexec' watch modifications.
-(when (straight--modifications 'watch-files)
-  (straight-watcher-start))
-
-;; Emulating symlinks in the software layer when use symlinks for
-;; building packages.
-(if straight-use-symlinks
-    (straight-symlink-emulation-mode nil)
-  (straight-symlink-emulation-mode t))
-
-;; Enable integration for `package'.
-(if straight-enable-package-integration
-    (straight-package-neutering-mode t)
-  (straight-package-neutering-mode nil))
-
-;; Enable integration for `use-package'.
-(if straight-enable-use-package-integration
-    (straight-use-package-mode t)
-  (straight-use-package-mode nil))
-
-;; Mark `straight' have been initialized.
-(defvar my-straight-initialize-p t)
+;; After setting the values of `no-littering-etc-directory' and
+;; `no-littering-var-directory', strange etc/ and var/ file
+;; directories are created under `user-emacs-directory', even though
+;; the values of the variables are as expected.  The var/ directory
+;; includes company/ and emacs-session/ directories, so my guess is
+;; that I loaded `company' at the beginning caused it. Resolve it by
+;; move `no-littering' loading to here.
+(defvar no-littering-etc-directory)
+(defvar no-littering-var-directory)
+(setq no-littering-etc-directory my-data-dir
+      no-littering-var-directory my-cache-dir)
+(straight-use-package '(no-littering
+			:type git
+			:host github
+			:repo "emacscollective/no-littering"))
+(require 'no-littering)
 
 ;;; Appearance:
 
-;; My Emacs is built with the gtk3 toolkit. By default, Emacs will set
-;; the font to value from the global environment. But my font is
+;; My Emacs is built with the gtk3 toolkit.  By default, Emacs will
+;; set the font to value from the global environment.  But my font is
 ;; different on a different machine, and I preferred to use Consolas
 ;; on all cases when edit.
 
@@ -310,7 +290,7 @@ there is a pending network request."
 (push '(width  . 120) default-frame-alist)
 
 ;; Each Emacs buffer normally has a menu bar at the top, it can use to
-;; perform common operations. I don't need it.
+;; perform common operations.  I don't need it.
 (push '(menu-bar-lines . nil) default-frame-alist)
 
 ;; `tool-bar-mode' provides some buttons like most other tool bars, I
@@ -324,13 +304,6 @@ there is a pending network request."
 ;; The default frame title is what I don't like, reset it.
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
-
-;; Prevent the glimpse of modeline when Emacs startup.
-;; (setq mode-line-format nil)
-
-;; Don't blink the paren matching the one at point, it's too
-;; distracting.
-(setq blink-matching-paren nil)
 
 ;; Setting this values will force one-line scrolling everywhere (mouse
 ;; and keyboard), resulting most of the times in a smoother scrolling
@@ -355,12 +328,18 @@ there is a pending network request."
       modus-themes-bold-constructs    t
       modus-themes-mode-line          '3d)
 
-;; Load the theme files before enabling a theme.
+;; Prevent the glimpse when change the default themes.
 (modus-themes-load-themes)
 (modus-themes-load-operandi)
 
-;; Prevent the glimpse when change the default themes.
-;; (load-theme 'modus-operandi t)
+;; `all-the-icons.el' is a utility package to collect various Icon
+;; Fonts and propertize them within Emacs.
+(when (display-graphic-p)
+  (straight-use-package 'all-the-icons)
+  (require 'all-the-icons))
+
+;; Avoid messing with things more than necessary.
+(advice-remove #'display-graphic-p #'my--fix-display-graphic-p)
 
 (provide 'early-init)
 ;;; early-init.el ends here
