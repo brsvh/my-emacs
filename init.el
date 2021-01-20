@@ -295,6 +295,8 @@
      :size 0.3 :autoclose t :select nil :align below)
     ("*Kill Ring*"
      :size 0.4 :autoclose t :select nil :align below)
+    ("*LanguageTool Errors*"
+     :size 0.2 :select t :align below :autoclose t)
     ("LSP Errors View"
      :size 0.4 :select t :align below :autoclose t)
     ("*lsp-help*"
@@ -312,7 +314,8 @@
     (help-mode
      :size 0.3 :autoclose t :select nil :align below)
     (pdf-view-mode
-     :size 0.4 :align right :select nil))
+     :size 0.4 :align right :select nil)
+    ("\\`\\*.*output\\*\\'" :regexp t :align 'below :autoclose t))
   "My popup window rules."
   :group 'my
   :type '(alist
@@ -352,7 +355,9 @@
   :group 'my
   :type 'boolean)
 
-(defcustom my-lsp-tex (and my-lsp (executable-find "texlab"))
+(defcustom my-lsp-tex (and my-lsp
+			   (or (executable-find "texlab")
+			       (executable-find "digestif")))
   "TeX LSP support status."
   :group 'my
   :type 'boolean)
@@ -439,6 +444,16 @@ This keymap is bound under \\[my-keymap].")
 
 (use-package use-package-hydra
   :straight t)
+
+;; Define check commands map.
+(require 'flycheck)
+(defvar my-check-command-map (copy-keymap flycheck-command-map)
+  "Keymap for my check commands that should be put under a prefix.")
+
+(general-define-key
+ :wk-full-keys nil
+ :keymaps 'my-keymap
+ "c" '(:keymap my-check-command-map :which-key "check"))
 
 ;;; Emacs:
 
@@ -677,7 +692,9 @@ This keymap is bound under \\[my-keymap].")
             "9" '(winum-select-window-9 :which-key "goto window 9")
             "`" '(winum-select-window-by-number
                   :which-key "select window"))
-  :hook (after-init-hook . winum-mode))
+  :hook (after-init-hook . winum-mode)
+  ;; :custom (winum-auto-setup-mode-line nil)
+  )
 
 ;;; Interface:
 
@@ -962,7 +979,7 @@ This keymap is bound under \\[my-keymap].")
 (use-package browse-kill-ring
   :straight t
   :general (:keymaps 'my-edit-command-map
-	    "k" '(browse-kill-ring :which-key "kill ring")))
+		     "k" '(browse-kill-ring :which-key "kill ring")))
 
 ;; `anzu' is an Emacs port of anzu.vim.  `anzu.el' provides a minor
 ;; mode which displays current match and total matches information in
@@ -1092,6 +1109,7 @@ This keymap is bound under \\[my-keymap].")
    :wk-full-keys nil
    :keymaps 'my-keymap
    "l" '(:keymap my-lsp-command-map :which-key "lsp"))
+
   :blackout t)
 
 ;; Hight level UI modules of `lsp'.
@@ -1167,25 +1185,48 @@ This keymap is bound under \\[my-keymap].")
 ;; configuration because it overrides the built-in tex package.
 (use-package auctex
   :straight t
-  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :mode ("\\.tex\\'" . LaTeX-mode)
   :hook ((LaTeX-mode-hook . visual-line-mode)
 	 (LaTeX-mode-hook . turn-on-reftex))
   :custom ((TeX-master nil)
 	   (TeX-auto-save t)
 	   (TeX-parse-self t)
 	   (reftex-plug-into-AUCTeX t)
-	   (TeX-command-list '(("XeLaTeX"
+	   (TeX-command-list '(("LaTeX"
 				"%`xelatex%(mode)%' %t"
 				TeX-run-command nil t
 				:help "Run XeLaTeX")
 			       ("Tectonic" "tectonic %t"
 				TeX-run-command nil t
-				:help "Run tectonic"))))
+				:help "Run tectonic")))
+	   (TeX-view-program-selection '((output-pdf "pdf-tools")))
+	   (TeX-view-program-list '(("pdf-tools" "TeX-pdf-tools-sync-view")))
+	   (TeX-source-correlate-mode t)
+	   (TeX-source-correlate-start-server t))
   :init (when my-lsp-tex
 	  (add-hook 'LaTeX-mode-hook #'lsp))
   :blackout t)
 
 ;;; Tools:
+
+;; `langtool' provides grammar, style, and spell check by use
+;; languagetool.
+(use-package langtool
+  :straight t
+  :commands (langtool-check
+	     langtool-correct-buffer
+	     langtool-show-message-at-point)
+  :general (:keymaps 'my-check-command-map
+	    :wk-full-keys nil
+	    "C-l" '(langtool-check :which-key "language check")
+	    "r"   '(langtool-correct-buffer :which-key "mark right")
+	    "."   '(langtool-show-message-at-point
+		    :which-key "langtool detail"))
+  :custom
+  ((langtool-java-classpath
+    "/usr/share/languagetool:/usr/share/java/languagetool/*")
+   (langtool-autoshow-message-function
+    'langtool-suggestions)))
 
 ;; `pdf-tools' provides major mode for rendering PDF files, much
 ;; better than DocView, and has much richer set of features.
