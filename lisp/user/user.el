@@ -42,17 +42,5 @@
   :group 'user
   :type 'string)
 
-;;;###autoload
-(defcustom user-config-files nil
-  "Store here configuration files added explicitly by user."
-  :group 'user
-  :type '(repeat string))
-
-;;;###autoload
-(defcustom user-package-files nil
-  "Store here package files installed explicitly by user."
-  :group 'user
-  :type '(repeat string))
-
 (provide 'user)
 ;;; user.el ends here
