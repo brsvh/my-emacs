@@ -6,4 +6,8 @@
    :prefix "C-c"
    "!" '(consult-flymake :which-key "flymake diagnostic")))
 
+(add-hook 'flymake-mode-hook
+          #'(lambda ()
+              (appendq minions-direct '(flymake-mode))))
+
 ;;; flymake.el ends here

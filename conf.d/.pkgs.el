@@ -2,6 +2,8 @@
 ;; `package-selected-packages' use.
 (add-to-list 'package-selected-packages 'consult)
 (add-to-list 'package-selected-packages 'general)
+(add-to-list 'package-selected-packages 'minions)
+(add-to-list 'package-selected-packages 'moody)
 (add-to-list 'package-selected-packages 'restart-emacs)
 (add-to-list 'package-selected-packages 'svg-lib)
 (add-to-list 'package-selected-packages 'which-key)
