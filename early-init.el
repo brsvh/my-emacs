@@ -17,6 +17,32 @@
 
 ;;; Code:
 
+;; OPTIMIZE Defer garbage collection further back in the startup
+;;          process.
+(setq gc-cons-threshold most-positive-fixnum)
+(add-hook 'after-init-hook
+          #'(lambda ()
+              (setq gc-cons-threshold
+                    (car (get 'gc-cons-threshold 'standard-value)))))
+
+(unless (or (daemonp) noninteractive)
+  ;; OPTIMIZE Set the `file-name-handler' to `nil' since regexing is
+  ;;          cpu intensive.
+  (let ((f file-name-handler-alist))
+    (setq-default file-name-handler-alist nil)
+    (add-hook 'emacs-startup-hook
+              #'(lambda ()
+                  (delete-dups (append file-name-handler-alist f)))))
+  ;; OPTIMIZE Premature redisplays can substantially affect startup
+  ;;          times and produce ugly flashes of unstyled Emacs.
+  (setq-default inhibit-redisplay t
+                inhibit-message t)
+  (add-hook 'window-setup-hook
+            (lambda ()
+              (setq-default inhibit-redisplay nil
+                            inhibit-message nil)
+              (redisplay))))
+
 (let ((user (expand-file-name "lisp/user" user-emacs-directory)))
   (load (expand-file-name "user.el" user) nil 'nomessage)
   (load (expand-file-name "user-theme.el" user) nil 'nomessage))
