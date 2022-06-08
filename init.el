@@ -4,7 +4,7 @@
 
 ;; Author: Burgess Chang <bsc@brsvh.org>
 ;; License: GNU General Public License v3.0 or later
-;; Package-Requires: ((emacs "28.1"))
+;; Package-Requires: ((cl-lib "1.0") (emacs "28.1") (user "0.1"))
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Version: 0.1
 
@@ -17,9 +17,6 @@
 ;; integrated computing environment.
 
 ;;; Code:
-
-(require 'cl-macs)
-(require 'user)
 
 (define-advice package--save-selected-packages
     (:override (&optional value) inhibit-save)
