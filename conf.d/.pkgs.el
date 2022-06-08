@@ -1,0 +1,7 @@
+;; Here we provide selected packages for -*- lexical-binding: t; -*-
+;; `package-selected-packages' use.
+(add-to-list 'package-selected-packages 'general)
+(add-to-list 'package-selected-packages 'restart-emacs)
+(add-to-list 'package-selected-packages 'which-key)
+;; Here we provide pinned packages for `package-pinned-packages' use.
+(add-to-list 'package-pinned-packages '(which-key . "gnu"))
