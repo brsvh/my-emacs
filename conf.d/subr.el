@@ -18,4 +18,9 @@
  "x"   '(:ignore t :which-key "buffer")
  "C-k" '(:ignore t :which-key "kmacro"))
 
+(define-keys
+ :keymaps 'global-map
+ :prefix "C-c"
+ "m"   '(:ignore t :which-key "major mode"))
+
 ;;; subr.el ends here
