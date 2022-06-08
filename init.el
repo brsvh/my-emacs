@@ -21,6 +21,14 @@
 (require 'cl-macs)
 (require 'user)
 
+(define-advice package--save-selected-packages
+    (:override (&optional value) inhibit-save)
+  "Set and (don't) save `package-selected-packages' to VALUE."
+  (when value
+    (setq package-selected-packages value))
+  (unless after-init-time
+    (add-hook 'after-init-hook #'package--save-selected-packages)))
+
 (defun init-package-initialize (&rest _)
   "Load all files which describe packages to be used."
   (eval-when-compile (require 'package))
@@ -50,8 +58,8 @@
                       (string-match "\\`[^z-a]*?\\.el\\'" local-pkg))
              do (let ((pkg (intern (file-name-base local-pkg))))
                   (unless (package-installed-p pkg)
-                    (quelpa
-                     `(,pkg :fetcher file :path ,local-pkg)))))))
+                    (quelpa `(,pkg :fetcher file :path ,local-pkg)))
+                  (add-to-list 'package-selected-packages pkg)))))
 
 (defun init-config-activate (&rest _)
   "Activate all configuration files."
