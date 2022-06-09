@@ -9,11 +9,13 @@
           #'(lambda ()
               ;; Set more subtle line numbers.
               (let ((bg (face-attribute 'default :background))
-                    (fg (face-attribute 'match :foreground)))
+                    (fg (face-attribute 'default :foreground)))
                 (set-face-attribute
                  'line-number nil :background bg)
                 (set-face-attribute
-                 'line-number-current-line nil :foreground fg))
+                 'line-number-current-line nil :foreground fg)
+                (set-face-attribute
+                 'line-number-current-line nil :weight 'bold))
               ;; Set borderless mode line.
               (let ((line (face-attribute 'mode-line :underline)))
                 (set-face-attribute
