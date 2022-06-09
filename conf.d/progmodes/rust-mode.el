@@ -3,10 +3,6 @@
 ;; Enable LSP(eglot) support.
 (add-hook 'rust-mode-hook 'eglot-ensure)
 
-;; Inhibit add new line at the end of Rust files.
-(add-hook 'rust-mode-hook
-          #'(lambda () (setq-local require-final-newline nil)))
-
 (with-eval-after-load 'rust-mode
   (define-keys
    :keymaps 'rust-mode-map
