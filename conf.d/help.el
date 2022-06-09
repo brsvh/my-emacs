@@ -50,7 +50,8 @@
  "C-s"   '(search-forward-help-for-help     :which-key "search help")
  "C-t"   '(view-emacs-todo                  :which-key "todo")
  "C-w"   '(describe-no-warranty             :which-key "warranty")
- "C-\\"  '(describe-input-method            :which-key "input method"))
+ "C-\\"  '(describe-input-method            :which-key "input method")
+ "M-f"   '(describe-face                    :which-key "face"))
 
 (define-keys
  :keymaps 'global-map
