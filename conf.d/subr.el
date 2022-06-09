@@ -21,6 +21,7 @@
 (define-keys
  :keymaps 'global-map
  :prefix "C-c"
- "m"   '(:ignore t :which-key "major mode"))
+ "m"   '(:ignore t :which-key "major mode")
+ "v"   '(:ignore t :which-key "version control"))
 
 ;;; subr.el ends here
