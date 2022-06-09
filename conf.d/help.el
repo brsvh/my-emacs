@@ -58,4 +58,14 @@
  :prefix "C-h 4"
  "i"     '(info-other-window                :which-key "info"))
 
+;; Configure base display rule of *Help* buffer.
+(appendq display-buffer-alist
+         '(("\\*Help\\*"
+            (display-buffer-reuse-window
+             display-buffer-in-side-window)
+            (side . bottom)
+            (window-height . 0.3)
+            (slot . 1)
+            (dedicated . t))))
+
 ;;; help.el ends here
