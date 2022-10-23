@@ -167,12 +167,21 @@
 
 (use-package server
   :autoload server-running-p
+  :init
+  (setq server-auth-dir
+        (expand-file-name "server/" my-data-directory))
   :hook
   ;; Start server at startup.
   (emacs-startup-hook
    . (lambda ()
        (eval-when-compile (require 'server))
        (unless (server-running-p) (server-start)))))
+
+(use-package auth-sources
+  :init
+  (setq auth-sources
+        (list (expand-file-name "authinfo" my-data-directory)
+              (expand-file-name "authinfo.gpg" my-data-directory))))
 
 (use-package minibuffer
   :ensure orderless
@@ -405,7 +414,7 @@
   :init
   ;; Redirect recent files records.
   (setq recentf-save-file
-        (expand-file-name "recent-files.el" my-data-directory))
+        (expand-file-name "recent.el" my-state-directory))
   :config
   ;; Avoid record `my-data-directory' and `my-cache-directory' files.
   (add-to-list 'recentf-exclude my-data-directory)
@@ -415,8 +424,7 @@
 (use-package savehist
   :init
   ;; Redirect minibuffer history file.
-  (setq savehist-file
-        (expand-file-name "minibuffer-history.el" my-data-directory))
+  (setq savehist-file (expand-file-name "hist.el" my-state-directory))
   :config
   ;; Auto delete duplicated history.
   (setq history-delete-duplicates t)
@@ -426,13 +434,24 @@
   :init
   ;; Redirect place file.
   (setq save-place-file
-        (expand-file-name "file-place.el" my-data-directory))
+        (expand-file-name "place.el" my-state-directory))
   :hook (emacs-startup-hook . save-place-mode))
 
 (use-package delsel
   :hook
   ;; Replace content in marked region with new text.
   (emacs-startup-hook . delete-selection-mode))
+
+(use-package tramp
+  :demand t
+  :init
+  ;; Only show connection errors.
+  (setq tramp-verbose 1))
+
+(use-package tramp-cache
+  :init
+  (setq tramp-persistency-file-name
+        (expand-file-name "tramp.el" my-state-directory)))
 
 (use-package diff-hl
   :ensure t
