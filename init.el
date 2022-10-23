@@ -744,5 +744,11 @@
   (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
   (magit-post-refresh-hook . diff-hl-magit-post-refresh))
 
+(use-package private
+  :no-require t
+  :when (file-exists-p (concat user-emacs-directory "private.el" ))
+  :init
+  (load (concat user-emacs-directory "private.el" ) nil 'nomessage))
+
 (provide 'init)
 ;;; init.el ends here
