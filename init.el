@@ -460,6 +460,8 @@
              diff-hl-dir-mode
              diff-hl-dired-mode
              diff-hl-flydiff-mode)
+  :autoload (diff-hl-magit-pre-refresh
+             diff-hl-magit-post-refresh)
   :hook
   (find-file-hook . diff-hl-mode)
   (vc-dir-mode-hook  . diff-hl-dir-mode)
@@ -734,9 +736,13 @@
   :ensure t
   :pin nongnu
   :commands (magit-dispatch magit-status)
+  :defines (magit-pre-refresh-hook magit-post-refresh-hook)
   :init
   (setq magit-define-global-key-bindings nil)
-  (keymap-set global-map "C-x M-v g" 'magit-dispatch))
+  (keymap-set global-map "C-x M-v g" 'magit-dispatch)
+  :hook
+  (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+  (magit-post-refresh-hook . diff-hl-magit-post-refresh))
 
 (provide 'init)
 ;;; init.el ends here
