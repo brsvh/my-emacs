@@ -106,11 +106,18 @@
         modus-themes-italic-constructs t
         modus-themes-subtle-line-numbers t
         modus-themes-inhibit-reload t
-        modus-themes-fringes 'subtle
+        modus-themes-fringes 'nil
         modus-themes-mode-line '(borderless moody)
         modus-themes-markup '(background italic)
         modus-themes-links '(italic neutral-underline)
-        modus-themes-prompts '(intense bold))
+        modus-themes-prompts '(intense bold)
+        modus-themes-headings
+        '((0 . (rainbow 1.5))
+          (1 . (rainbow 1.4))
+          (2 . (rainbow 1.3))
+          (3 . (rainbow 1.2))
+          (4 . (rainbow 1.1))
+          (t . (rainbow))))
   (modus-themes-load-themes)
   :config
   (modus-themes-load-operandi)
@@ -633,6 +640,13 @@
                  :help "Run XeLaTex")
                'append))
 
+(use-package org-modern
+  :ensure t
+  :pin gnu
+  :config
+  (setq org-modern-star '("§"))
+  :commands (org-modern-mode org-modern-agenda))
+
 (use-package org
   :ensure t
   :pin gnu
@@ -640,8 +654,31 @@
   ;; Hide *, ~ and / in org text.
   (setq org-hide-emphasis-markers t)
 
+  ;; Ellipsis symbol.
+  (setq org-ellipsis "…")
+
+  ;; Show entities as UTF8 characters.
+  (setq org-pretty-entities t)
+
   ;; Auto indent mode as default.
-  (setq org-startup-indented t))
+  ;; (setq org-startup-indented t)
+
+  (setq org-auto-align-tags nil
+        org-tags-column 0
+        org-catch-invisible-edits 'show-and-error)
+
+  ;; Bring back the cursor to the beginning or end of the headline text.
+  (setq org-special-ctrl-a/e t)
+
+  ;; State keywords of `org-mode'.
+  (setq org-todo-keywords
+        '((sequence "TODO(t!)"
+                    "WAIT(w!)"
+                    "|"
+                    "DONE(d)"
+                    "CANCEL(c)")))
+  :hook
+  (org-mode-hook . org-modern-mode))
 
 (use-package eshell
   :defines eshell-directory-name
