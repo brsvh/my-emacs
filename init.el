@@ -434,6 +434,19 @@
   ;; Replace content in marked region with new text.
   (emacs-startup-hook . delete-selection-mode))
 
+(use-package diff-hl
+  :ensure t
+  :pin gnu
+  :commands (diff-hl-mode
+             diff-hl-dir-mode
+             diff-hl-dired-mode
+             diff-hl-flydiff-mode)
+  :hook
+  (find-file-hook . diff-hl-mode)
+  (vc-dir-mode-hook  . diff-hl-dir-mode)
+  (dired-mode-hook   . diff-hl-dired-mode)
+  (diff-hl-mode-hook . diff-hl-flydiff-mode))
+
 (use-package svg-lib
   :ensure t
   :pin gnu
