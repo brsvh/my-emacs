@@ -112,11 +112,7 @@
         modus-themes-links '(italic neutral-underline)
         modus-themes-prompts '(intense bold)
         modus-themes-headings
-        '((0 . (rainbow 1.5))
-          (1 . (rainbow 1.4))
-          (2 . (rainbow 1.3))
-          (3 . (rainbow 1.2))
-          (4 . (rainbow 1.1))
+        '((0 . (rainbow 1.2))
           (t . (rainbow))))
   (modus-themes-load-themes)
   :config
@@ -442,6 +438,11 @@
   ;; Replace content in marked region with new text.
   (emacs-startup-hook . delete-selection-mode))
 
+(use-package bookmark
+  :config
+  (setq bookmark-default-file
+        (expand-file-name "bookmarks.el" my-data-directory)))
+
 (use-package tramp
   :demand t
   :init
@@ -697,9 +698,12 @@
   ;; Auto indent mode as default.
   ;; (setq org-startup-indented t)
 
+  ;; Tags align
   (setq org-auto-align-tags nil
-        org-tags-column 0
-        org-catch-invisible-edits 'show-and-error)
+        org-tags-column 0)
+
+  ;; Check invisible region.
+  (setq org-catch-invisible-edits 'show-and-error)
 
   ;; Bring back the cursor to the beginning or end of the headline text.
   (setq org-special-ctrl-a/e t)
@@ -713,6 +717,55 @@
                     "CANCEL(c)")))
   :hook
   (org-mode-hook . org-modern-mode))
+
+(use-package org-agenda
+  :init
+  (keymap-set global-map "C-x M-o a" 'org-agenda)
+  :config
+  (add-to-list 'org-agenda-files "~/org/agenda/inbox.org")
+  (add-to-list 'org-agenda-files "~/org/agenda/gtd.org")
+  (add-to-list 'org-agenda-files "~/org/agenda/tickler.org")
+
+  ;; Tags align.
+  (setq org-agenda-tags-column 0)
+
+  (setq org-agenda-block-separator ?─)
+
+  (setq org-agenda-time-grid
+        '((daily today require-timed)
+          (000 100 200 300 400 500 600 700 800 900 1000 1100 1200
+           1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300)
+          " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄"))
+
+  (setq org-agenda-current-time-string
+        "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄ now ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+  :hook (org-agenda-finalize-hook . org-modern-agenda))
+
+(use-package org-capture
+  :init
+  (keymap-set global-map "C-x M-o c" 'org-capture)
+  :config
+  ;; Task.
+  (add-to-list 'org-capture-templates
+               '("t"
+                 "Todo [inbox]"
+                 entry
+                 (file+headline "~/org/agenda/inbox.org" "Tasks"))
+               'append)
+
+  ;; Tickler
+  (add-to-list 'org-capture-templates
+               '("T"
+                 "Tickler"
+                 entry
+                 (file+headline "~/org/agenda/tickler.org" "Tickler"))
+               'append))
+
+(use-package org-refile
+  :config
+  (add-to-list 'org-refile-targets '("~/org/agenda/gtd.org" :maxlevel . 3))
+  (add-to-list 'org-refile-targets '("~/org/agenda/someday.org" :level . 1))
+  (add-to-list 'org-refile-targets '("~/org/agenda/tickler.org" :maxlevel . 2)))
 
 (use-package eshell
   :defines eshell-directory-name
