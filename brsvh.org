@@ -1924,6 +1924,37 @@ Require /ox-md.el/ to auto extended Markdown support of  ~org-export-dispatch~.
     :after org)
 #+end_src
 
+** Write article with LaTeX
+
+[[https://www.latex-project.org/][LaTeX]] is a powerful, elegant, and rich ecological document preparation system.  I use it to create formal, polished, high-quality articles and presentations.  I started using Emacs many years ago because Emacs had the best LaTex support.  Of course, I mean the [[https://www.gnu.org/software/auctex/][auctex.el]].  I use its default workflow to compile and preview my LaTeX document.
+
+*** Work with AUCTeX
+
+As I mentioned in this file, I am a Chinese native speaker.  So I often use LaTeX to write Chinese documents.  Actually writing Chinese documents using only LaTeX is tedious, and I used to get lost in the [[http://www.ctex.org/HomePage][CTeX]] configuration.  And In recent years, I have been using [[https://tug.org/xetex/][XeTeX]](and XeLaTeX), which is a TeX typesetting engine using Unicode and supporting modern font technologies.  And then I can write Chinese documentation quickly with very little configuration.
+
+Unfortunately, /auctex.el/ doesn't support compiling XeLaTex by default.  But I can simply add XeLaTeX compile command to ~TeX-command-list~ to support it.
+
+#+begin_src emacs-lisp
+  (use-package tex-site
+    :ensure auctex
+    :pin gnu
+    :defer t)
+
+  (use-package tex
+    :ensure auctex
+    :pin gnu
+    :defer t
+    :config
+    (add-to-list 'TeX-command-list
+		 '("XeLaTeX"
+		   "xelatex -interaction=nonstopmode %s"
+		   TeX-run-command
+		   t
+		   t
+		   :help "Run XeLaTex")
+		 'append))
+#+end_src
+
 * Programming
 
 Emacs is most powerful programming environment.  But it is required to be configured in detail, otherwise it will be poor.  Let me configure Emacs for all programming languages I use.
@@ -2119,7 +2150,7 @@ Emacs Lisp Macros enable I to define new control constructs and other language f
      pp-macroexpand-expression)
     :init
     (keymap-set emacs-lisp-mode-map
-		"C-c <return>"
+		"C-c C-<return>"
 		'pp-macroexpand-last-sexp)
     (keymap-set emacs-lisp-mode-map
 		"C-c M-<return>"
