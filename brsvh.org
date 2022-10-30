@@ -55,7 +55,7 @@
 
 * Convention
 
-We keep the configuration file style consistent as it grows by conventions for functions, variables, key bindings, and file storage.
+I keep the configuration file style consistent as it grows by conventions for functions, variables, key bindings, and file storage.
 
 ** Name Convention
 
@@ -427,7 +427,7 @@ So I use [[https://github.com/rranelli/auto-package-update.el][auto-package-upda
 
 ** Inhibit saving customization to ~user-init-file~ by appending
 
-Although I do not use the * Easy Customization Interface* of Emacs, some packages will use it somewhere I do not notice.
+Although I do not use the *Easy Customization Interface* of Emacs, some packages will use it somewhere I do not notice.
 
 I want to keep the content of ~user-init-file~ and my configuration file not auto-generated, so I choose to save customizations somewhere other than my initialization file.
 
@@ -443,7 +443,7 @@ I want to keep the content of ~user-init-file~ and my configuration file not aut
 
 ** Syncing to the shell's environment variables
 
-For one reason or another, an Emacs instance begun from the desktop may miss some PATH set in the interactive shell.  Thus, it is challenging to use utilities installed by ~cargo~.  I use an excellent package named /exec-path-from-shell/ written by Steve Purcell to solve this problem, which will synchronize PATH from the shell.
+For one reason or another, an Emacs instance begun from the desktop may miss some PATH set in the interactive shell.  Thus, it is challenging to use utilities installed by ~cargo~.  I use an excellent package named [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell.el]] written by Steve Purcell to solve this problem, which will synchronize PATH from the shell.
 
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
@@ -466,6 +466,8 @@ Emacs uses a fixed threshold to trigger Garbage Collection by default, which is 
 #+end_src
 
 ** UTF-8 everywhere
+
+In the Linux world, there is a silent agreement that UTF-8 is the best encoding to use for Unicode.  So I use utf8 by default, unless I explicitly specify the encoding.
 
 #+begin_src emacs-lisp
   (use-package mule-cmds
@@ -543,6 +545,8 @@ There are some shared libraries need to setup, mainly related to file of librari
 #+end_src
 
 * Appearance
+
+The default interface of Emacs is old-fashioned and old-school, and I'm a young person, so I want it to be more modern.  I used a more luminous Theme and Mode Line.
 
 ** Change the default frame layout
 
@@ -1793,9 +1797,6 @@ Org mode needs some tweaks to remove some clutter from the screen.  We can chang
     :pin gnu
     :defer t
     :config
-    ;; Activate ~org-indent-mode~ by default.
-    ;; (setq org-startup-indented t)
-
     ;; Show entities as UTF8 characters.
     (setq org-pretty-entities t)
 
@@ -1807,6 +1808,17 @@ Org mode needs some tweaks to remove some clutter from the screen.  We can chang
 #+end_src
 
 Hiding emphasis markers is that rich text becomes hard to edit because it is unclear whether your cursor is on the marker or the first or last character.  The [[https://github.com/awth13/org-appear][org-appear.el]] helps by displaying the markers while the cursor is on a rich text word.
+
+When I'm editing the headline, I adjust the headline level with the ~tab~ key. So ~C-a~ return to before leading star is not appropriate, I always expect to change the first word of the headline instead of changing the level.  Set ~org-special-ctrl-a/e~ to move cursor to the beginning of headline when press ~C-a~.  The same is applied to ~C-e~, which moves to the end of the headline when editing a folded block.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure t
+    :pin gnu
+    :defer t
+    :config
+    (setq org-special-ctrl-a/e t))
+#+end_src
 
 #+begin_src emacs-lisp
   (use-package org-appear
@@ -1938,6 +1950,23 @@ I have already configured corfu to complete text, activate it when I am programm
     :pin gnu
     :hook
     (prog-mode-hook . corfu-mode))
+#+end_src
+
+*** Back to Indentation or Beginning
+
+Most the real code has the indented structure, and Emacs will move to the beginning of line when press ~C-a~ by default.  But most times, I mean move to the beginning of code rather than the line.
+
+#+begin_src emacs-lisp
+  (use-package mwim
+    :ensure t
+    :pin melpa
+    :after prog-mode
+    :commands
+    (mwim-beginning
+     mwim-end)
+    :init
+    (keymap-set prog-mode-map "C-a" 'mwim-beginning)
+    (keymap-set prog-mode-map "C-e" 'mwim-end))
 #+end_src
 
 *** Emacs with Tree-sitter

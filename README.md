@@ -1,124 +1,124 @@
 
 # Table of Contents
 
--   [About](#org7e71d1f)
-    -   [Why Emacs?](#orgd7e4c10)
-    -   [Why Vanila Emacs?](#org37308a1)
-    -   [How literature configuration works?](#orgd41b61b)
-    -   [Why a monolithic configuration?](#org1c8e7b0)
-    -   [Special Thanks](#orgc6dd561)
--   [Convention](#org92f4ee7)
-    -   [Name Convention](#orga6ded0e)
-    -   [Bind Convention](#org1f5ad27)
-    -   [File Convention](#orgf65947a)
-    -   [Supported Environment](#org004be3c)
--   [Booting Up](#orgc39764a)
-    -   [Early Init](#org3019f0f)
-    -   [Preparation for literature configuration](#orgd86a0f6)
-    -   [Package Management](#orgfaf593c)
-    -   [Inhibit saving customization to `user-init-file` by appending](#orge49a217)
-    -   [Syncing to the shell's environment variables](#org0d373ad)
-    -   [Intelligent garbage collection](#org0a7919c)
-    -   [UTF-8 everywhere](#org4084cc9)
-    -   [Using Emacs as a server](#org3fe9381)
-    -   [Resarting Emacs](#org9c24238)
--   [Common Library](#orgbf7c579)
--   [Appearance](#org27774c5)
-    -   [Change the default frame layout](#orgbd7b224)
-    -   [Change the default startup screen](#orgb4d2b1f)
-    -   [Resize pixelwise](#org0278ec8)
-    -   [Accessible themes](#orga2044f9)
-    -   [Tabs and Ribbons style Mode Line](#org8980629)
-    -   [Context Menu](#orgb8ef9bc)
-    -   [Smooth Scrolling](#orge0f977b)
-    -   [Highlighting changes](#org24f9696)
--   [Completion](#orgcf1aa2e)
-    -   [Allow recursive edit in minibuffer](#orgc144d00)
-    -   [Hide commands in M-x which do not work in the current mode](#org024891a)
-    -   [Do not allow the cursor in the minibuffer prompt](#orga1f47d3)
-    -   [Eye-catching indicator when calling `completing-read-multiple`](#org6f00c0f)
-    -   [Match completion with space](#org9392a8e)
-    -   [Use vertical completion UI with vertico.el](#orgf171042)
-    -   [Completion Overlay Region FUnction](#orgf19837a)
-    -   [Show mariginalia of completions](#orgf152f41)
--   [Actions in Emacs](#org85c6a53)
-    -   [Save actions history](#org02ee98a)
-    -   [Switch buffer with preview](#orge58c70e)
-    -   [Avaiable actions menu](#org6d7ccb4)
-    -   [Help Actions](#orgac8fcdf)
-    -   [Adjust scrolling distance](#org8ee1157)
-    -   [Mouse actions](#orga0e794d)
-    -   [Drag and Drop](#orgb1c3243)
-    -   [Mouse yank at point](#org17cc2bb)
-    -   [Search actions](#orga44403d)
-    -   [Goto actions](#org570a6d3)
--   [Use Emacs as general text editor](#org84b41a2)
-    -   [Automatic Backups](#org19ef34b)
-    -   [Automatic Saving](#orgcc707d3)
-    -   [Recent Files](#orge9d9e98)
-    -   [Show basic information of buffer](#org362af61)
-    -   [Save the last opened place](#org771ee5a)
-    -   [Replace region with new content](#org04b3e43)
-    -   [Display file name with forward style](#orga1dd7e4)
-    -   [Kill ring and Clipboard](#org2d63e86)
--   [File Management](#org92fb47b)
-    -   [Version Control](#org3155d44)
--   [Life with `org-mode`](#org3119498)
-    -   [Using `org-mode` as a Day Planner](#org64b7d66)
-    -   [Files of Day Planner](#org4a598df)
-    -   [Capture and collect tasks](#org57c961f)
--   [Prose](#orge8f172f)
-    -   [Generic writing experience improvements for text of Prose](#org801dc51)
-    -   [Distraction-free writing](#org51da49e)
-    -   [Write article with `org-mode`](#orgd98a575)
--   [Programming](#org99a2832)
-    -   [Generic programming enhancement](#org5d9aaee)
-    -   [C/C++](#org23d6ed4)
-    -   [Emacs Lisp](#orge6238cf)
-    -   [Haskell](#orgb073e40)
-    -   [Rust](#org21174ef)
+-   [About](#org2586d2a)
+    -   [Why Emacs?](#org13a5ee1)
+    -   [Why Vanila Emacs?](#org32b44dd)
+    -   [How literature configuration works?](#org8661cc3)
+    -   [Why a monolithic configuration?](#orgc388321)
+    -   [Special Thanks](#org4ab1121)
+-   [Convention](#orgd49a5f5)
+    -   [Name Convention](#orge399c00)
+    -   [Bind Convention](#orgc7c46a2)
+    -   [File Convention](#orgb52a69a)
+    -   [Supported Environment](#org47c07a1)
+-   [Booting Up](#orgdc60939)
+    -   [Early Init](#orga5b43ed)
+    -   [Preparation for literature configuration](#org888566b)
+    -   [Package Management](#org32cc4ee)
+    -   [Inhibit saving customization to `user-init-file` by appending](#org8890c1d)
+    -   [Syncing to the shell's environment variables](#org683e252)
+    -   [Intelligent garbage collection](#orgbf74b55)
+    -   [UTF-8 everywhere](#org6afc0de)
+    -   [Using Emacs as a server](#orgf3a710b)
+    -   [Resarting Emacs](#orgab2f2ab)
+-   [Common Library](#orgfadd56a)
+-   [Appearance](#orge6d4a2b)
+    -   [Change the default frame layout](#orge307bac)
+    -   [Change the default startup screen](#orga30c7c6)
+    -   [Resize pixelwise](#orgfb63739)
+    -   [Accessible themes](#org12b01ed)
+    -   [Tabs and Ribbons style Mode Line](#org6673943)
+    -   [Context Menu](#orgfe3700a)
+    -   [Smooth Scrolling](#org21a1f22)
+    -   [Highlighting changes](#org4ea1363)
+-   [Completion](#orgeed9934)
+    -   [Allow recursive edit in minibuffer](#org711112e)
+    -   [Hide commands in M-x which do not work in the current mode](#org4120867)
+    -   [Do not allow the cursor in the minibuffer prompt](#orgdae41a0)
+    -   [Eye-catching indicator when calling `completing-read-multiple`](#org0970c0b)
+    -   [Match completion with space](#org858242b)
+    -   [Use vertical completion UI with vertico.el](#org2526cff)
+    -   [Completion Overlay Region FUnction](#orgea7e98c)
+    -   [Show mariginalia of completions](#org26ec335)
+-   [Actions in Emacs](#org6c6919e)
+    -   [Save actions history](#org888884b)
+    -   [Switch buffer with preview](#orgbf7f72f)
+    -   [Avaiable actions menu](#org9f70768)
+    -   [Help Actions](#org7cc44d9)
+    -   [Adjust scrolling distance](#orgb7b0fb4)
+    -   [Mouse actions](#org0a31c20)
+    -   [Drag and Drop](#org04ddd60)
+    -   [Mouse yank at point](#orga65eb18)
+    -   [Search actions](#orgaa2078d)
+    -   [Goto actions](#org1fc9e62)
+-   [Use Emacs as general text editor](#org800d598)
+    -   [Automatic Backups](#orgceb5f3d)
+    -   [Automatic Saving](#orgebd5a39)
+    -   [Recent Files](#org6ababda)
+    -   [Show basic information of buffer](#orgae394f3)
+    -   [Save the last opened place](#org5f6ab67)
+    -   [Replace region with new content](#org472d34d)
+    -   [Display file name with forward style](#org54d3f15)
+    -   [Kill ring and Clipboard](#org8561f25)
+-   [File Management](#orga9cbb53)
+    -   [Version Control](#org1b8e32d)
+-   [Life with `org-mode`](#org11b9d3e)
+    -   [Using `org-mode` as a Day Planner](#org20982c7)
+    -   [Files of Day Planner](#org4ef6d9c)
+    -   [Capture and collect tasks](#orge684067)
+-   [Prose](#org249f288)
+    -   [Generic writing experience improvements for text of Prose](#orgcb28342)
+    -   [Distraction-free writing](#org23391a5)
+    -   [Write article with `org-mode`](#org6fb32d0)
+-   [Programming](#orgbe51a11)
+    -   [Generic programming enhancement](#org8f1bdf6)
+    -   [C/C++](#orga5c4347)
+    -   [Emacs Lisp](#orgef3b59e)
+    -   [Haskell](#orgee98647)
+    -   [Rust](#orgf263745)
 
 :header-args: :comment no :lexical t :mkdirp yes :tangle (eval my-profile)
 
 
-<a id="org7e71d1f"></a>
+<a id="org2586d2a"></a>
 
 # TODO About
 
 
-<a id="orgd7e4c10"></a>
+<a id="org13a5ee1"></a>
 
 ## TODO Why Emacs?
 
 
-<a id="org37308a1"></a>
+<a id="org32b44dd"></a>
 
 ## TODO Why Vanila Emacs?
 
 
-<a id="orgd41b61b"></a>
+<a id="org8661cc3"></a>
 
 ## TODO How literature configuration works?
 
 
-<a id="org1c8e7b0"></a>
+<a id="orgc388321"></a>
 
 ## TODO Why a monolithic configuration?
 
 
-<a id="orgc6dd561"></a>
+<a id="org4ab1121"></a>
 
 ## TODO Special Thanks
 
 
-<a id="org92f4ee7"></a>
+<a id="orgd49a5f5"></a>
 
 # Convention
 
-We keep the configuration file style consistent as it grows by conventions for functions, variables, key bindings, and file storage.
+I keep the configuration file style consistent as it grows by conventions for functions, variables, key bindings, and file storage.
 
 
-<a id="orga6ded0e"></a>
+<a id="orge399c00"></a>
 
 ## Name Convention
 
@@ -128,7 +128,7 @@ I use a very simple function and variable naming convention.
 -   Private or internal fucntions and variables should be named start with the prefix `my--`.
 
 
-<a id="org1f5ad27"></a>
+<a id="orgc7c46a2"></a>
 
 ## Bind Convention
 
@@ -169,7 +169,7 @@ These letter keys correspond to the following categories and usages.
 -   `v`: commands for version control.
 
 
-<a id="orgf65947a"></a>
+<a id="orgb52a69a"></a>
 
 ## File Convention
 
@@ -220,7 +220,7 @@ I have grouped the Emacs-related files into four categories.
       "Directory beneath which additional state files are placed.")
 
 
-<a id="org004be3c"></a>
+<a id="org47c07a1"></a>
 
 ## Supported Environment
 
@@ -252,14 +252,14 @@ Current verbose build information about my Emacs:
 The Emacs version below 29.0.50 will have some errors during startup, so this configuration only works on the master branch.  Likewise, I haven't adapted and tested it for Windows and macOS, so it may work.
 
 
-<a id="orgc39764a"></a>
+<a id="orgdc60939"></a>
 
 # Booting Up
 
 Let's make some necessary settings to facilitate our further personalizing Emacs.
 
 
-<a id="org3019f0f"></a>
+<a id="orga5b43ed"></a>
 
 ## Early Init
 
@@ -268,12 +268,12 @@ After Emacs 27.0.50, Emacs supports be configured before eval `user-init-file`. 
 
 ### Move Emacs Native Compilation cache to not mess up my emacs.d
 
-Beginning from Emacs 28.0.50, Emacs support native compilation.  It greatly improves the loading speed of Emacs Lisp.  It is configuration free, but I need to move default *eln-cache/* directory under `user-emacs-directory` to follow my [File Convention](#orgf65947a).
+Beginning from Emacs 28.0.50, Emacs support native compilation.  It greatly improves the loading speed of Emacs Lisp.  It is configuration free, but I need to move default *eln-cache/* directory under `user-emacs-directory` to follow my [File Convention](#orgb52a69a).
 
     (startup-redirect-eln-cache (concat my-cache-directory "eln-cache/"))
 
 
-<a id="orgd86a0f6"></a>
+<a id="org888566b"></a>
 
 ## Preparation for literature configuration
 
@@ -317,7 +317,7 @@ Then the literature configuration can be loaded by loading the configuration fil
 **Notice**: the above two code blocks are not extracted into the configuration file, they actually exist in the `user-init-file`.
 
 
-<a id="orgfaf593c"></a>
+<a id="org32cc4ee"></a>
 
 ## Package Management
 
@@ -505,11 +505,11 @@ So I use [auto-package-update.el](https://github.com/rranelli/auto-package-updat
       (quelpa-upgrade-all-maybe))
 
 
-<a id="orge49a217"></a>
+<a id="org8890c1d"></a>
 
 ## Inhibit saving customization to `user-init-file` by appending
 
-Although I do not use the \* Easy Customization Interface\* of Emacs, some packages will use it somewhere I do not notice.
+Although I do not use the **Easy Customization Interface** of Emacs, some packages will use it somewhere I do not notice.
 
 I want to keep the content of `user-init-file` and my configuration file not auto-generated, so I choose to save customizations somewhere other than my initialization file.
 
@@ -522,11 +522,11 @@ I want to keep the content of `user-init-file` and my configuration file not aut
       (load custom-file nil 'nomessage))
 
 
-<a id="org0d373ad"></a>
+<a id="org683e252"></a>
 
 ## Syncing to the shell's environment variables
 
-For one reason or another, an Emacs instance begun from the desktop may miss some PATH set in the interactive shell.  Thus, it is challenging to use utilities installed by `cargo`.  I use an excellent package named *exec-path-from-shell* written by Steve Purcell to solve this problem, which will synchronize PATH from the shell.
+For one reason or another, an Emacs instance begun from the desktop may miss some PATH set in the interactive shell.  Thus, it is challenging to use utilities installed by `cargo`.  I use an excellent package named [exec-path-from-shell.el](https://github.com/purcell/exec-path-from-shell) written by Steve Purcell to solve this problem, which will synchronize PATH from the shell.
 
     (use-package exec-path-from-shell
       :ensure t
@@ -536,7 +536,7 @@ For one reason or another, an Emacs instance begun from the desktop may miss som
       (emacs-startup-hook . exec-path-from-shell-initialize))
 
 
-<a id="org0a7919c"></a>
+<a id="orgbf74b55"></a>
 
 ## Intelligent garbage collection
 
@@ -548,9 +548,11 @@ Emacs uses a fixed threshold to trigger Garbage Collection by default, which is 
       :hook (emacs-startup-hook . gcmh-mode))
 
 
-<a id="org4084cc9"></a>
+<a id="org6afc0de"></a>
 
 ## UTF-8 everywhere
+
+In the Linux world, there is a silent agreement that UTF-8 is the best encoding to use for Unicode.  So I use utf8 by default, unless I explicitly specify the encoding.
 
     (use-package mule-cmds
       :commands
@@ -563,7 +565,7 @@ Emacs uses a fixed threshold to trigger Garbage Collection by default, which is 
       (prefer-coding-system 'utf-8))
 
 
-<a id="org3fe9381"></a>
+<a id="orgf3a710b"></a>
 
 ## Using Emacs as a server
 
@@ -582,7 +584,7 @@ When I invoke Emacs at other places, I want to share buffers, a command history,
            (unless (server-running-p) (server-start)))))
 
 
-<a id="org9c24238"></a>
+<a id="orgab2f2ab"></a>
 
 ## Resarting Emacs
 
@@ -596,13 +598,13 @@ When I change the configuration file, and in some other cases, I want to be able
       (keymap-set ctl-c-e-map "r" 'restart-emacs))
 
 
-<a id="orgbf7c579"></a>
+<a id="orgfadd56a"></a>
 
 # Common Library
 
 There are some shared libraries need to setup, mainly related to file of libraries saving.
 
-[svg-lib.el](https://github.com/rougier/svg-lib) is used to provides a lot of icons in **svg** format, it will save the cache of icons to a directory under `user-emacs-directory`.  Make it follow my [File Convention](#orgf65947a).
+[svg-lib.el](https://github.com/rougier/svg-lib) is used to provides a lot of icons in **svg** format, it will save the cache of icons to a directory under `user-emacs-directory`.  Make it follow my [File Convention](#orgb52a69a).
 
     (use-package svg-lib
       :ensure t
@@ -612,7 +614,7 @@ There are some shared libraries need to setup, mainly related to file of librari
       (setq svg-lib-icons-dir
     	(expand-file-name "svg-lib/" my-cache-directory)))
 
-[transient.el](https://github.com/magit/transient) implements abstraction involving a prefix command, infix arguments and suffix commands, it used to create interface for command-line program.  It will save levels, values, and history to a directory named *transient* under `user-emacs-directory`, make it follow my [File Convention](#orgf65947a).
+[transient.el](https://github.com/magit/transient) implements abstraction involving a prefix command, infix arguments and suffix commands, it used to create interface for command-line program.  It will save levels, values, and history to a directory named *transient* under `user-emacs-directory`, make it follow my [File Convention](#orgb52a69a).
 
     (use-package transient
       :ensure t
@@ -627,12 +629,14 @@ There are some shared libraries need to setup, mainly related to file of librari
     	(expand-file-name "transient/values.el" my-state-directory)))
 
 
-<a id="org27774c5"></a>
+<a id="orge6d4a2b"></a>
 
 # Appearance
 
+The default interface of Emacs is old-fashioned and old-school, and I'm a young person, so I want it to be more modern.  I used a more luminous Theme and Mode Line.
 
-<a id="orgbd7b224"></a>
+
+<a id="orge307bac"></a>
 
 ## Change the default frame layout
 
@@ -675,7 +679,7 @@ This looks strange, so I turn them off by setting `default-frame-alist` in the `
     (setq-default menu-bar-mode nil tool-bar-mode nil scroll-bar-mode nil)
 
 
-<a id="orgb4d2b1f"></a>
+<a id="orga30c7c6"></a>
 
 ## Change the default startup screen
 
@@ -690,7 +694,7 @@ Emacs will display **GNU Emacs** buffer that is not useful.  I use **scratch** b
     	initial-major-mode 'fundamental-mode))
 
 
-<a id="org0278ec8"></a>
+<a id="orgfb63739"></a>
 
 ## Resize pixelwise
 
@@ -706,7 +710,7 @@ I preferred resize frame and window pixelwise rather linewise.
       (setq frame-resize-pixelwise t))
 
 
-<a id="orga2044f9"></a>
+<a id="org12b01ed"></a>
 
 ## Accessible themes
 
@@ -760,7 +764,7 @@ In Modus Themes, their background colors are not uniform when both `display-line
         (set-face-attribute 'line-number-current-line nil :background bg)))
 
 
-<a id="org8980629"></a>
+<a id="org6673943"></a>
 
 ## Tabs and Ribbons style Mode Line
 
@@ -807,7 +811,7 @@ I use [minions.el](https://github.com/tarsius/minions) to replace the minor mode
 `minions-prominent-modes` is used to show minor mode directly in the mode line.
 
 
-<a id="orgb8ef9bc"></a>
+<a id="orgfe3700a"></a>
 
 ## Context Menu
 
@@ -817,7 +821,7 @@ Emacs support clicking the mouse button activates the menu whose contents depend
       :hook (emacs-startup-hook . context-menu-mode))
 
 
-<a id="orge0f977b"></a>
+<a id="org21a1f22"></a>
 
 ## Smooth Scrolling
 
@@ -829,7 +833,7 @@ smooth scrolling, as its name indicates, is a feature that allows you to scroll 
        (emacs-startup-hook . pixel-scroll-precision-mode)))
 
 
-<a id="org24f9696"></a>
+<a id="org4ea1363"></a>
 
 ## Highlighting changes
 
@@ -845,7 +849,7 @@ Highlighting uncommitted changes on the fringe.
       (diff-hl-mode-hook . diff-hl-flydiff-mode))
 
 
-<a id="orgcf1aa2e"></a>
+<a id="orgeed9934"></a>
 
 # Completion
 
@@ -863,7 +867,7 @@ I have used all these packages for a long or short time.  I choose to use [verti
 And for text completion, less choice, [company.el](https://github.com/company-mode/company-mode) and [corfu.el](https://github.com/minad/corfu).  Because [corfu.el](https://github.com/minad/corfu) relies exclusively on the standard Emacs completion API, [company.el](https://github.com/company-mode/company-mode) defines its own API for the backends.  So I use [corfu.el](https://github.com/minad/corfu) other than [company.el](https://github.com/company-mode/company-mode).
 
 
-<a id="orgc144d00"></a>
+<a id="org711112e"></a>
 
 ## Allow recursive edit in minibuffer
 
@@ -877,7 +881,7 @@ I set `enable-recursive-minibuffers` to `t` to allow use recursive minibuffer.
       (setq enable-recursive-minibuffers t))
 
 
-<a id="org024891a"></a>
+<a id="org4120867"></a>
 
 ## Hide commands in M-x which do not work in the current mode
 
@@ -892,7 +896,7 @@ In particular, note that this only works on Emacs after 28.0.50.
     	#'command-completion-default-include-p))
 
 
-<a id="orga1f47d3"></a>
+<a id="orgdae41a0"></a>
 
 ## Do not allow the cursor in the minibuffer prompt
 
@@ -909,7 +913,7 @@ Keep cursor outside of any `cursor-intangible` text property.
       (minibuffer-setup-hook . cursor-intangible-mode))
 
 
-<a id="org6f00c0f"></a>
+<a id="org0970c0b"></a>
 
 ## Eye-catching indicator when calling `completing-read-multiple`
 
@@ -931,7 +935,7 @@ Add prompt indicator when calling `completing-read-multiple`, it will display `[
     	  (cdr args))))
 
 
-<a id="org9392a8e"></a>
+<a id="org858242b"></a>
 
 ## Match completion with space
 
@@ -965,7 +969,7 @@ Although the default is sufficient, I would like to be allowed to complete the i
 Additionally, enable `partial-completion` for file path expansion.  `partial-completion` is vital for file wildcard support.  Multiple files can be opened at once with `find-file` if the input has a wildcard.
 
 
-<a id="orgf171042"></a>
+<a id="org2526cff"></a>
 
 ## Use vertical completion UI with [vertico.el](https://github.com/minad/vertico)
 
@@ -1029,7 +1033,7 @@ I occasionally use the mouse, and this is why I want to use the mouse to select 
       (vertico-mode-hook . vertico-mouse-mode))
 
 
-<a id="orgf19837a"></a>
+<a id="orgea7e98c"></a>
 
 ## Completion Overlay Region FUnction
 
@@ -1204,7 +1208,7 @@ Some functions and variables are named similarly when writing code, and I need t
       (setq kind-icon-default-face 'corfu-default))
 
 
-<a id="orgf152f41"></a>
+<a id="org26ec335"></a>
 
 ## Show mariginalia of completions
 
@@ -1222,14 +1226,14 @@ I use [marginalia.el](https://github.com/minad/marginalia) get more helpful info
       (emacs-startup-hook . marginalia-mode))
 
 
-<a id="org85c6a53"></a>
+<a id="org6c6919e"></a>
 
 # Actions in Emacs
 
 For me, there are some commands in Emacs that I consider to actions.  Such as opening the URL in a browser, switching to other buffers, searching for something, and operating them.  So I need quickly find these actions and enhance them for me.
 
 
-<a id="org02ee98a"></a>
+<a id="org888884b"></a>
 
 ## Save actions history
 
@@ -1243,7 +1247,7 @@ When I do some actions and quit Emacs later, the history of actions will be lost
       :hook (emacs-startup-hook . savehist-mode))
 
 
-<a id="orge58c70e"></a>
+<a id="orgbf7f72f"></a>
 
 ## Switch buffer with preview
 
@@ -1257,7 +1261,7 @@ At this point, in addition to memorizing their differences, I'd like to preview 
       (keymap-substitute global-map 'switch-to-buffer 'consult-buffer))
 
 
-<a id="org6d7ccb4"></a>
+<a id="org9f70768"></a>
 
 ## Avaiable actions menu
 
@@ -1306,7 +1310,7 @@ Automatic preview at point in the Embark Collect buffer.
       (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 
-<a id="orgac8fcdf"></a>
+<a id="org7cc44d9"></a>
 
 ## Help Actions
 
@@ -1350,7 +1354,7 @@ Some people use [which-key.el](https://github.com/justbur/emacs-which-key), whic
       (setq prefix-help-command #'embark-prefix-help-command))
 
 
-<a id="org8ee1157"></a>
+<a id="orgb7b0fb4"></a>
 
 ## Adjust scrolling distance
 
@@ -1375,14 +1379,14 @@ Emacs will scroll more than half of the screen when I am at the bottom of the bu
       (setq hscroll-margin 2 hscroll-step 1))
 
 
-<a id="orga0e794d"></a>
+<a id="org0a31c20"></a>
 
 ## Mouse actions
 
 As with most graphics software, Emacs has mouse interactions, some of which are difficult to use and inadequate.  I've tweek them to make the interactions feel more subtle.
 
 
-<a id="orgb1c3243"></a>
+<a id="org04ddd60"></a>
 
 ## Drag and Drop
 
@@ -1395,7 +1399,7 @@ I mostly drag and drop text with mouse.
       (setq mouse-drag-and-drop-region 'control))
 
 
-<a id="org17cc2bb"></a>
+<a id="orga65eb18"></a>
 
 ## Mouse yank at point
 
@@ -1406,7 +1410,7 @@ Mouse yank commands yank at point instead of at click.
       (setq mouse-yank-at-point t))
 
 
-<a id="orga44403d"></a>
+<a id="orgaa2078d"></a>
 
 ## Search actions
 
@@ -1439,7 +1443,7 @@ I use [consult.el](https://github.com/minad/consult) to improve search commands 
       (keymap-set search-map "M-o" 'consult-multi-occur))
 
 
-<a id="org570a6d3"></a>
+<a id="org1fc9e62"></a>
 
 ## Goto actions
 
@@ -1464,7 +1468,7 @@ I also use [consult.el](https://github.com/minad/consult) to improve goto comman
       (keymap-set goto-map "M-m" 'consult-global-mark))
 
 
-<a id="org84b41a2"></a>
+<a id="org800d598"></a>
 
 # Use Emacs as general text editor
 
@@ -1473,11 +1477,11 @@ Emacs is an integrated computing environment, but it also has some features of t
 And Emacs is a visual editor.  That means that I have a representation of my entire document on your screen, and I can move around freely, editing any part of the document I wish.  So I've also enhanced some visual features of the text.
 
 
-<a id="org19ef34b"></a>
+<a id="orgceb5f3d"></a>
 
 ## Automatic Backups
 
-By default, Emacs saves backup files —those ending in ~— in the current directory, thereby cluttering it up.  Let's place them in a directory follow my [File Convention](#orgf65947a).
+By default, Emacs saves backup files —those ending in ~— in the current directory, thereby cluttering it up.  Let's place them in a directory follow my [File Convention](#orgb52a69a).
 
 I want to keep multiple versions of my backup files to help keep my sanity.  Emacs allow saving an unlimited number of backups, but keeping a backup of five versions is appropriate.
 
@@ -1509,13 +1513,13 @@ I want to keep multiple versions of my backup files to help keep my sanity.  Ema
 You may have noticed that I set `backup-by-copying` to `t`, which makes Emacs create backups by copying from the original file.  This differs from the default method, which creates backups by renaming the original file.
 
 
-<a id="orgcc707d3"></a>
+<a id="orgebd5a39"></a>
 
 ## Automatic Saving
 
 By default, Emacs automatically saves your changes to a file intermittently.  If anything should happen, you can recover a file with `M-x recover-file`.
 
-And Emacs will create the auto-saved file with a name appending **#** to the front and rear of the visited file name in place.  I want to keep the directory clean, and follow my [File Convention](#orgf65947a).  So I push my customized transform for rule of making auto-save file name to `auto-save-file-name-transforms`.
+And Emacs will create the auto-saved file with a name appending **#** to the front and rear of the visited file name in place.  I want to keep the directory clean, and follow my [File Convention](#orgb52a69a).  So I push my customized transform for rule of making auto-save file name to `auto-save-file-name-transforms`.
 
     (use-package files
       :defer t
@@ -1540,7 +1544,7 @@ And Emacs will create the auto-saved file with a name appending **#** to the fro
 
 Deleting a substantial portion of the text disables auto-save in the buffer by default.  Thus, if I make many changes and my computer suddenly fails, all my changes will be lost, so save all changes anyway.  For always failsafe to take precedence, I have to set `auto-save-include-big-deletions` to `t`.
 
-After auto-saved files have been created, Emacs will save paths of all auto-saved files to a file named the value of `auto-save-list-file-name`.  Make it follow my [File Convention](#orgf65947a).
+After auto-saved files have been created, Emacs will save paths of all auto-saved files to a file named the value of `auto-save-list-file-name`.  Make it follow my [File Convention](#orgb52a69a).
 
     (use-package startup
       :no-require t
@@ -1549,7 +1553,7 @@ After auto-saved files have been created, Emacs will save paths of all auto-save
     	(expand-file-name "auto-save/session/" my-data-directory)))
 
 
-<a id="orge9d9e98"></a>
+<a id="org6ababda"></a>
 
 ## Recent Files
 
@@ -1558,7 +1562,7 @@ Same as criminals always return to the scene of the crime, I also reopen file fr
     (use-package recentf
       :hook (emacs-startup-hook . recentf-mode))
 
-The list of recented files will store in `user-emacs-directory` by default, make it follow my [File Convention](#orgf65947a).  In addition, I use an incredible command named `consult-recent-file` provided by [consult.el](https://github.com/minad/consult) to give a preview of recent files.
+The list of recented files will store in `user-emacs-directory` by default, make it follow my [File Convention](#orgb52a69a).  In addition, I use an incredible command named `consult-recent-file` provided by [consult.el](https://github.com/minad/consult) to give a preview of recent files.
 
     (use-package consult
       :ensure t
@@ -1604,7 +1608,7 @@ It isn't enjoyable and doesn't help, so I created some advice to stop it from ap
       :hook (emacs-startup-hook . recentf-mode))
 
 
-<a id="org362af61"></a>
+<a id="orgae394f3"></a>
 
 ## Show basic information of buffer
 
@@ -1617,7 +1621,7 @@ The basic capabilities of the text editor should include showing basic informati
        (emacs-startup-hook . size-indication-mode)))
 
 
-<a id="org771ee5a"></a>
+<a id="org5f6ab67"></a>
 
 ## Save the last opened place
 
@@ -1629,10 +1633,10 @@ After I modified a file, I saved and closed it.  Emacs will go to the top line o
     	(expand-file-name "place.el" my-state-directory))
       :hook (emacs-startup-hook . save-place-mode))
 
-Make date storage of *saveplace.el* follow my [File Convention](#orgf65947a).
+Make date storage of *saveplace.el* follow my [File Convention](#orgb52a69a).
 
 
-<a id="org04b3e43"></a>
+<a id="org472d34d"></a>
 
 ## Replace region with new content
 
@@ -1644,7 +1648,7 @@ Emacs will append the new content to the marked region by default, which goes ag
       (emacs-startup-hook . delete-selection-mode))
 
 
-<a id="orga1dd7e4"></a>
+<a id="org54d3f15"></a>
 
 ## Display file name with forward style
 
@@ -1656,7 +1660,7 @@ When I opened two files that have same name, the buffers of these files will app
       (setq uniquify-buffer-name-style 'forward))
 
 
-<a id="org2d63e86"></a>
+<a id="org8561f25"></a>
 
 ## Kill ring and Clipboard
 
@@ -1673,14 +1677,14 @@ The **kill ring** is a list of blocks of text that were previously killed. And t
 I set `kill-do-not-save-duplicates` to `t`, it will remove duplicated content in the kill ring.
 
 
-<a id="org92fb47b"></a>
+<a id="orga9cbb53"></a>
 
 # File Management
 
 Emacs can be used as a file manager, in addition to local file management, there is also rich remote protocol support.  I use Emacs as file management client to operate files, and version control.
 
 
-<a id="org3155d44"></a>
+<a id="org1b8e32d"></a>
 
 ## Version Control
 
@@ -1721,7 +1725,7 @@ Widely used version control software includes **Git**, **Subversion**, **Mercuri
        (magit-post-refresh-hook . diff-hl-magit-post-refresh)))
 
 
-<a id="org3119498"></a>
+<a id="org11b9d3e"></a>
 
 # Life with `org-mode`
 
@@ -1737,7 +1741,7 @@ All my **Org** files stored in the *org* directory under the `HOME` directory.
       (setq org-directory "~/org"))
 
 
-<a id="org64b7d66"></a>
+<a id="org20982c7"></a>
 
 ## Using `org-mode` as a Day Planner
 
@@ -1760,7 +1764,7 @@ I use *org-agenda.el* to show my tasks by time or category and bind related comm
       (keymap-set ctl-c-o-map "a" 'org-agenda))
 
 
-<a id="org4a598df"></a>
+<a id="org4ef6d9c"></a>
 
 ## Files of Day Planner
 
@@ -1797,7 +1801,7 @@ My inbox is then processed and emptied daily.  When processing the inbox, I refi
     	       '("~/org/agenda/tickler.org" :maxlevel . 2)))
 
 
-<a id="org57c961f"></a>
+<a id="orge684067"></a>
 
 ## Capture and collect tasks
 
@@ -1827,14 +1831,14 @@ As mentioned above, I use the inbox as a pre-processing place for all tasks.  So
     	       'append))
 
 
-<a id="orge8f172f"></a>
+<a id="org249f288"></a>
 
 # Prose
 
 Emacs is a writer's best friend, the rich extensions from the Emacs community and the extensibility of Emacs itself offer endless possibilities for writing.
 
 
-<a id="org801dc51"></a>
+<a id="orgcb28342"></a>
 
 ## Generic writing experience improvements for text of Prose
 
@@ -1870,7 +1874,7 @@ I am a Chinese native speaker, so I frequently write English and Chinese at the 
       (setq word-wrap-by-category t))
 
 
-<a id="org51da49e"></a>
+<a id="org23391a5"></a>
 
 ## Distraction-free writing
 
@@ -1886,7 +1890,7 @@ Distraction-free writing means that the computer screen is free of clutter and, 
       :commands olivetti-mode)
 
 
-<a id="orgd98a575"></a>
+<a id="org6fb32d0"></a>
 
 ## Write article with `org-mode`
 
@@ -1902,9 +1906,6 @@ Org mode needs some tweaks to remove some clutter from the screen.  We can chang
       :pin gnu
       :defer t
       :config
-      ;; Activate ~org-indent-mode~ by default.
-      ;; (setq org-startup-indented t)
-    
       ;; Show entities as UTF8 characters.
       (setq org-pretty-entities t)
     
@@ -1915,6 +1916,15 @@ Org mode needs some tweaks to remove some clutter from the screen.  We can chang
       (setq org-startup-with-inline-images t))
 
 Hiding emphasis markers is that rich text becomes hard to edit because it is unclear whether your cursor is on the marker or the first or last character.  The [org-appear.el](https://github.com/awth13/org-appear) helps by displaying the markers while the cursor is on a rich text word.
+
+When I'm editing the headline, I adjust the headline level with the `tab` key. So `C-a` return to before leading star is not appropriate, I always expect to change the first word of the headline instead of changing the level.  Set `org-special-ctrl-a/e` to move cursor to the beginning of headline when press `C-a`.  The same is applied to `C-e`, which moves to the end of the headline when editing a folded block.
+
+    (use-package org
+      :ensure t
+      :pin gnu
+      :defer t
+      :config
+      (setq org-special-ctrl-a/e t))
 
     (use-package org-appear
       :ensure t
@@ -2011,14 +2021,14 @@ Require *ox-md.el* to auto extended Markdown support of  `org-export-dispatch`.
       :after org)
 
 
-<a id="org99a2832"></a>
+<a id="orgbe51a11"></a>
 
 # Programming
 
 Emacs is most powerful programming environment.  But it is required to be configured in detail, otherwise it will be poor.  Let me configure Emacs for all programming languages I use.
 
 
-<a id="org5d9aaee"></a>
+<a id="org8f1bdf6"></a>
 
 ## Generic programming enhancement
 
@@ -2039,6 +2049,22 @@ I have already configured corfu to complete text, activate it when I am programm
       :pin gnu
       :hook
       (prog-mode-hook . corfu-mode))
+
+
+### Back to Indentation or Beginning
+
+Most the real code has the indented structure, and Emacs will move to the beginning of line when press `C-a` by default.  But most times, I mean move to the beginning of code rather than the line.
+
+    (use-package mwim
+      :ensure t
+      :pin melpa
+      :after prog-mode
+      :commands
+      (mwim-beginning
+       mwim-end)
+      :init
+      (keymap-set prog-mode-map "C-a" 'mwim-beginning)
+      (keymap-set prog-mode-map "C-e" 'mwim-end))
 
 
 ### Emacs with Tree-sitter
@@ -2134,7 +2160,7 @@ Use `completing-read` to jumping between diagnostics, and get preview features f
       (keymap-set flymake-mode-map "C-c !" 'consult-flymake))
 
 
-<a id="org23d6ed4"></a>
+<a id="orga5c4347"></a>
 
 ## C/C++
 
@@ -2153,7 +2179,7 @@ Use `completing-read` to jumping between diagnostics, and get preview features f
        (c++-mode-hook . eglot-ensure)))
 
 
-<a id="orge6238cf"></a>
+<a id="orgef3b59e"></a>
 
 ## Emacs Lisp
 
@@ -2190,7 +2216,7 @@ Emacs Lisp Macros enable I to define new control constructs and other language f
     	      'pp-macroexpand-expression))
 
 
-<a id="orgb073e40"></a>
+<a id="orgee98647"></a>
 
 ## Haskell
 
@@ -2212,7 +2238,7 @@ Emacs Lisp Macros enable I to define new control constructs and other language f
       (haskell-mode-hook . eglot-ensure))
 
 
-<a id="org21174ef"></a>
+<a id="orgf263745"></a>
 
 ## Rust
 
