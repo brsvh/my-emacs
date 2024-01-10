@@ -28,6 +28,60 @@
 
 ;;; Code:
 
+(defmacro my-operating-system-p (os)
+  "Return non-nil if OS corresponds to the current operating system.
+Allowable values for OS (not quoted) are `macOS', `osx',
+`windows', `linux', `unix'."
+  (pcase os
+    (`unix `(not (memq system-type '(ms-dos windows-nt cygwin))))
+    ((or `macOS `osx) `(eq system-type 'darwin))
+    (`linux `(not (memq system-type
+                        '(darwin ms-dos windows-nt cygwin))))
+    (`windows `(memq system-type '(ms-dos windows-nt cygwin)))))
+
+(defmacro my-get-xdg-base-dir (concept)
+  "Get the value of corresponds XDG Base Directory CONCEPT.
+Allowable concepts (not quoted) are `cache', `config', `data' and
+ `state'."
+  (let* ((concepts '((cache . ("XDG_CACHE_HOME" . "~/.cache/"))
+                     (config . ("XDG_CONFIG_HOME" . "~/.config/"))
+                     (data . ("XDG_DATA_HOME" . "~/.local/share/"))
+                     (state . ("XDG_STATE_HOME" . "~/.local/state/")))))
+    `(let ((default-cons (cdr (assoc ',concept ',concepts))))
+       (expand-file-name
+        (or (getenv (car default-cons))
+            (cdr default-cons))))))
+
+
+(defconst my-cache-directory (if (my-operating-system-p linux)
+                                 (expand-file-name
+                                  "emacs/"
+                                  (my-get-xdg-base-dir cache))
+                               user-emacs-directory)
+  "Directory beneath which additional volatile files are placed.")
+
+(defconst my-config-directory user-emacs-directory
+  "Directory beneath which additional config files are placed.")
+
+(defconst my-data-directory (if (my-operating-system-p linux)
+                                (expand-file-name
+                                 "emacs/"
+                                 (my-get-xdg-base-dir data))
+                              user-emacs-directory)
+  "Directory beneath which additional non-volatile files are placed.")
+
+(defconst my-state-directory (if (my-operating-system-p linux)
+                                 (expand-file-name
+                                  "emacs/"
+                                  (my-get-xdg-base-dir data))
+                               user-emacs-directory)
+  "Directory beneath which additional state files are placed.")
+
+;; Redirect storage location for native compilation, it must be set
+;; before all features are `require' if I want to set the follow
+;; custom directory as the first priority.
+(startup-redirect-eln-cache (concat my-cache-directory "eln-cache/"))
+
 ;; Add some essentia layout parameters of frame to preset values, and
 ;; ensure the minor modes corresponding to follow values are disabled.
 (push (cons 'menu-bar-lines nil) default-frame-alist)

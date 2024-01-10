@@ -26,9 +26,33 @@
 
 ;; This file is the first loaded file after Emacs is started.
 
+;; To show the top-level functions and variable declarations in each
+;; section, run M-x occur with the following query: ^;;;;* \|^(.
+
 ;;; Code:
+
+(use-package use-package
+  :init
+  ;; When employing the `:hook' keyword to delegate a task to the hook,
+  ;; `use-package' will utilize an abbreviated hook name. To illustrate,
+  ;; `c-mode-hook' is truncated as `c-mode', and `emacs-startup-hook' is
+  ;; truncated as `emacs-startup'. Given my occasional propensity for
+  ;; oversight, which may lead to inconsistencies, it is imperative to
+  ;; ensure that `use-package' invariably employs the accurate hook
+  ;; name.
+  (setq use-package-hook-name-suffix nil)
+
+  ;; The `:ensure' keyword of `use-package' conventionally employs
+  ;; `package' to verify the installation status of the package. In
+  ;; reality, I am currently utilizing twist to manage all ELPA, which
+  ;; results in the execution of the superfluous
+  ;; `package-refresh-contents' during the startup process,
+  ;; circumventing this occurrence.
+  (setq use-package-ensure-function
+        #'(lambda (name args _state &optional _no-refresh)
+            "Do nothing when the need for ensures package installation."
+            t)))
 
 (use-package vertico
   :ensure t
-  :init
-  (vertico-mode +1))
+  :hook (after-init-hook . vertico-mode))
