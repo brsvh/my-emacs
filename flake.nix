@@ -136,13 +136,33 @@
     , twist-overrides
     , ...
     } @ inputs:
+    let
+      earlyInitFile = ./lisp/early-init.el;
+      initFile = ./lisp/init.el;
+      lockDir = ./elpa;
+    in
     flake-parts.lib.mkFlake
       { inherit inputs; }
       {
         imports =
           [
+            ./nix/flakeModules
             ./nix/flakes
           ];
+
+        flake = {
+          homeModules = {
+            twist = {
+              imports =
+                [
+                  twist.homeModules.emacs-twist
+                  (
+                    import ./nix/homeModules self.packages earlyInitFile
+                  )
+                ];
+            };
+          };
+        };
 
         perSystem =
           { final
@@ -154,11 +174,6 @@
             let
               inherit (final) emacs-git emacs-pgtk tree-sitter-grammars;
               inherit (final) emacsTwist;
-
-              initFile = ./lisp/init.el;
-              earlyInitFile = ./lisp/early-init.el;
-
-              lockDir = ./elpa;
 
               revision = "${substring 0 8 self.lastModifiedDate}.${
               if self ? rev
@@ -267,6 +282,8 @@
                 { inherit emacs-config; };
 
               packages = {
+                inherit emacs-config;
+
                 pgtk = emacs-config // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
                     tmpdir =
