@@ -146,7 +146,6 @@
       {
         imports =
           [
-            ./nix/flakeModules
             ./nix/flakes
           ];
 
@@ -157,7 +156,7 @@
                 [
                   twist.homeModules.emacs-twist
                   (
-                    import ./nix/homeModules self.packages earlyInitFile
+                    import ./nix/homeModules/twist.nix self.packages earlyInitFile
                   )
                 ];
             };
