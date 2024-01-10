@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704548175,
+        "narHash": "sha256-4YwSkcOYKpI9YjSLk9jfDZ4KWdH533KlrePylOAbvyw=",
+        "owner": "emacs-compat",
+        "repo": "compat",
+        "rev": "dff3639b70f3c9916c5397056a51cdc3e60d5668",
+        "type": "github"
+      },
+      "original": {
+        "owner": "emacs-compat",
+        "repo": "compat",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "compat": "compat",
+        "vertico": "vertico"
+      }
+    },
+    "vertico": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704290384,
+        "narHash": "sha256-vKfWK4aKO5ZgZ+h/krtFAw0cH1KqQSAghnuFhakhJOU=",
+        "owner": "minad",
+        "repo": "vertico",
+        "rev": "357c2503a7787193d50dafd8212f2b1cc165ae16",
+        "type": "github"
+      },
+      "original": {
+        "owner": "minad",
+        "repo": "vertico",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
