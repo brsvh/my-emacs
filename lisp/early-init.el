@@ -16,11 +16,11 @@
 
 ;; emacs.d is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with emacs.d. If not, see <https://www.gnu.org/licenses/>.
+;; along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -73,7 +73,7 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 (defconst my-state-directory (if (my-operating-system-p linux)
                                  (expand-file-name
                                   "emacs/"
-                                  (my-get-xdg-base-dir data))
+                                  (my-get-xdg-base-dir state))
                                user-emacs-directory)
   "Directory beneath which additional state files are placed.")
 
@@ -89,3 +89,5 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 (push (cons 'vertical-scroll-bars nil) default-frame-alist)
 (push (cons 'horizontal-scroll-bars nil) default-frame-alist)
 (setq-default menu-bar-mode nil tool-bar-mode nil scroll-bar-mode nil)
+
+;;; early-init.el ends here

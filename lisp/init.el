@@ -32,26 +32,33 @@
 ;;; Code:
 
 (use-package use-package
+  :preface
+  (defun my-use-package-fake-ensure-package (&rest _)
+    "Do nothing when the need for ensures package installation."
+    t)
   :init
-  ;; When employing the `:hook' keyword to delegate a task to the hook,
-  ;; `use-package' will utilize an abbreviated hook name. To illustrate,
-  ;; `c-mode-hook' is truncated as `c-mode', and `emacs-startup-hook' is
-  ;; truncated as `emacs-startup'. Given my occasional propensity for
-  ;; oversight, which may lead to inconsistencies, it is imperative to
-  ;; ensure that `use-package' invariably employs the accurate hook
-  ;; name.
+  ;; When employing the `:hook' keyword to delegate a task to the
+  ;; hook, `use-package' will utilize an abbreviated hook name.  To
+  ;; illustrate, `c-mode-hook' is truncated as `c-mode', and
+  ;; `emacs-startup-hook' is truncated as `emacs-startup'.  Given my
+  ;; occasional propensity for oversight, which may lead to
+  ;; inconsistencies, it is imperative to ensure that `use-package'
+  ;; invariably employs the accurate hook name.
   (setq use-package-hook-name-suffix nil)
 
   ;; The `:ensure' keyword of `use-package' conventionally employs
-  ;; `package' to verify the installation status of the package. In
+  ;; `package' to verify the installation status of the package.  In
   ;; reality, I am currently utilizing twist to manage all ELPA, which
   ;; results in the execution of the superfluous
   ;; `package-refresh-contents' during the startup process,
   ;; circumventing this occurrence.
   (setq use-package-ensure-function
-        #'(lambda (name args _state &optional _no-refresh)
-            "Do nothing when the need for ensures package installation."
-            t)))
+        'my-use-package-fake-ensure-package)
+  :config
+  (define-advice use-package-pin-package
+      (:override (&rest _) fake-pin)
+    "Do nothing when pin package to archive."
+    t))
 
 (use-package vertico
   :ensure t
