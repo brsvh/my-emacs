@@ -15,7 +15,7 @@ with lib;
         directory = ".config/emacs";
         createInitFile = true;
         createManifestFile = true;
-        config = packages.${pkgs.system}.emacs-config;
+        config = packages.${pkgs.system}.emacsD;
 
         serviceIntegration = {
           enable = mkDefault true;

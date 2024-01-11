@@ -171,7 +171,7 @@
             with builtins;
             with nixpkgs.lib;
             let
-              inherit (final) emacs-git emacs-pgtk tree-sitter-grammars;
+              inherit (final) emacs-git tree-sitter-grammars;
               inherit (final) emacsTwist;
 
               revision = "${substring 0 8 self.lastModifiedDate}.${
@@ -190,22 +190,22 @@
 
               makeEmacs =
                 { nativeCompileAheadDefault ? true
-                , pgtk ? true
+                , wayland ? true
+                , x11 ? !wayland
                 , ...
                 }:
                 let
                   emacsPackage =
-                    (
-                      if pgtk
-                      then emacs-pgtk
-                      else emacs-git
-                    ).override (_:
+                    emacs-git.override
                       (
-                        if pgtk
-                        then { }
-                        else { withGTK3 = true; }
-                      )
-                    );
+                        _:
+                        if wayland
+                        then { withPgtk = true; }
+                        else
+                          if x11
+                          then { withGTK3 = true; }
+                          else { }
+                      );
                 in
                 (
                   emacsTwist {
@@ -266,44 +266,55 @@
                   }
                 ).overrideScope' twist-overrides.overlays.twistScope;
 
-              emacs-config = makeOverridable makeEmacs {
-                pgtk = true;
-              };
+              emacsD = makeOverridable makeEmacs { };
+
+              emacsD-wayland = emacsD.override
+                (
+                  _:
+                  {
+                    wayland = true;
+                  }
+                );
+
+              emacsD-x11 = emacsD.override
+                (
+                  _:
+                  {
+                    wayland = false;
+                    x11 = true;
+                  }
+                );
             in
             {
-              apps = emacs-config.makeApps { lockDirName = "elpa"; };
+              apps = emacsD.makeApps { lockDirName = "elpa"; };
 
               overlayAttrs =
                 (
-                  inputs.emacs-overlay.overlays.default final pkgs
+                  emacs-overlay.overlays.default final pkgs
                 ) //
                 (
-                  inputs.twist.overlays.default final pkgs
+                  twist.overlays.default final pkgs
                 ) //
-                { inherit emacs-config; };
+                { inherit emacsD emacsD-wayland emacsD-x11; };
 
               packages = {
-                inherit emacs-config;
+                inherit emacsD;
 
-                pgtk = emacs-config // {
+                pgtk = emacsD-wayland // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
                     tmpdir =
                       pkgs.callPackage ./nix/wrapper.nix { }
                         "emacs.d"
-                        emacs-config;
+                        emacsD-wayland;
                   };
                 };
 
-                x11 = (emacs-config.override (_:
-                  {
-                    pgtk = false;
-                  }
-                )) // {
+                x11 = emacsD-x11 // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
                     tmpdir =
                       pkgs.callPackage ./nix/wrapper.nix { }
                         "emacs.d"
-                        emacs-config;
+                        emacsD-x11;
                   };
                 };
               };
