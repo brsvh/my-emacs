@@ -247,12 +247,14 @@
                     registries =
                       [
                         {
+                          name = "gnu";
                           type = "elpa";
                           path = gnu.outPath + "/elpa-packages";
                           core-src = emacsPackage.src;
                           auto-sync-only = true;
                         }
                         {
+                          name = "nongnu";
                           type = "elpa";
                           path = nongnu.outPath + "/elpa-packages";
                           core-src = emacsPackage.src;
