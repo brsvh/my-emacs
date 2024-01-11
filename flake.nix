@@ -83,6 +83,10 @@
       url = "git+https://git.savannah.gnu.org/git/emacs/elpa.git?ref=main";
       flake = false;
     };
+    melpa = {
+      url = "github:melpa/melpa/master";
+      flake = false;
+    };
     nixpkgs = {
       follows = "nixpkgs-unstable";
     };
@@ -145,6 +149,7 @@
     , flake-parts
     , flake-pins
     , gnu
+    , melpa
     , nixpkgs
     , nongnu
     , self
@@ -275,6 +280,11 @@
                           path = nongnu.outPath + "/elpa-packages";
                           core-src = emacsPackage.src;
                           auto-sync-only = true;
+                        }
+                        {
+                          name = "melpa";
+                          type = "melpa";
+                          path = melpa.outPath + "/recipes";
                         }
                       ];
 
