@@ -161,6 +161,7 @@
       earlyInitFile = ./lisp/early-init.el;
       initFile = ./lisp/init.el;
       lockDir = ./elpa;
+      my-melpa = ./melpa;
     in
     flake-parts.lib.mkFlake
       { inherit inputs; }
@@ -267,6 +268,11 @@
 
                     registries =
                       [
+                        {
+                          name = "my-melpa";
+                          type = "melpa";
+                          path = my-melpa;
+                        }
                         {
                           name = "melpa";
                           type = "melpa";
