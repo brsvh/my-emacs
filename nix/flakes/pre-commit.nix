@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Burgess Chang
+# Copyright (C) 2023-2024 Burgess Chang
 #
 # This file is part of emacs.d.
 #
