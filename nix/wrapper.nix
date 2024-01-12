@@ -14,21 +14,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
-{ writeShellScriptBin
-, runCommandLocal
+{ early-init
+, init
+, writeShellScriptBin
 , ...
 }: name: emacs-env:
-let
-  initFile = runCommandLocal "init.el" { } ''
-    mkdir -p $out
-    touch $out/init.el
-    for file in ${builtins.concatStringsSep " " emacs-env.initFiles}
-    do
-      cat "$file" >> $out/init.el
-      echo >> $out/init.el
-    done
-  '';
-in
 writeShellScriptBin name ''
   set +u
   set -x
@@ -41,8 +31,8 @@ writeShellScriptBin name ''
 
   trap cleanup ERR EXIT
 
-  ln -s ${initFile}/init.el "$initdir/init.el"
-  ln -s ${../lisp/early-init.el} "$initdir/early-init.el"
+  ln -s ${init}/init.el "$initdir/init.el"
+  ln -s ${early-init} "$initdir/early-init.el"
 
   ${emacs-env}/bin/emacs --init-directory="$initdir" "$@"
 ''

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Burgess Chang
+# Copyright (C) 2023-2024 Burgess Chang
 #
 # This file is part of emacs.d.
 #
@@ -100,6 +100,9 @@
       url = "git+https://git.savannah.gnu.org/git/emacs/nongnu.git?ref=main";
       flake = false;
     };
+    org-babel = {
+      url = "github:emacs-twist/org-babel/master";
+    };
     pre-commit = {
       url = "github:cachix/pre-commit-hooks.nix/master";
       inputs = {
@@ -152,17 +155,12 @@
     , melpa
     , nixpkgs
     , nongnu
+    , org-babel
     , self
     , twist
     , twist-overrides
     , ...
     } @ inputs:
-    let
-      earlyInitFile = ./lisp/early-init.el;
-      initFile = ./lisp/init.el;
-      lockDir = ./elpa;
-      my-melpa = ./melpa;
-    in
     flake-parts.lib.mkFlake
       { inherit inputs; }
       {
@@ -178,7 +176,7 @@
                 [
                   twist.homeModules.emacs-twist
                   (
-                    import ./nix/homeModules/twist.nix self.packages earlyInitFile
+                    import ./nix/homeModules/twist.nix self.packages
                   )
                 ];
             };
@@ -194,13 +192,13 @@
             with nixpkgs.lib;
             let
               inherit (final) emacs-git tree-sitter-grammars;
-              inherit (final) emacsTwist;
+              inherit (final) emacsTwist tangleOrgBabelFile;
 
               revision = "${substring 0 8 self.lastModifiedDate}.${
-              if self ? rev
-              then substring 0 7 self.rev
-              else "dirty"
-            }";
+                if self ? rev
+                then substring 0 7 self.rev
+                else "dirty"
+              }";
 
               grammars =
                 pipe
@@ -209,6 +207,66 @@
                     (filterAttrs (name: _: name != "recurseForDerivations"))
                     attrValues
                   ];
+
+              initFile =
+                tangleOrgBabelFile "init.el" ./org/init.org {
+                  languages = [ "emacs-lisp" ];
+                };
+
+              initTreeSitterFile =
+                pkgs.writeText "init-tree-sitter.el" ''
+                  (add-to-list 'treesit-extra-load-path "${
+                    pkgs.linkFarm "treesit-grammars"
+                      (
+                        map
+                          (
+                            drv: {
+                              name = "lib${
+                                removeSuffix "-grammar" (getName drv)
+                              }${
+                                pkgs.stdenv.targetPlatform.extensions.sharedLibrary
+                              }";
+                              path = "${drv}/parser";
+                            }
+                          )
+                          grammars
+                      )
+                  }/")
+                '';
+
+              initFiles =
+                [
+                  initFile
+                  initTreeSitterFile
+                ];
+
+              my-milkypostman-elpa = {
+                name = "my-melpa";
+                type = "melpa";
+                path = ./melpa;
+              };
+
+              milkypostman-elpa = {
+                name = "melpa";
+                type = "melpa";
+                path = melpa.outPath + "/recipes";
+              };
+
+              gnu-elpa = {
+                name = "gnu";
+                type = "elpa";
+                path = gnu.outPath + "/elpa-packages";
+                core-src = emacsPackage.src;
+                auto-sync-only = true;
+              };
+
+              nongnu-elpa = {
+                name = "nongnu";
+                type = "elpa";
+                path = nongnu.outPath + "/elpa-packages";
+                core-src = emacsPackage.src;
+                auto-sync-only = true;
+              };
 
               makeEmacs =
                 { nativeCompileAheadDefault ? true
@@ -231,67 +289,26 @@
                 in
                 (
                   emacsTwist {
-                    inherit emacsPackage lockDir nativeCompileAheadDefault;
+                    inherit
+                      emacsPackage
+                      initFiles
+                      nativeCompileAheadDefault;
 
                     configurationRevision = revision;
-
-                    initFiles =
-                      [
-                        initFile
-                        (
-                          pkgs.writeText "init-tree-sitter.el" ''
-                            (add-to-list 'treesit-extra-load-path "${
-                            pkgs.linkFarm "treesit-grammars"
-                              (
-                                map
-                                (
-                                  drv: {
-                                    name = "lib${
-                                      removeSuffix "-grammar" (getName drv)
-                                    }${
-                                      pkgs.stdenv.targetPlatform.extensions.sharedLibrary
-                                    }";
-                                    path = "${drv}/parser";
-                                  }
-                                )
-                                grammars
-                              )
-                            }/")
-                          ''
-                        )
-                      ];
 
                     initialLibraries =
                       (
                         import flake-pins
                       ).data.emacs.libraries;
 
+                    lockDir = ./elpa;
+
                     registries =
                       [
-                        {
-                          name = "my-melpa";
-                          type = "melpa";
-                          path = my-melpa;
-                        }
-                        {
-                          name = "melpa";
-                          type = "melpa";
-                          path = melpa.outPath + "/recipes";
-                        }
-                        {
-                          name = "gnu";
-                          type = "elpa";
-                          path = gnu.outPath + "/elpa-packages";
-                          core-src = emacsPackage.src;
-                          auto-sync-only = true;
-                        }
-                        {
-                          name = "nongnu";
-                          type = "elpa";
-                          path = nongnu.outPath + "/elpa-packages";
-                          core-src = emacsPackage.src;
-                          auto-sync-only = true;
-                        }
+                        my-milkypostman-elpa
+                        milkypostman-elpa
+                        gnu-elpa
+                        nongnu-elpa
                       ];
 
                     exportManifest = true;
@@ -316,6 +333,22 @@
                     x11 = true;
                   }
                 );
+
+              emacsD-init-el =
+                pkgs.runCommandLocal "emacsD-init-el" { } ''
+                  mkdir -p $out
+                  touch $out/init.el
+                  for file in ${concatStringsSep " " emacsD.initFiles}
+                  do
+                  cat "$file" >> $out/init.el
+                  echo >> $out/init.el
+                  done
+                '';
+
+              emacsD-early-init-el =
+                tangleOrgBabelFile "early-init.el" ./org/early-init.org {
+                  languages = [ "emacs-lisp" ];
+                };
             in
             {
               apps = emacsD.makeApps { lockDirName = "elpa"; };
@@ -325,18 +358,31 @@
                   emacs-overlay.overlays.default final pkgs
                 ) //
                 (
+                  org-babel.overlays.default final pkgs
+                ) //
+                (
                   twist.overlays.default final pkgs
                 ) //
                 { inherit emacsD emacsD-wayland emacsD-x11; };
 
               packages = {
-                inherit emacsD;
+                inherit
+                  emacsD
+                  emacsD-early-init-el
+                  emacsD-init-el
+                  emacsD-wayland
+                  emacsD-x11;
 
                 pgtk = emacsD-wayland // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
                     tmpdir =
-                      pkgs.callPackage ./nix/wrapper.nix { }
-                        "emacsD"
+                      pkgs.callPackage
+                        ./nix/wrapper.nix
+                        {
+                          early-init = emacsD-early-init-el;
+                          init = emacsD-init-el;
+                        }
+                        "emacs.d"
                         emacsD-wayland;
                   };
                 };
@@ -344,8 +390,13 @@
                 x11 = emacsD-x11 // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
                     tmpdir =
-                      pkgs.callPackage ./nix/wrapper.nix { }
-                        "emacsD"
+                      pkgs.callPackage
+                        ./nix/wrapper.nix
+                        {
+                          early-init = emacsD-early-init-el;
+                          init = emacsD-init-el;
+                        }
+                        "emacs.d"
                         emacsD-x11;
                   };
                 };

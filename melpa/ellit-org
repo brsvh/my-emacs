@@ -1,0 +1,1 @@
+(ellit-org :fetcher github :repo "zevlg/ellit-org.el" :files ("ellit-org.el"))

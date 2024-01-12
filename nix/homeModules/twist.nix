@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Burgess Chang
+# Copyright (C) 2023-2024 Burgess Chang
 #
 # This file is part of emacs.d.
 #
@@ -14,24 +14,86 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
-packages: earlyInitFile:
+packages:
 { config
 , lib
 , pkgs
 , ...
 }:
+with builtins;
 with lib;
+let
+  init-el = packages.${pkgs.system}.emacsD-init-el;
+  early-init-el = packages.${pkgs.system}.emacsD-early-init-el;
+in
 {
-  config = mkIf config.programs.emacs-twist.enable {
+  options = {
+    emacs.d = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether the Emacs Configuration is used.
+        '';
+      };
+
+      platform = mkOption {
+        type = types.enum
+          [
+            "wayland"
+            "x11"
+          ];
+        default = "wayland";
+        description = ''
+          What display server protocol the Emacs configuration will
+          run on.
+        '';
+      };
+
+      directory = mkOption {
+        type = types.str;
+        description = ''
+          Relative path in string to user-emacs-directory from the
+          home directory
+        '';
+        default = ".config/emacs";
+        example = ".local/share/emacs";
+      };
+    };
+  };
+
+  config = mkIf config.emacs.d.enable {
+    home = {
+      file = listToAttrs (
+        [
+          {
+            name = "${config.emacs.d.directory}/init.el";
+            value = {
+              source = "${init-el}/init.el";
+            };
+          }
+          {
+            name = "${config.emacs.d.directory}/early-init.el";
+            value = {
+              source = "${early-init-el}";
+            };
+          }
+        ]
+      );
+    };
+
     programs = {
       emacs-twist = {
-        inherit earlyInitFile;
+        enable = true;
 
-        name = "emacsD";
-        directory = ".config/emacs";
-        createInitFile = true;
-        createManifestFile = true;
-        config = packages.${pkgs.system}.emacsD;
+        name = "emacs.d";
+
+        directory = config.emacs.d.directory;
+
+        config =
+          if config.emacs.d.platform == "wayland"
+          then packages.${pkgs.system}.emacsD-wayland
+          else packages.${pkgs.system}.emacsD-x11;
 
         serviceIntegration = {
           enable = mkDefault true;

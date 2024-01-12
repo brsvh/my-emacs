@@ -248,6 +248,22 @@
         "url": "https://git.savannah.gnu.org/git/emacs/nongnu.git"
       }
     },
+    "org-babel": {
+      "locked": {
+        "lastModified": 1669954182,
+        "narHash": "sha256-tYXRO/+MbLDQNn/mqnWKrQrYvFY0gHbU29wYln7+mpY=",
+        "owner": "emacs-twist",
+        "repo": "org-babel",
+        "rev": "b448845abbbc8b742e9de547cd49ec886cd79cbf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "emacs-twist",
+        "ref": "master",
+        "repo": "org-babel",
+        "type": "github"
+      }
+    },
     "pre-commit": {
       "inputs": {
         "flake-compat": [
@@ -299,6 +315,7 @@
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nongnu": "nongnu",
+        "org-babel": "org-babel",
         "pre-commit": "pre-commit",
         "systems": "systems",
         "treefmt": "treefmt",

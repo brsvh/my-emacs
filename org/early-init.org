@@ -1,0 +1,166 @@
+# Copyright (C) 2022-2024 Burgess Chang
+#
+# This file is part of emacs.d.
+#
+# emacs.d is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+#
+# emacs.d is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
+#+options: toc:nil num:nil
+#+startup: noindent fnadjust
+#+exclude_tags: nonexport
+#+macro: kbd @@html:<kbd>@@ $1 @@html:</kbd>@@
+#+title: GNU Emacs Early Init File
+#+author: Burgess Chang
+#+email: (concat bsc at-sign brsvh dot org)
+
+* File header                                                     :nonexport:
+
+The tangled file will follow [[info:elisp#Library Headers]].
+
+** Description
+
+#+begin_src emacs-lisp
+  ;;; early-init.el --- Early Init File -*- lexical-binding: t; -*-
+
+  ;; Copyright (C) 2022-2024 Burgess Chang
+
+  ;; Author: Burgess Chang <bsc@brsvh.org>
+  ;; Keywords: internal
+  ;; Package-Requires: ((emacs "29.1"))
+  ;; URL: https://github.com/brsvh/emacs.d
+  ;; Version: 0.50.0
+#+end_src
+
+** License
+
+#+begin_src emacs-lisp
+  ;; This file is part of emacs.d.
+
+  ;; emacs.d is free software: you can redistribute it and/or modify it
+  ;; under the terms of the GNU General Public License as published by
+  ;; the Free Software Foundation, either version 3 of the License, or
+  ;; (at your option) any later version.
+
+  ;; emacs.d is distributed in the hope that it will be useful, but
+  ;; WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ;; General Public License for more details.
+
+  ;; You should have received a copy of the GNU General Public License
+  ;; along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
+#+end_src
+
+** Introduction
+
+#+begin_src emacs-lisp
+  ;;; Commentary:
+
+  ;; This file is load before normal init file is loaded.
+#+end_src
+
+** Code
+
+#+begin_src emacs-lisp
+  ;;; Code:
+#+end_src
+
+* Piecemeal presets
+
+Certain configurations necessitate presetting prior to the loading of
+the ~user-init-file~, I establish these settings herein.
+
+** File storage conventions
+
+I aspire for my file storage to adhere to [[file:init.org::File
+conventions]] and be configured in accordance with the type of operating
+system.
+
+#+begin_src emacs-lisp
+  (defmacro my-operating-system-p (os)
+    "Return non-nil if OS corresponds to the current operating system.
+  Allowable values for OS (not quoted) are `macOS', `osx',
+  `windows', `linux', `unix'."
+    (pcase os
+      (`unix `(not (memq system-type '(ms-dos windows-nt cygwin))))
+      ((or `macOS `osx) `(eq system-type 'darwin))
+      (`linux `(not (memq system-type
+			  '(darwin ms-dos windows-nt cygwin))))
+      (`windows `(memq system-type '(ms-dos windows-nt cygwin)))))
+
+  (defmacro my-get-xdg-base-dir (concept)
+    "Get the value of corresponds XDG Base Directory CONCEPT.
+  Allowable concepts (not quoted) are `cache', `config', `data' and
+   `state'."
+    (let* ((concepts '((cache . ("XDG_CACHE_HOME" . "~/.cache/"))
+		       (config . ("XDG_CONFIG_HOME" . "~/.config/"))
+		       (data . ("XDG_DATA_HOME" . "~/.local/share/"))
+		       (state . ("XDG_STATE_HOME" . "~/.local/state/")))))
+      `(let ((default-cons (cdr (assoc ',concept ',concepts))))
+	 (expand-file-name
+	  (or (getenv (car default-cons))
+	      (cdr default-cons))))))
+
+
+  (defconst my-cache-directory (if (my-operating-system-p linux)
+				   (expand-file-name
+				    "emacs/"
+				    (my-get-xdg-base-dir cache))
+				 user-emacs-directory)
+    "Directory beneath which additional volatile files are placed.")
+
+  (defconst my-config-directory user-emacs-directory
+    "Directory beneath which additional config files are placed.")
+
+  (defconst my-data-directory (if (my-operating-system-p linux)
+				  (expand-file-name
+				   "emacs/"
+				   (my-get-xdg-base-dir data))
+				user-emacs-directory)
+    "Directory beneath which additional non-volatile files are placed.")
+
+  (defconst my-state-directory (if (my-operating-system-p linux)
+				   (expand-file-name
+				    "emacs/"
+				    (my-get-xdg-base-dir state))
+				 user-emacs-directory)
+    "Directory beneath which additional state files are placed.")
+#+end_src
+
+*** eln-cache storage
+
+Redirect storage location for native compilation, it must be set before
+all features are ~require~ if I want to set the follow custom directory
+as the first priority.
+
+#+begin_src emacs-lisp
+  (startup-redirect-eln-cache (concat my-cache-directory "eln-cache/"))
+#+end_src
+
+** Default frame layout
+
+Add some essentia layout parameters of frame to preset values, i.e.,
+here I turned off *Menu Bar*, *Tool Bar*, and *Scroll Bar*.
+
+#+begin_src emacs-lisp
+  (push (cons 'menu-bar-lines nil) default-frame-alist)
+  (push (cons 'tool-bar-lines nil) default-frame-alist)
+  (push (cons 'vertical-scroll-bars nil) default-frame-alist)
+  (push (cons 'horizontal-scroll-bars nil) default-frame-alist)
+#+end_src
+
+* File footer
+
+#+begin_src emacs-lisp
+  (provide 'early-init)
+  ;;; early-init.el ends here
+#+end_src
+
