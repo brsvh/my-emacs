@@ -16,9 +16,111 @@
         "type": "github"
       }
     },
+    "dash": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704286883,
+        "narHash": "sha256-p3dqme62bRlDa1MEJSIPhW3DiAOlwkUWMD8yYuqUfEo=",
+        "owner": "magnars",
+        "repo": "dash.el",
+        "rev": "e32a70ca636bad42232b6c79f1491dc86802a721",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magnars",
+        "repo": "dash.el",
+        "type": "github"
+      }
+    },
+    "ellit-org": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1642630594,
+        "narHash": "sha256-g5xWr/PD5XZGFjNVYE7YPBQVGD4m8yR1Xxva/ISmIWw=",
+        "owner": "zevlg",
+        "repo": "ellit-org.el",
+        "rev": "23a7cec54bd13e955c6db3710d392da7643f18e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zevlg",
+        "repo": "ellit-org.el",
+        "type": "github"
+      }
+    },
+    "magit-section": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704784205,
+        "narHash": "sha256-qiQQ1nKm+f1Hx9cipHSmxP6ED2SntnWx/qm1erUS1t4=",
+        "owner": "magit",
+        "repo": "magit",
+        "rev": "c3b7fd7dc43dd87468a86aef3d59576ad79fbc16",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magit",
+        "repo": "magit",
+        "type": "github"
+      }
+    },
+    "marginalia": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704438119,
+        "narHash": "sha256-iz5kS5AQ7of+UdhUu8fiMxeapg/Fk26EMq0FFw5I+Jc=",
+        "owner": "minad",
+        "repo": "marginalia",
+        "rev": "ea356ebb1ddb8d6da78574b517155475cf52d46f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "minad",
+        "repo": "marginalia",
+        "type": "github"
+      }
+    },
+    "modus-themes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704367379,
+        "narHash": "sha256-ntL1xxc345NV6Acpuy3zTRW1L/0Q9p1HtZ9gX83J5QM=",
+        "owner": "protesilaos",
+        "repo": "modus-themes",
+        "rev": "64823c7767710207cdf443492e0f712876dc4ee4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "protesilaos",
+        "repo": "modus-themes",
+        "type": "github"
+      }
+    },
+    "nix-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1682109415,
+        "narHash": "sha256-W/bxCAn4cvzKGbhILxtTiWJ5Wln2w6g4TPgk+ziCXsQ=",
+        "owner": "NixOS",
+        "repo": "nix-mode",
+        "rev": "719feb7868fb567ecfe5578f6119892c771ac5e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nix-mode",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "compat": "compat",
+        "dash": "dash",
+        "ellit-org": "ellit-org",
+        "magit-section": "magit-section",
+        "marginalia": "marginalia",
+        "modus-themes": "modus-themes",
+        "nix-mode": "nix-mode",
         "vertico": "vertico"
       }
     },
