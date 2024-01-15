@@ -32,19 +32,35 @@
         "type": "github"
       }
     },
-    "ellit-org": {
+    "git-commit": {
       "flake": false,
       "locked": {
-        "lastModified": 1642630594,
-        "narHash": "sha256-g5xWr/PD5XZGFjNVYE7YPBQVGD4m8yR1Xxva/ISmIWw=",
-        "owner": "zevlg",
-        "repo": "ellit-org.el",
-        "rev": "23a7cec54bd13e955c6db3710d392da7643f18e6",
+        "lastModified": 1705160738,
+        "narHash": "sha256-ssnlrGvwsEZL9b5n+xJau4iKBhwZdyzRjsnwwxLAsPA=",
+        "owner": "magit",
+        "repo": "magit",
+        "rev": "47f333e1fa989a81c0265d2f523aff4108254238",
         "type": "github"
       },
       "original": {
-        "owner": "zevlg",
-        "repo": "ellit-org.el",
+        "owner": "magit",
+        "repo": "magit",
+        "type": "github"
+      }
+    },
+    "magit": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705160738,
+        "narHash": "sha256-ssnlrGvwsEZL9b5n+xJau4iKBhwZdyzRjsnwwxLAsPA=",
+        "owner": "magit",
+        "repo": "magit",
+        "rev": "47f333e1fa989a81c0265d2f523aff4108254238",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magit",
+        "repo": "magit",
         "type": "github"
       }
     },
@@ -116,12 +132,14 @@
       "inputs": {
         "compat": "compat",
         "dash": "dash",
-        "ellit-org": "ellit-org",
+        "git-commit": "git-commit",
+        "magit": "magit",
         "magit-section": "magit-section",
         "marginalia": "marginalia",
         "modus-themes": "modus-themes",
         "nix-mode": "nix-mode",
-        "vertico": "vertico"
+        "vertico": "vertico",
+        "with-editor": "with-editor"
       }
     },
     "vertico": {
@@ -137,6 +155,22 @@
       "original": {
         "owner": "minad",
         "repo": "vertico",
+        "type": "github"
+      }
+    },
+    "with-editor": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704148003,
+        "narHash": "sha256-zhd46lOk0ucCtXFtqDNtpVI5DqQ4cGBgxEY7B9ibPgM=",
+        "owner": "magit",
+        "repo": "with-editor",
+        "rev": "d43db3c58c34d4dbc3ce6f68ec24fecf3452b20e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magit",
+        "repo": "with-editor",
         "type": "github"
       }
     }

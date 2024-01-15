@@ -14,10 +14,16 @@
       repo = "dash.el";
       type = "github";
     };
-    ellit-org = {
+    git-commit = {
       flake = false;
-      owner = "zevlg";
-      repo = "ellit-org.el";
+      owner = "magit";
+      repo = "magit";
+      type = "github";
+    };
+    magit = {
+      flake = false;
+      owner = "magit";
+      repo = "magit";
       type = "github";
     };
     magit-section = {
@@ -48,6 +54,12 @@
       flake = false;
       owner = "minad";
       repo = "vertico";
+      type = "github";
+    };
+    with-editor = {
+      flake = false;
+      owner = "magit";
+      repo = "with-editor";
       type = "github";
     };
   };

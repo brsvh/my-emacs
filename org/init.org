@@ -240,6 +240,15 @@ Consequently, I bind the commands I require to the letter keys with
 {{{kbd(C-c)}}} as the prefix key. These letter keys are also employed
 for categorization purposes.
 
+- {{{kbd(v)}}}: Version Control map.
+
+#+begin_src emacs-lisp
+  (defvar ctl-c-v-map (make-keymap)
+    "Default keymap for C-c v commands.")
+
+  (keymap-set ctl-c-map "v" ctl-c-v-map)
+#+end_src
+
 ** Init Conventions
 
 The [[info:elisp#Startup Summary][startup]] of Emacs is rather
@@ -440,7 +449,7 @@ rectification.
      my--reset-modus-themes-line-number-face-when-highlight))
 #+end_src
 
-* Multilingual Environment
+* Multilingual environment
 
 As a polyglot (it may not qualify as such, but I want to be.), it is
 only natural for me to use Emacs for editing text in various languages.
@@ -571,6 +580,59 @@ permissions.
     (emacs-startup-hook . marginalia-mode))
 #+end_src
 
+* Project management
+
+When I am engaged in programming or writing, the majority of my trivial
+tasks, operations, and text editing are project-based, that is, a
+collection of files used for the production of one or more products.
+Consequently, I aspire for Emacs to accomplish the majority of
+interactive operations required during my work within projects, such as
+file positioning, symbol searching, version management, task planning,
+and so forth.
+
+** Version control
+
+Version control is a system that records changes to a file or set of
+files over time so that you can recall specific versions later, this is
+particularly beneficial for maintaining records and facilitating
+collaborative work.  In the majority of my tasks, I incessantly need to
+check out remote repositories, manipulate local version data, and push
+to remote repositories.  Fortunately, Emacs significantly alleviates the
+stress associated with these activities.
+
+*** Git
+
+Git is currently the most popular distributed version control system in
+the world, and naturally, I cannot afford to be the exception in not
+using it.  Emacs, on the other hand, is the optimal client for Git,
+specifically, Emacs equipped with Magit[fn:6].  I am acquainted with
+numerous users who have newly joined the Emacs community, their
+migration from other editors to Emacs is primarily motivated by the
+desire to use magit.  Of course, I too wish to use the best resources,
+from Emacs to magit.
+
+Magit is ready to use out of the box, yet I have still made some
+modifications.  I have unbound its default annoying key bindings,
+{{{kbd(C-x g)}}} and {{{kbd(C-c g)}}}, and we have bound all the magit
+commands required to the {{{kbd(C-c v g)}}} prefix, which signifies the
+Git subcategory of the Version control category.
+
+#+begin_src emacs-lisp
+  (defvar ctl-c-v-g-map (make-keymap)
+    "Default keymap for C-c v g commands.")
+
+  (keymap-set ctl-c-v-map "g" ctl-c-v-g-map)
+
+  (use-package magit
+    :ensure magit
+    :init
+    (setq-default magit-define-global-key-bindings nil)
+    :bind
+    (:map ctl-c-v-g-map
+     ("d" . magit-dispatch)
+     ("s" . magit-status)))
+#+end_src
+
 * Writing
 
 Emacs is an indispensable companion for authors, the abundant extensions
@@ -604,7 +666,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:6], including:
+Emacs supports a variety of line-folding methods[fn:7], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -686,4 +748,6 @@ predicated on the extension name.
 
 [fn:5] Marginalia, https://github.com/minad/marginalia
 
-[fn:6] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:6] Magit, https://magit.vc
+
+[fn:7] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
