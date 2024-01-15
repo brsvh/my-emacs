@@ -462,6 +462,30 @@ instances where the encoding is explicitly delineated otherwise.
     (prefer-coding-system 'utf-8))
 #+end_src
 
+** Multibyte characters
+
+In the realm of character encoding, the most of linguistic symbols in
+the world are composed of multiple bytes, and the range of byte values
+can confirm the language to which the character belongs.  Within Emacs,
+~character~ offers a predefined description, referred to as *Category*,
+thereby enabling additional settings for different languages via
+Category.
+
+*** Multibyte character text wrapping
+
+Emacs supports a variety of line wrapping methods, primarily based on
+the value of ~fill-column~ to perform hard or soft wrap.  By default,
+its compatibility with multibyte characters is subpar, manifesting as
+line wrapping at incorrect positions.  I default to enabling word wrap
+based on Category.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq-default word-wrap-by-category t))
+#+end_src
+
 * Completion
 
 The completion feature in Emacs significantly enhances my interaction
