@@ -241,11 +241,16 @@ Consequently, I bind the commands I require to the letter keys with
 for categorization purposes.
 
 - {{{kbd(v)}}}: Version Control map.
+- {{{kbd(n)}}}: Nix(Flake) map.
 
 #+begin_src emacs-lisp
+  (defvar ctl-c-n-map (make-keymap)
+    "Default keymap for C-c n commands.")
+
   (defvar ctl-c-v-map (make-keymap)
     "Default keymap for C-c v commands.")
 
+  (keymap-set ctl-c-map "n" ctl-c-n-map)
   (keymap-set ctl-c-map "v" ctl-c-v-map)
 #+end_src
 
@@ -552,13 +557,24 @@ the candidates.
 
     (setq vertico-cycle t)
     :hook
-    (emacs-startup-hook . vertico-mode)
-    (vertico-mode-hook . vertico-mouse-mode)
+    (emacs-startup-hook . vertico-mode))
+
+  (use-package vertico-directory
+    :ensure vertico
+    :pin gnu
+    :after vertico
     :bind
     (:map vertico-map
      ("<return>" . vertico-directory-enter)
      ("<backspace>" . vertico-directory-delete-char)
      ("M-<backspace>" . vertico-directory-delete-word)))
+
+  (use-package vertico-mouse
+    :ensure vertico
+    :pin gnu
+    :after vertico
+    :hook
+    (vertico-mode-hook . vertico-mouse-mode))
 #+end_src
 
 *** Show mariginalia of completions
@@ -633,6 +649,43 @@ Git subcategory of the Version control category.
      ("s" . magit-status)))
 #+end_src
 
+** Nix
+
+Nix is the tool I use to manage dependencies in the most of my
+programming projects, specifically, which use Nix Flake.  I am currently
+experimenting with Nix3.el[fn:7], an Emacs Nix Interface akin to Magit,
+which I employ to manage the inputs and outputs of Nix Flake projects,
+as well as interactive operations that I prefer not to execute outside
+of Emacs.
+
+I have bound most of the Nix3.el commands to the {{{kbd(C-c n)}}} prefix
+keymap, where {{{kbd(n)}}} subtly signifies Nix.
+
+#+begin_src emacs-lisp
+  (use-package nix3
+    :ensure nix3
+    :bind
+    (:map ctl-c-n-map
+     ("b" . nix3-build)
+     ("d" . nix3-transient)
+     ("e" . nix3-flake-edit)
+     ("i" . nix3-flake-init)
+     ("n" . nix3-flake-new)
+     ("r" . nix3-run)
+     ("s" . nix3-flake-show)))
+#+end_src
+
+Furthermore, the section that appends inputs and outputs information to
+the *Magit Status Buffer* by enabling ~magit-nix3-flake-mode~.
+
+#+begin_src emacs-lisp
+  (use-package magit-nix3
+    :ensure magit-nix3
+    :after magit-status
+    :hook
+    (magit-status-mode-hook . magit-nix3-flake-mode))
+#+end_src
+
 * Writing
 
 Emacs is an indispensable companion for authors, the abundant extensions
@@ -666,7 +719,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:7], including:
+Emacs supports a variety of line-folding methods[fn:8], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -750,4 +803,6 @@ predicated on the extension name.
 
 [fn:6] Magit, https://magit.vc
 
-[fn:7] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:7] Nix3.el, https://github.com/emacs-twist/nix3.el
+
+[fn:8] Line Wrap, https://www.emacswiki.org/emacs/LineWrap

@@ -26,6 +26,12 @@
       repo = "magit";
       type = "github";
     };
+    magit-nix3 = {
+      flake = false;
+      owner = "emacs-twist";
+      repo = "nix3.el";
+      type = "github";
+    };
     magit-section = {
       flake = false;
       owner = "magit";
@@ -48,6 +54,24 @@
       flake = false;
       owner = "NixOS";
       repo = "nix-mode";
+      type = "github";
+    };
+    nix3 = {
+      flake = false;
+      owner = "emacs-twist";
+      repo = "nix3.el";
+      type = "github";
+    };
+    promise = {
+      flake = false;
+      owner = "chuntaro";
+      repo = "emacs-promise";
+      type = "github";
+    };
+    "s" = {
+      flake = false;
+      owner = "magnars";
+      repo = "s.el";
       type = "github";
     };
     vertico = {
