@@ -160,6 +160,39 @@
         "type": "github"
       }
     },
+    "org": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705233034,
+        "narHash": "sha256-q56UK8Yj0JmfSHKSVJQvr2/sEEXTuMysydMiy0aG6us=",
+        "ref": "bugfix",
+        "rev": "25c786f0fb5e49af27ed1790f966b3958e210d7f",
+        "revCount": 26077,
+        "type": "git",
+        "url": "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+      },
+      "original": {
+        "ref": "bugfix",
+        "type": "git",
+        "url": "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+      }
+    },
+    "org-modern": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704166155,
+        "narHash": "sha256-d1PxoFwRn+Xo7bRFw87O8j6wsz/pLjWd+fvnpRkqcsA=",
+        "owner": "minad",
+        "repo": "org-modern",
+        "rev": "5f056aad428a0e4207012a0efa447aacb74c75b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "minad",
+        "repo": "org-modern",
+        "type": "github"
+      }
+    },
     "promise": {
       "flake": false,
       "locked": {
@@ -188,6 +221,8 @@
         "modus-themes": "modus-themes",
         "nix-mode": "nix-mode",
         "nix3": "nix3",
+        "org": "org",
+        "org-modern": "org-modern",
         "promise": "promise",
         "s": "s",
         "vertico": "vertico",

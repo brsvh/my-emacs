@@ -62,6 +62,18 @@
       repo = "nix3.el";
       type = "github";
     };
+    org = {
+      flake = false;
+      ref = "bugfix";
+      type = "git";
+      url = "https://git.savannah.gnu.org/git/emacs/org-mode.git";
+    };
+    org-modern = {
+      flake = false;
+      owner = "minad";
+      repo = "org-modern";
+      type = "github";
+    };
     promise = {
       flake = false;
       owner = "chuntaro";

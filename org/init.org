@@ -24,7 +24,7 @@
 #+author: Burgess Chang
 #+email: (concat bsc at-sign brsvh dot org)
 
-* File header                                                :nonexport:
+* File header :nonexport:
 
 The tangled file will follow [[info:elisp#Library Headers]].
 
@@ -273,7 +273,7 @@ be activated through ~after-init-hook~.
     (after-init-hook emacs-startup-hook))
 #+end_src
 
-* Libraries                                                  :nonexport:
+* Libraries :nonexport:
 
 ** ~cl-lib~
 
@@ -680,6 +680,7 @@ the *Magit Status Buffer* by enabling ~magit-nix3-flake-mode~.
 
 #+begin_src emacs-lisp
   (use-package magit-nix3
+    :disabled
     :ensure magit-nix3
     :after magit-status
     :hook
@@ -747,6 +748,61 @@ In the most of my cases, I employ the *Soft Wrap* method.
     (text-mode-hook . visual-line-mode))
 #+end_src
 
+** Writing with ~org-mode~
+
+*Org Mode* is a major mode within GNU Emacs for editing the org file
+format, and the org file format is a markup text language replete with
+rich features.  The majority of my plain text files are composed in the
+org file format.  I can leverage Emacs or other external tools (such as
+~pandoc~) to flexibly convert between org files and other file formats.
+Additionally, I use ~org-mode~ to attain superior computable tables
+(compared to Markdown), literate programming, and inline support for
+LaTeX.
+
+When I am use Org Mode for writing, superficially, my primary concern is
+aesthetics, hence I have racked my brains to strike a balance between
+pure text editing and modern appearance within Org Mode.  The majority
+of the time, I am concerned with the original content of paragraph text,
+thus I anticipate that the markup syntax used in Org Mode paragraphs
+retains the original characters, rather than being overlaid with other
+symbols or omitted.  This typically refers to hiding emphasis markers,
+descriptive links, etc.  However, beyond the content of the paragraphs,
+I desire some replacements for aesthetic design considerations, such as
+the heading star can use more visually pleasing symbols, tags or
+keywords can use special icons, etc.  Therefore, I use
+~org-modern~[fn:9] to enhance the appearance of Org Mode headings by
+replacing the asterisk symbols with more appealing circles, and it also
+enhances the looks of plain lists, todo items, and tables.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure org
+    :defer t
+    :config
+    (setq org-auto-align-tags nil
+          org-hide-emphasis-markers nil
+          org-pretty-entities t
+          org-special-ctrl-a/e t
+          org-startup-with-inline-images t
+          org-tags-column 0))
+
+  (use-package org-modern
+    :ensure org-modern
+    :after org
+    :hook
+    (org-mode-hook . org-modern-mode))
+#+end_src
+
+You may have noticed that I have activated an special option
+~org-special-ctrl-a/e~.  When I am editing the headline, I adjust the
+headline level with the tab key.  Therefore, {{{kbd(C-a)}}} returning to
+before the leading star is not suitable, as I invariably anticipate
+modifying the first word of the headline rather than altering the level.
+Set ~org-special-ctrl-a/e~ to shift the cursor to the beginning of the
+headline when {{{kbd(C-a)}}} is pressed.  The same applies to
+{{{kbd(C-e)}}}, which moves to the end of the headline when editing a
+folded block.
+
 * Programming
 
 Emacs is an exceptionally potent programming environment. However, it
@@ -806,3 +862,5 @@ predicated on the extension name.
 [fn:7] Nix3.el, https://github.com/emacs-twist/nix3.el
 
 [fn:8] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+
+[fn:9] Modern Org Style, https://github.com/minad/org-modern
