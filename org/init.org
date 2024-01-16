@@ -93,7 +93,8 @@ grows, adhering to conventions for functions, variables, key bindings,
 
 ** Naming conventions
 
-I adhere to a straightforward naming convention for functions and variables.
+I adhere to a straightforward naming convention for functions and
+variables.
 
 - Public functions and variables start with the prefix ~my-~.
 - Private or internal functions and variables start with the prefix
@@ -213,6 +214,115 @@ truncated as ~emacs-startup~.  Given my occasional propensity for
 oversight, which may lead to inconsistencies, it is imperative to ensure
 that ~use-package~ invariably employs the accurate hook name.
 
+*** My Custom Keyword /:keymap-set/ and /:kemap-unset/
+
+~use-package~ defaults to using keywords such as /:bind/,
+/:bind-keymap/, etc., to bind keys.  They are convenient but have an
+annoying issue - extremely unsightly indentation, as shown below.
+
+#+begin_example emacs-lisp
+  (use-package term
+    :bind (("C-c t" . term)
+           :map term-mode-map
+           ("M-p" . term-send-up)         ; good indent
+           ("M-n" . term-send-down)))
+
+  (use-package term
+    :bind (:map term-mode-map
+                ("M-p" . term-send-up)    ; indentation broken
+                ("M-n" . term-send-down)))
+#+end_example
+
+Consequently, I have crafted my own key binding keywords, /:keymap-set/,
+which encapsulate the newer ~keymap-set~ function.
+
+#+begin_src emacs-lisp
+  (use-package use-package
+    :preface
+    (defun my--use-package-normalize-keymap-set
+        (name keyword args &optional map)
+      "`use-package' :keymap-set normalizer."
+      (or map (setq map 'global-map))
+      (let ((args* args) (ctx-map map) result)
+        (while args*
+          (cond
+           ((and (consp (car args*))
+                   (or (stringp (caar args*))
+                       (vectorp (caar args*)))
+                   (or (use-package-recognize-function (cdar args*)
+                                                       t
+                                                       #'stringp)))
+            (setq result (nconc result (list (list map
+                                                   (caar args*)
+                                                   `',(cdar args*))))
+                  args* (cdr args*)))
+           ((keywordp (car args*))
+            (setq ctx-map (intern (substring (symbol-name (car args*)) 1))
+                  result (nconc result
+                                (my--use-package-normalize-keymap-set
+                                 name keyword (cdr args*) ctx-map))
+                  args* nil))
+           ((listp (car args*))
+            (setq result (nconc result
+                                (my--use-package-normalize-keymap-set
+                                 name keyword (car args*) ctx-map))
+                  args* (cdr args*)))
+           (t
+            (use-package-error
+             (concat (symbol-name name)
+                     " wants arguments acceptable to the `keymap-set'"
+                     " function, or a list of such values")))))
+        result))
+
+    (defun my--use-package-handle-keymap-set (name keyword args rest state)
+      "`use-package' handler of :keymap-set keyword."
+      (use-package-concat
+       (mapcar
+        #'(lambda (keybinding) `(keymap-set ,@keybinding))
+        args)
+       (use-package-process-keywords name rest state)))
+
+    (defun my--use-package-set-keyword (keyword position)
+      "Insert KEYWORD to `use-package-keywords' after POSITION."
+      (unless (member keyword use-package-keywords)
+        (unless (and (keywordp keyword)
+                     (keywordp position))
+          (error "KEYWORD and POSITION must be keyword"))
+        (setq use-package-keywords
+              (let* ((pos (cl-position position use-package-keywords))
+                     (head (cl-subseq use-package-keywords 0 (+ 1 pos)))
+                     (tail (nthcdr (+ 1 pos) use-package-keywords)))
+                (append head (list keyword) tail)))))
+
+    :init
+    (my--use-package-set-keyword :keymap-set :custom-face)
+
+    (defalias 'use-package-normalize/:keymap-set
+      'my--use-package-normalize-keymap-set)
+
+    (defalias 'use-package-handler/:keymap-set
+      'my--use-package-handle-keymap-set)
+
+    (defalias 'use-package-autoloads/:keymap-set
+      'use-package-autoloads-mode))
+#+end_src
+
+In this manner, a keymap can be specified for binding through a keyword
+named with the actual symbol name of keymap.
+
+#+begin_example emacs-lisp
+  (use-package foo
+    :commands (foo bar)
+    :keymap-set
+    ("C-c f" . foo)      ;; => (keymap-set global-map "C-c f" 'foo)
+    (:foo-mode-map
+     ("C-c f" . foo)     ;; => (keymap-set foo-mode-map "C-c f" 'foo)
+     ("C-c b" . bar)     ;; => (keymap-set foo-mode-map "C-c b" 'bar)
+     :bar-mode-map
+     (("C-c f" . foo)    ;; => (keymap-set bar-mode-map "C-c f" 'foo)
+      ("C-c b" . bar)))) ;; => (keymap-set bar-mode-map "C-c b" 'bar)
+#+end_example
+
 ** Keybinding conventions
 
 For all commands, both those I have created and those from other
@@ -240,16 +350,21 @@ Consequently, I bind the commands I require to the letter keys with
 {{{kbd(C-c)}}} as the prefix key. These letter keys are also employed
 for categorization purposes.
 
-- {{{kbd(v)}}}: Version Control map.
-- {{{kbd(n)}}}: Nix(Flake) map.
+- {{{kbd(m)}}}: Major mode commands.
+- {{{kbd(n)}}}: Nix(Flake) commands.
+- {{{kbd(v)}}}: Version Control commands.
 
 #+begin_src emacs-lisp
+  (defvar ctl-c-m-map (make-keymap)
+    "Default keymap for C-c m commands.")
+
   (defvar ctl-c-n-map (make-keymap)
     "Default keymap for C-c n commands.")
 
   (defvar ctl-c-v-map (make-keymap)
     "Default keymap for C-c v commands.")
 
+  (keymap-set ctl-c-map "m" ctl-c-m-map)
   (keymap-set ctl-c-map "n" ctl-c-n-map)
   (keymap-set ctl-c-map "v" ctl-c-v-map)
 #+end_src
@@ -563,8 +678,8 @@ the candidates.
     :ensure vertico
     :pin gnu
     :after vertico
-    :bind
-    (:map vertico-map
+    :keymap-set
+    (:vertico-map
      ("<return>" . vertico-directory-enter)
      ("<backspace>" . vertico-directory-delete-char)
      ("M-<backspace>" . vertico-directory-delete-word)))
@@ -643,8 +758,8 @@ Git subcategory of the Version control category.
     :ensure magit
     :init
     (setq-default magit-define-global-key-bindings nil)
-    :bind
-    (:map ctl-c-v-g-map
+    :keymap-set
+    (:ctl-c-v-g-map
      ("d" . magit-dispatch)
      ("s" . magit-status)))
 #+end_src
@@ -664,8 +779,8 @@ keymap, where {{{kbd(n)}}} subtly signifies Nix.
 #+begin_src emacs-lisp
   (use-package nix3
     :ensure nix3
-    :bind
-    (:map ctl-c-n-map
+    :keymap-set
+    (:ctl-c-n-map
      ("b" . nix3-build)
      ("d" . nix3-transient)
      ("e" . nix3-flake-edit)
@@ -803,6 +918,26 @@ headline when {{{kbd(C-a)}}} is pressed.  The same applies to
 {{{kbd(C-e)}}}, which moves to the end of the headline when editing a
 folded block.
 
+*** Displaying Outline on the Sidebar
+
+When I am composing or perusing an exceedingly lengthy org, I anticipate
+the presence of a sidebar, listing all the headings within the Org file,
+essentially an outline preview.  This is one of the most coveted
+features for those using Org Mode for writing, as it facilitates
+effortless navigation between chapters and scenes in novels or other
+extensive works.  I use ~org-sidebar-tree~[fn:10] to achieve this.
+
+#+begin_src emacs-lisp
+  (use-package org-side-tree
+    :ensure org-side-tree
+    :after org
+    :commands
+    (org-side-tree)
+    :keymap-set
+    (:org-mode-map
+     ("C-c m o" . org-side-tree)))
+#+end_src
+
 * Programming
 
 Emacs is an exceptionally potent programming environment. However, it
@@ -820,8 +955,8 @@ C-v)}}} key in *Emacs Lisp Mode*.  Here, {{{kbd(v)}}} implies verbose.
 
 #+begin_src emacs-lisp
   (use-package pp
-    :bind
-    (:map emacs-lisp-mode-map
+    :keymap-set
+    (:emacs-lisp-mode-map
      ("C-c C-v" . pp-macroexpand-last-sexp)))
 #+end_src
 
@@ -864,3 +999,5 @@ predicated on the extension name.
 [fn:8] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
 [fn:9] Modern Org Style, https://github.com/minad/org-modern
+
+[fn:10] Org Side Tree, https://github.com/localauthor/org-side-tree

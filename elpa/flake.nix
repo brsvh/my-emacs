@@ -74,6 +74,12 @@
       repo = "org-modern";
       type = "github";
     };
+    org-side-tree = {
+      flake = false;
+      owner = "localauthor";
+      repo = "org-side-tree";
+      type = "github";
+    };
     promise = {
       flake = false;
       owner = "chuntaro";

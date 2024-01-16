@@ -193,6 +193,22 @@
         "type": "github"
       }
     },
+    "org-side-tree": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704204195,
+        "narHash": "sha256-NOYt8GTIFBqOmKWmrjoqIWDD5GXsofc7w1ZXfcnHvJ0=",
+        "owner": "localauthor",
+        "repo": "org-side-tree",
+        "rev": "77e88e8c528b809f24827c7cd986580d5bc4cd17",
+        "type": "github"
+      },
+      "original": {
+        "owner": "localauthor",
+        "repo": "org-side-tree",
+        "type": "github"
+      }
+    },
     "promise": {
       "flake": false,
       "locked": {
@@ -223,6 +239,7 @@
         "nix3": "nix3",
         "org": "org",
         "org-modern": "org-modern",
+        "org-side-tree": "org-side-tree",
         "promise": "promise",
         "s": "s",
         "vertico": "vertico",
