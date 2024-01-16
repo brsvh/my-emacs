@@ -8,6 +8,5 @@
               (fill-column . 72)
               (indent-tabs-mode . nil)
               (org-link-descriptive . nil)
-              (org-tags-column . -72)
               (sentence-end-double-space . t)))
  (prog-mode . ((eval . (display-fill-column-indicator-mode 1)))))
