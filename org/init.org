@@ -400,6 +400,28 @@ adding numerous Common Lisp functions and control structures.
   (use-package cl-lib)
 #+end_src
 
+** ~transient~
+
+~transient~[fn:3] implements an abstraction that encompasses a prefix
+command, infix arguments, and suffix commands, which is utilized to
+construct an interface for command-line programs.
+
+It preserves levels, values, and history in a directory named
+=transient= located under ~user-emacs-directory~, thereby adhering to my
+[[*File conventions]].
+
+#+begin_src emacs-lisp
+  (use-package transient
+    :ensure transient
+    :defer t
+    :config
+    (let ((default-directory
+           (expand-file-name "transient/" my-state-directory)))
+      (setq transient-history-file (expand-file-name "history.el")
+            transient-levels-file (expand-file-name "levels.el")
+            transient-values-file (expand-file-name "values.el"))))
+#+end_src
+
 * Customization system
 
 Emacs is a real-time, extensible, and customizable editor.  Its
@@ -481,7 +503,7 @@ echo area.
 Emacs' inherent theme is somewhat lackluster, lacking the polished and
 lustrous appearance that typically appeals to novices, often resulting
 in a superficial and unfavorable initial impression of the
-system. Subsequently, I use Modus Themes[fn:3] that enhances Emacs'
+system. Subsequently, I use Modus Themes[fn:4] that enhances Emacs'
 aesthetic appeal, rendering it more user-friendly.
 
 #+begin_src emacs-lisp
@@ -631,7 +653,7 @@ method for both.
 
 ** Input completion
 
-My choice is to provided input completion support with ~vertico~ [fn:4],
+My choice is to provided input completion support with ~vertico~ [fn:5],
 which is a performant, minimalistic vertical completion UI for Emacs.
 It reuses built-in facilities for full compatibility with Emacs'
 completion commands and tables.
@@ -696,7 +718,7 @@ the candidates.
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.[fn:5]
+of the minibuffer for your completion candidates.[fn:6]
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -736,7 +758,7 @@ stress associated with these activities.
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:6].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:7].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -768,7 +790,7 @@ Git subcategory of the Version control category.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:7], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:8], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -835,7 +857,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:8], including:
+Emacs supports a variety of line-folding methods[fn:9], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -885,7 +907,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:9] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:10] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -925,7 +947,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:10] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:11] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -986,18 +1008,20 @@ predicated on the extension name.
 
 [fn:2] Twist, https://github.com/emacs-twist/twist.nix
 
-[fn:3] Modus Themes, https://protesilaos.com/emacs/modus-themes
+[fn:3] Transient, https://github.com/magit/transient
 
-[fn:4] Vertico, https://github.com/minad/vertico
+[fn:4] Modus Themes, https://protesilaos.com/emacs/modus-themes
 
-[fn:5] Marginalia, https://github.com/minad/marginalia
+[fn:5] Vertico, https://github.com/minad/vertico
 
-[fn:6] Magit, https://magit.vc
+[fn:6] Marginalia, https://github.com/minad/marginalia
 
-[fn:7] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:7] Magit, https://magit.vc
 
-[fn:8] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:8] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:9] Modern Org Style, https://github.com/minad/org-modern
+[fn:9] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:10] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:10] Modern Org Style, https://github.com/minad/org-modern
+
+[fn:11] Org Side Tree, https://github.com/localauthor/org-side-tree
