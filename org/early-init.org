@@ -24,7 +24,7 @@
 #+author: Burgess Chang
 #+email: (concat bsc at-sign brsvh dot org)
 
-* File header                                                :nonexport:
+* File header :nonexport:
 
 The tangled file will follow [[info:elisp#Library Headers]].
 
@@ -95,7 +95,7 @@ system.
       (`unix `(not (memq system-type '(ms-dos windows-nt cygwin))))
       ((or `macOS `osx) `(eq system-type 'darwin))
       (`linux `(not (memq system-type
-			  '(darwin ms-dos windows-nt cygwin))))
+                          '(darwin ms-dos windows-nt cygwin))))
       (`windows `(memq system-type '(ms-dos windows-nt cygwin)))))
 
   (defmacro my-get-xdg-base-dir (concept)
@@ -103,37 +103,37 @@ system.
   Allowable concepts (not quoted) are `cache', `config', `data' and
    `state'."
     (let* ((concepts '((cache . ("XDG_CACHE_HOME" . "~/.cache/"))
-		       (config . ("XDG_CONFIG_HOME" . "~/.config/"))
-		       (data . ("XDG_DATA_HOME" . "~/.local/share/"))
-		       (state . ("XDG_STATE_HOME" . "~/.local/state/")))))
+                       (config . ("XDG_CONFIG_HOME" . "~/.config/"))
+                       (data . ("XDG_DATA_HOME" . "~/.local/share/"))
+                       (state . ("XDG_STATE_HOME" . "~/.local/state/")))))
       `(let ((default-cons (cdr (assoc ',concept ',concepts))))
-	 (expand-file-name
-	  (or (getenv (car default-cons))
-	      (cdr default-cons))))))
+         (expand-file-name
+          (or (getenv (car default-cons))
+              (cdr default-cons))))))
 
 
   (defconst my-cache-directory (if (my-operating-system-p linux)
-				   (expand-file-name
-				    "emacs/"
-				    (my-get-xdg-base-dir cache))
-				 user-emacs-directory)
+                                   (expand-file-name
+                                    "emacs/"
+                                    (my-get-xdg-base-dir cache))
+                                 user-emacs-directory)
     "Directory beneath which additional volatile files are placed.")
 
   (defconst my-config-directory user-emacs-directory
     "Directory beneath which additional config files are placed.")
 
   (defconst my-data-directory (if (my-operating-system-p linux)
-				  (expand-file-name
-				   "emacs/"
-				   (my-get-xdg-base-dir data))
-				user-emacs-directory)
+                                  (expand-file-name
+                                   "emacs/"
+                                   (my-get-xdg-base-dir data))
+                                user-emacs-directory)
     "Directory beneath which additional non-volatile files are placed.")
 
   (defconst my-state-directory (if (my-operating-system-p linux)
-				   (expand-file-name
-				    "emacs/"
-				    (my-get-xdg-base-dir state))
-				 user-emacs-directory)
+                                   (expand-file-name
+                                    "emacs/"
+                                    (my-get-xdg-base-dir state))
+                                 user-emacs-directory)
     "Directory beneath which additional state files are placed.")
 #+end_src
 
