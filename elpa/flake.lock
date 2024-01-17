@@ -112,6 +112,22 @@
         "type": "github"
       }
     },
+    "minions": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704147651,
+        "narHash": "sha256-YVH/f8wwrDo85b5Fx1y0X0SFWkoOvPKoieGgqN1PgRw=",
+        "owner": "tarsius",
+        "repo": "minions",
+        "rev": "07caa8c30b12c35f3fe563a036f9823c4a6a5f01",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tarsius",
+        "repo": "minions",
+        "type": "github"
+      }
+    },
     "modus-themes": {
       "flake": false,
       "locked": {
@@ -250,6 +266,7 @@
         "magit-nix3": "magit-nix3",
         "magit-section": "magit-section",
         "marginalia": "marginalia",
+        "minions": "minions",
         "modus-themes": "modus-themes",
         "moody": "moody",
         "nix-mode": "nix-mode",

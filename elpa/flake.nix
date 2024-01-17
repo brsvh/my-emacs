@@ -44,6 +44,12 @@
       repo = "marginalia";
       type = "github";
     };
+    minions = {
+      flake = false;
+      owner = "tarsius";
+      repo = "minions";
+      type = "github";
+    };
     modus-themes = {
       flake = false;
       owner = "protesilaos";
