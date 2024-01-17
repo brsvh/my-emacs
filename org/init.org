@@ -214,7 +214,7 @@ truncated as ~emacs-startup~.  Given my occasional propensity for
 oversight, which may lead to inconsistencies, it is imperative to ensure
 that ~use-package~ invariably employs the accurate hook name.
 
-*** My Custom Keyword /:keymap-set/ and /:kemap-unset/
+*** My Custom Keyword /:keymap-set/
 
 ~use-package~ defaults to using keywords such as /:bind/,
 /:bind-keymap/, etc., to bind keys.  They are convenient but have an
@@ -481,6 +481,40 @@ to be done in ~early-init~[fn:1].
     (scroll-bar-mode -1))
 #+end_src
 
+*** Mode Line
+
+The [[info:emacs#Mode Line][Mode Line]], situated towards the bottom of
+Emacs, provides details about the current buffer, encompassing aspects
+such as encoding, buffer size, cursor position, major mode, and minor
+mode.
+
+I employ moody[fn:4] to acquire a mode line styled with tabs and ribbons.
+Its merit lies in its minimalistic alterations to the mode line, merely
+adding or substituting a select few elements.
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :ensure moody
+    :hook
+    (emacs-startup-hook . moody-replace-eldoc-minibuffer-message-function)
+    (emacs-startup-hook . moody-replace-mode-line-buffer-identification)
+    (emacs-startup-hook . moody-replace-vc-mode))
+#+end_src
+
+By default, Emacs draws underlines at the baseline of the font, and some
+elements in the Mode Line, such as *Buffer Name* and *Version Control
+Menu*, are underlined.  This results in a conspicuous and unsightly
+underline displayed in the Mode Line.  I have modified
+~x-underline-at-descent-line~ to ~t~, instructing Emacs to draw
+underlines at the same height as the font descent line.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq-default x-underline-at-descent-line t))  
+#+end_src
+
 ** Default startup screen
 
 Emacs exhibits a *\*GNU Emacs\** buffer, which I find to be of limited
@@ -503,12 +537,18 @@ echo area.
 Emacs' inherent theme is somewhat lackluster, lacking the polished and
 lustrous appearance that typically appeals to novices, often resulting
 in a superficial and unfavorable initial impression of the
-system. Subsequently, I use Modus Themes[fn:4] that enhances Emacs'
+system. Subsequently, I use Modus Themes[fn:5] that enhances Emacs'
 aesthetic appeal, rendering it more user-friendly.
 
 #+begin_src emacs-lisp
   (use-package modus-themes
     :ensure modus-themes
+    :preface
+    (defun my-theme-init ()
+      "Initialize theme."
+      (if (display-graphic-p)
+          (load-theme 'modus-operandi-tinted :no-confirm)
+        (load-theme 'modus-vivendi-tinted :no-confirm)))
     :config
     (setq modus-themes-custom-auto-reload t
           modus-themes-bold-constructs t
@@ -524,10 +564,8 @@ aesthetic appeal, rendering it more user-friendly.
                                   (2 . (1.3 heavy))
                                   (3 . (1.2 bold))
                                   (t . (1.1 semibold))))
-
-    (if (display-graphic-p)
-        (load-theme 'modus-operandi-tinted :no-confirm)
-      (load-theme 'modus-vivendi-tinted :no-confirm)))
+    :hook
+    (after-init-hook . my-theme-init))
 #+end_src
 
 As you may have noticed, I have used a rudimentary configuration of
@@ -538,6 +576,19 @@ characters, such as remote access via SSH or launching Emacs in a
 terminal.  Predominantly, I desire a more conspicuous style for my Emacs
 interface, hence you observe my activation of extensive italic and bold
 support.
+
+By default, Mode Line renders a box effect, which is essentially a
+border around the Mode Line. I aspire for a borderless modeline, which
+can be achieved through ~modus-themes-common-palette-overrides~.
+
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :config
+    (push '(border-mode-line-active unspecified)
+          modus-themes-common-palette-overrides)
+    (push '(border-mode-line-inactive unspecified)
+          modus-themes-common-palette-overrides))
+#+end_src
 
 Furthermore, there is an additional rectification wherein I have ensured
 uniformity between the background color of the current line and the
@@ -653,7 +704,7 @@ method for both.
 
 ** Input completion
 
-My choice is to provided input completion support with ~vertico~ [fn:5],
+My choice is to provided input completion support with ~vertico~ [fn:6],
 which is a performant, minimalistic vertical completion UI for Emacs.
 It reuses built-in facilities for full compatibility with Emacs'
 completion commands and tables.
@@ -718,7 +769,7 @@ the candidates.
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.[fn:6]
+of the minibuffer for your completion candidates.[fn:7]
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -758,7 +809,7 @@ stress associated with these activities.
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:7].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:8].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -790,7 +841,7 @@ Git subcategory of the Version control category.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:8], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:9], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -857,7 +908,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:9], including:
+Emacs supports a variety of line-folding methods[fn:10], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -907,7 +958,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:10] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:11] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -947,7 +998,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:11] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:12] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -1010,18 +1061,20 @@ predicated on the extension name.
 
 [fn:3] Transient, https://github.com/magit/transient
 
-[fn:4] Modus Themes, https://protesilaos.com/emacs/modus-themes
+[fn:4] Moody Mode Line, https://github.com/tarsius/moody
 
-[fn:5] Vertico, https://github.com/minad/vertico
+[fn:5] Modus Themes, https://protesilaos.com/emacs/modus-themes
 
-[fn:6] Marginalia, https://github.com/minad/marginalia
+[fn:6] Vertico, https://github.com/minad/vertico
 
-[fn:7] Magit, https://magit.vc
+[fn:7] Marginalia, https://github.com/minad/marginalia
 
-[fn:8] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:8] Magit, https://magit.vc
 
-[fn:9] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:9] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:10] Modern Org Style, https://github.com/minad/org-modern
+[fn:10] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:11] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:11] Modern Org Style, https://github.com/minad/org-modern
+
+[fn:12] Org Side Tree, https://github.com/localauthor/org-side-tree

@@ -50,6 +50,12 @@
       repo = "modus-themes";
       type = "github";
     };
+    moody = {
+      flake = false;
+      owner = "tarsius";
+      repo = "moody";
+      type = "github";
+    };
     nix-mode = {
       flake = false;
       owner = "NixOS";
@@ -90,6 +96,12 @@
       flake = false;
       owner = "magnars";
       repo = "s.el";
+      type = "github";
+    };
+    transient = {
+      flake = false;
+      owner = "magit";
+      repo = "transient";
       type = "github";
     };
     vertico = {
