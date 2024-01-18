@@ -24,6 +24,7 @@
 
   perSystem =
     { pkgs
+    , system
     , ...
     }:
     {
@@ -40,6 +41,12 @@
               {
                 name = "nix";
                 package = pkgs.nixUnstable;
+                category = "development";
+              }
+              {
+                name = "emacs";
+                command = "nix run .#nogui.wrappers.tmpdir";
+                help = "The extensible, customizable GNU text editor";
                 category = "development";
               }
             ];
