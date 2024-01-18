@@ -276,20 +276,46 @@
                 , ...
                 }:
                 let
+                  emacs-git-wayland = (
+                    (
+                      emacs-git.override (_: { withPgtk = true; })
+                    ).overrideAttrs (
+                      oa: {
+                        name = "${oa.name}-wayland";
+                      }
+                    )
+                  );
+
+                  emacs-git-x11 = (
+                    (
+                      emacs-git.override (_: { withGTK3 = true; })
+                    ).overrideAttrs (
+                      oa: {
+                        name = "${oa.name}-x11";
+                      }
+                    )
+                  );
+
+                  emacs-git-nogui = (
+                    (
+                      emacs-git.override (_: { noGui = true; })
+                    ).overrideAttrs (
+                      oa: {
+                        name = "${oa.name}-nogui";
+                      }
+                    )
+                  );
+
                   emacsPackage =
-                    emacs-git.override
-                      (
-                        _:
-                        if wayland
-                        then { withPgtk = true; }
-                        else
-                          if x11
-                          then { withGTK3 = true; }
-                          else
-                            if noGui
-                            then { noGui = true; }
-                            else { }
-                      );
+                    if wayland
+                    then emacs-git-wayland
+                    else
+                      if x11
+                      then emacs-git-x11
+                      else
+                        if noGui
+                        then emacs-git-nogui
+                        else emacs-git;
                 in
                 (
                   emacsTwist {
