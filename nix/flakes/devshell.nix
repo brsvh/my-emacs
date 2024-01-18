@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 { inputs
+, self
 , ...
 }:
 {
@@ -24,6 +25,7 @@
 
   perSystem =
     { pkgs
+    , self'
     , system
     , ...
     }:
@@ -45,7 +47,7 @@
               }
               {
                 name = "emacs";
-                command = "nix run .#nogui.wrappers.tmpdir";
+                package = self'.packages.nogui.wrappers.tmpdir;
                 help = "The extensible, customizable GNU text editor";
                 category = "development";
               }
