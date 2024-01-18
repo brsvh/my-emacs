@@ -270,8 +270,9 @@
 
               makeEmacs =
                 { nativeCompileAheadDefault ? true
-                , wayland ? true
-                , x11 ? !wayland
+                , wayland ? false
+                , x11 ? false
+                , noGui ? !(wayland || x11)
                 , ...
                 }:
                 let
@@ -284,7 +285,10 @@
                         else
                           if x11
                           then { withGTK3 = true; }
-                          else { }
+                          else
+                            if noGui
+                            then { noGui = true; }
+                            else { }
                       );
                 in
                 (
@@ -329,8 +333,15 @@
                 (
                   _:
                   {
-                    wayland = false;
                     x11 = true;
+                  }
+                );
+
+              emacsD-noGui = emacsD.override
+                (
+                  _:
+                  {
+                    noGui = true;
                   }
                 );
 
@@ -371,7 +382,8 @@
                   emacsD-early-init-el
                   emacsD-init-el
                   emacsD-wayland
-                  emacsD-x11;
+                  emacsD-x11
+                  emacsD-noGui;
 
                 pgtk = emacsD-wayland // {
                   wrappers = optionalAttrs pkgs.stdenv.isLinux {
@@ -398,6 +410,20 @@
                         }
                         "emacs.d"
                         emacsD-x11;
+                  };
+                };
+
+                nogui = emacsD-noGui // {
+                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
+                    tmpdir =
+                      pkgs.callPackage
+                        ./nix/wrapper.nix
+                        {
+                          early-init = emacsD-early-init-el;
+                          init = emacsD-init-el;
+                        }
+                        "emacs.d"
+                        emacsD-noGui;
                   };
                 };
               };
