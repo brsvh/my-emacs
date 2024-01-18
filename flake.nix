@@ -420,7 +420,7 @@
                           early-init = emacsD-early-init-el;
                           init = emacsD-init-el;
                         }
-                        "emacs.d"
+                        "emacs"
                         emacsD-wayland;
                   };
                 };
@@ -434,7 +434,7 @@
                           early-init = emacsD-early-init-el;
                           init = emacsD-init-el;
                         }
-                        "emacs.d"
+                        "emacs"
                         emacsD-x11;
                   };
                 };
@@ -448,7 +448,7 @@
                           early-init = emacsD-early-init-el;
                           init = emacsD-init-el;
                         }
-                        "emacs.d"
+                        "emacs"
                         emacsD-noGui;
                   };
                 };
