@@ -90,6 +90,8 @@ in
 
         directory = config.emacs.d.directory;
 
+        createManifestFile = true;
+
         config =
           if config.emacs.d.platform == "wayland"
           then packages.${pkgs.system}.emacsD-wayland
@@ -101,6 +103,15 @@ in
 
         emacsclient = {
           enable = mkDefault true;
+        };
+      };
+    };
+
+    services = {
+      emacs = {
+        client = {
+          enable =
+            config.programs.emacs-twist.serviceIntegration.enable;
         };
       };
     };
