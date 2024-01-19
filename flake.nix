@@ -17,6 +17,30 @@
 {
   description = "emacs.d - Personal GNU Emacs configuration.";
 
+  nixConfig = {
+    experimental-features =
+      [
+        "ca-derivations"
+        "flakes"
+        "nix-command"
+        "repl-flake"
+      ];
+
+    substituters =
+      [
+        "https://brsvh.cachix.org"
+        "https://cache.nixos.org"
+        "https://nix-community.cachix.org"
+      ];
+
+    trusted-public-keys =
+      [
+        "brsvh.cachix.org-1:DqtlvqnpP9g39l8Eo74AXRftGx1KJLid/ViADTNgDNE="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+  };
+
   inputs = {
     devshell = {
       url = "github:numtide/devshell/main";
@@ -191,7 +215,8 @@
             with builtins;
             with nixpkgs.lib;
             let
-              inherit (final) emacs-git tree-sitter-grammars;
+              inherit (final) emacs-git emacs-git-nox emacs-pgtk;
+              inherit (final) tree-sitter-grammars;
               inherit (final) emacsTwist tangleOrgBabelFile;
 
               revision = "${substring 0 8 self.lastModifiedDate}.${
@@ -268,54 +293,20 @@
                 auto-sync-only = true;
               };
 
-              makeEmacs =
+              makeEmacsD =
                 { nativeCompileAheadDefault ? true
-                , wayland ? false
-                , x11 ? false
-                , noGui ? !(wayland || x11)
+                , pgtk ? false
+                , x ? true
+                , nogui ? !(pgtk || x)
                 , ...
                 }:
                 let
-                  emacs-git-wayland = (
-                    (
-                      emacs-git.override (_: { withPgtk = true; })
-                    ).overrideAttrs (
-                      oa: {
-                        name = "${oa.name}-wayland";
-                      }
-                    )
-                  );
-
-                  emacs-git-x11 = (
-                    (
-                      emacs-git.override (_: { withGTK3 = true; })
-                    ).overrideAttrs (
-                      oa: {
-                        name = "${oa.name}-x11";
-                      }
-                    )
-                  );
-
-                  emacs-git-nogui = (
-                    (
-                      emacs-git.override (_: { noGui = true; })
-                    ).overrideAttrs (
-                      oa: {
-                        name = "${oa.name}-nogui";
-                      }
-                    )
-                  );
-
                   emacsPackage =
-                    if wayland
-                    then emacs-git-wayland
-                    else
-                      if x11
-                      then emacs-git-x11
-                      else
-                        if noGui
-                        then emacs-git-nogui
-                        else emacs-git;
+                    if nogui
+                    then emacs-git-nox
+                    else if pgtk
+                    then emacs-pgtk
+                    else emacs-git;
                 in
                 (
                   emacsTwist {
@@ -345,29 +336,21 @@
                   }
                 ).overrideScope' twist-overrides.overlays.twistScope;
 
-              emacsD = makeOverridable makeEmacs { };
+              emacsD = makeOverridable makeEmacsD { };
 
-              emacsD-wayland = emacsD.override
+              emacsD-pgtk = emacsD.override
                 (
                   _:
                   {
-                    wayland = true;
+                    pgtk = true;
                   }
                 );
 
-              emacsD-x11 = emacsD.override
+              emacsD-nogui = emacsD.override
                 (
                   _:
                   {
-                    x11 = true;
-                  }
-                );
-
-              emacsD-noGui = emacsD.override
-                (
-                  _:
-                  {
-                    noGui = true;
+                    nogui = true;
                   }
                 );
 
@@ -386,6 +369,20 @@
                 tangleOrgBabelFile "early-init.el" ./org/early-init.org {
                   languages = [ "emacs-lisp" ];
                 };
+
+              emacsDWithWrapper = env:
+                env // {
+                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
+                    tmpdir =
+                      pkgs.callPackage ./nix/wrapper.nix
+                        {
+                          early-init = emacsD-early-init-el;
+                          init = emacsD-init-el;
+                        }
+                        "emacs"
+                        env;
+                  };
+                };
             in
             {
               apps = emacsD.makeApps { lockDirName = "elpa"; };
@@ -400,58 +397,21 @@
                 (
                   twist.overlays.default final pkgs
                 ) //
-                { inherit emacsD emacsD-wayland emacsD-x11; };
+                { inherit emacsD emacsD-pgtk emacsD-nogui; };
 
               packages = {
                 inherit
                   emacsD
                   emacsD-early-init-el
                   emacsD-init-el
-                  emacsD-wayland
-                  emacsD-x11
-                  emacsD-noGui;
+                  emacsD-nogui
+                  emacsD-pgtk;
 
-                pgtk = emacsD-wayland // {
-                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
-                    tmpdir =
-                      pkgs.callPackage
-                        ./nix/wrapper.nix
-                        {
-                          early-init = emacsD-early-init-el;
-                          init = emacsD-init-el;
-                        }
-                        "emacs"
-                        emacsD-wayland;
-                  };
-                };
+                nogui = emacsDWithWrapper emacsD-nogui;
 
-                x11 = emacsD-x11 // {
-                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
-                    tmpdir =
-                      pkgs.callPackage
-                        ./nix/wrapper.nix
-                        {
-                          early-init = emacsD-early-init-el;
-                          init = emacsD-init-el;
-                        }
-                        "emacs"
-                        emacsD-x11;
-                  };
-                };
+                pgtk = emacsDWithWrapper emacsD-pgtk;
 
-                nogui = emacsD-noGui // {
-                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
-                    tmpdir =
-                      pkgs.callPackage
-                        ./nix/wrapper.nix
-                        {
-                          early-init = emacsD-early-init-el;
-                          init = emacsD-init-el;
-                        }
-                        "emacs"
-                        emacsD-noGui;
-                  };
-                };
+                x11 = emacsDWithWrapper emacsD;
               };
             };
 

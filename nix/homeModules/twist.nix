@@ -94,8 +94,8 @@ in
 
         config =
           if config.emacs.d.platform == "wayland"
-          then packages.${pkgs.system}.emacsD-wayland
-          else packages.${pkgs.system}.emacsD-x11;
+          then packages.${pkgs.system}.emacsD-pgtk
+          else packages.${pkgs.system}.emacsD;
 
         serviceIntegration = {
           enable = mkDefault true;
