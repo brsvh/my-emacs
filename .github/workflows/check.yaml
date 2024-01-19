@@ -24,5 +24,8 @@ jobs:
           name: brsvh
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Flake check
+      - name: Check flake
         run: nix flake check
+
+      - name: Check package dependencies
+        run: nix run .#emacsD.depsCheck --print-build-logs
