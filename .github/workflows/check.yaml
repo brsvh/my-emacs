@@ -42,4 +42,4 @@ jobs:
 
       - name: Check package dependencies
         continue-on-error: true
-        run: nix run .#emacsD.depsCheck --print-build-logs
+        run: nix build .#emacsD.depsCheck --print-build-logs
