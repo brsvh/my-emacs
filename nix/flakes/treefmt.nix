@@ -38,6 +38,10 @@
         shfmt = {
           enable = true;
         };
+
+        yamlfmt = {
+          enable = true;
+        };
       };
 
       settings = {
