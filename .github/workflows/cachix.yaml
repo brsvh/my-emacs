@@ -1,0 +1,26 @@
+name: Cachix
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    uses: ./.github/workflows/check.yaml
+    secrets: inherit
+
+  build:
+    needs: check
+    if: ${{ contains(join(needs.*.result, ','), 'success') }}
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
