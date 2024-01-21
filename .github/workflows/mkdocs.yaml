@@ -18,6 +18,7 @@ jobs:
           filters: |
             org:
               - 'docs/README.org'
+              - 'org/*.org'
 
       - uses: cachix/install-nix-action@v25
         with:
