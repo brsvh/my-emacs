@@ -14,6 +14,12 @@
       repo = "dash.el";
       type = "github";
     };
+    gcmh = {
+      flake = false;
+      owner = "koral";
+      repo = "gcmh";
+      type = "gitlab";
+    };
     git-commit = {
       flake = false;
       owner = "magit";

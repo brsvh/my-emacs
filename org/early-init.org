@@ -82,6 +82,35 @@ The tangled file will follow [[info:elisp#Library Headers]].
 Certain configurations necessitate presetting prior to the loading of
 the ~user-init-file~, I establish these settings herein.
 
+** Garbage collection optimization
+
+Emacs Lisp is a programming language equipped with garbage collection
+support.  During the initialization phase, the default threshold is not
+particularly high, leading to frequent garbage collection.
+Consequently, I strive to set a larger garbage collection threshold
+during the startup process.
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+
+  (defun my--restore-gc-cons-threshold ()
+    "Restore `gc-cons-threshold' to its default value."
+    (setq gc-cons-threshold (default-value 'gc-cons-threshold)))
+
+  (add-hook 'after-init-hook #'my--restore-gc-cons-threshold 100)
+#+end_src
+
+** Emacs Lisp bytecode loading optimization
+
+Emacs conducts a verification of the existence and accuracy of the
+bytecode file when loading Emacs Lisp files.  I employ Twist to manage
+the bytecode files of Emacs Lisp, which are almost always accurate,
+thereby saving on this portion of the overhead.
+
+#+begin_src emacs-lisp
+  (setq load-prefer-newer noninteractive)
+#+end_src
+
 ** File storage conventions
 
 I aspire for my file storage to adhere to [[file:init.org::File
