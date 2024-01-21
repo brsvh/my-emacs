@@ -208,6 +208,7 @@
         perSystem =
           { final
           , pkgs
+          , self'
           , ...
           }:
             with builtins;
@@ -369,18 +370,14 @@
                 };
 
               emacsDWithWrapper = env:
-                env // {
-                  wrappers = optionalAttrs pkgs.stdenv.isLinux {
-                    tmpdir =
-                      pkgs.callPackage ./nix/wrapper.nix
-                        {
-                          early-init = emacsD-early-init-el;
-                          init = emacsD-init-el;
-                        }
-                        "emacs"
-                        env;
-                  };
-                };
+                assert pkgs.stdenv.isLinux;
+                pkgs.callPackage ./nix/wrapper.nix
+                  {
+                    early-init = emacsD-early-init-el;
+                    init = emacsD-init-el;
+                  }
+                  "emacs"
+                  env;
             in
             {
               apps = emacsD.makeApps { lockDirName = "elpa"; };
@@ -404,6 +401,8 @@
                   emacsD-init-el
                   emacsD-nogui
                   emacsD-pgtk;
+
+                default = self'.packages.x11;
 
                 nogui = emacsDWithWrapper emacsD-nogui;
 
