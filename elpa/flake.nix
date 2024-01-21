@@ -122,6 +122,12 @@
       repo = "with-editor";
       type = "github";
     };
+    yaml-mode = {
+      flake = false;
+      owner = "yoshiki";
+      repo = "yaml-mode";
+      type = "github";
+    };
   };
   outputs = { ... }: { };
 }

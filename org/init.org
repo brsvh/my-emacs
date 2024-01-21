@@ -1242,6 +1242,25 @@ predicated on the extension name.
     ("\\.nix\\'" . nix-mode))
 #+end_src
 
+** YAML
+
+YAML[fn:14] is an exceedingly prevalent configuration language. Despite my
+personal aversion towards it, I have to incorporate its support.
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :ensure yaml-mode
+    :config
+    (keymap-set yaml-mode-map "C-m" 'newline-and-indent)
+    :mode
+    ("\\.yaml\\'" . yaml-mode)
+    ("\\.yml\\'" . yaml-mode))
+#+end_src
+
+Unlike ~python-mode~, this mode follows the Emacs convention of not
+binding the {{{kbd(ENTER)}}} key to ~newline-and-indent~.  To get this
+behavior, bind it in ~yaml-mode~.
+
 * File footer
 
 #+begin_src emacs-lisp
@@ -1276,3 +1295,5 @@ predicated on the extension name.
 [fn:12] Modern Org Style, https://github.com/minad/org-modern
 
 [fn:13] Org Side Tree, https://github.com/localauthor/org-side-tree
+
+[fn:14] YAML, https://yaml.org/

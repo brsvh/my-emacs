@@ -278,7 +278,8 @@
         "s": "s",
         "transient": "transient",
         "vertico": "vertico",
-        "with-editor": "with-editor"
+        "with-editor": "with-editor",
+        "yaml-mode": "yaml-mode"
       }
     },
     "s": {
@@ -342,6 +343,22 @@
       "original": {
         "owner": "magit",
         "repo": "with-editor",
+        "type": "github"
+      }
+    },
+    "yaml-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1700618519,
+        "narHash": "sha256-C3xztrxtuKY99tR56/qpJ8jyavO2SEjI0nkBEVas0ng=",
+        "owner": "yoshiki",
+        "repo": "yaml-mode",
+        "rev": "5b58248ab255dff6cfa4c4057a191bc4446ee5b6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yoshiki",
+        "repo": "yaml-mode",
         "type": "github"
       }
     }
