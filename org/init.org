@@ -695,7 +695,7 @@ mentally and physically exhausting.  To alleviate this, I employ
 
 *** Window splitting
 
-Emacs, through the shortcuts {{{kdb(C-x 2)}}} and {{{kbd(C-x 3)}}},
+Emacs, through the shortcuts {{{kbd(C-x 2)}}} and {{{kbd(C-x 3)}}},
 facilitates horizontal and vertical window splitting, effectively
 creating new windows either below or to the right.  The default
 splitting behavior proves efficient for one or two windows.  However,
