@@ -16,7 +16,7 @@
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
 #+BIND: org-md-toplevel-hlevel 2
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil ^:nil
 #+STARTUP: noindent fnadjust
 #+EXPORT_FILE_NAME: ../.github/README
 
@@ -96,7 +96,24 @@ rewrap of the Twsit module, including presets for some of Twsit options.
   }
 #+end_src
 
-The source files for this module are located in the =nix/homeModules= directory.
+The source files for this module are located in the =nix/homeModules=
+directory.
+
+** Batch mode
+
+Emacs permits the execution of Emacs Lisp scripts in a non-interactive
+mode, referred to as *Batch Mode*, which is initiated by appending the
+~--batch~ parameter when launching Emacs.  In most instances, I want to
+execute scripts or evaluations while loading my own Emacs configuration.
+However, achieving this by appending ~--load INIT_FILE_PATH~ to ~nix run
+github:brsvh/emacs.d#nogui -- --batch~ is not straightforward, as the
+wrapper creation and the specified temporary ~user-emacs-directory~ are
+constantly changing.  Consequently, I have provided a separate package
+named =batch= for script execution, as demonstrated below:
+
+#+begin_src shell
+  nix run github:brsvh/emacs.d#batch -- --eval '(message "hello")'
+#+end_src
 
 * License
 
