@@ -31,7 +31,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Export to Markdown
-       if: steps.changes.outputs.org == 'true'
+        if: steps.changes.outputs.org == 'true'
         run: |
           for org in ${{ steps.changes.outputs.org_files }}
           do
