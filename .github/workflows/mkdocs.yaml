@@ -1,0 +1,45 @@
+name: Genreate Docs
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  ox-md:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout docs changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          list-files: shell
+          filters: |
+            org:
+              - 'docs/README.org'
+
+      - uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            accept-flake-config = true
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v14
+        with:
+          name: brsvh
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Export to Markdown
+       if: steps.changes.outputs.org == 'true'
+        run: |
+          for org in ${{ steps.changes.outputs.org_files }}
+          do
+             nix run .#batch -- $org --funcall org-md-export-to-markdown
+          done
+
+      - name: Auto commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: |-
+            chore(docs): apply automatic changes
