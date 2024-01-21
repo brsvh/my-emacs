@@ -34,5 +34,5 @@ writeShellScriptBin name ''
   ln -s ${init}/init.el "$initdir/init.el"
   ln -s ${early-init} "$initdir/early-init.el"
 
-  ${emacs}/bin/emacs --kill --batch --load "$initdir/init.el"  "$@"
+  ${emacs}/bin/emacs --kill --batch --load "$initdir/early-init.el" --load "$initdir/init.el"  "$@"
 ''
