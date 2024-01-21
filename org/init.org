@@ -1397,7 +1397,7 @@ Unlike ~python-mode~, this mode follows the Emacs convention of not
 binding the {{{kbd(ENTER)}}} key to ~newline-and-indent~.  To get this
 behavior, bind it in ~yaml-mode~.
 
-* File footer
+* File footer :nonexport:
 
 #+begin_src emacs-lisp
   (provide 'init)

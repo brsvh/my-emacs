@@ -190,7 +190,7 @@ here I turned off *Menu Bar*, *Tool Bar*, and *Scroll Bar*.
   (push (cons 'horizontal-scroll-bars nil) default-frame-alist)
 #+end_src
 
-* File footer
+* File footer :nonexport:
 
 #+begin_src emacs-lisp
   (provide 'early-init)
