@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
+#+bind: org-md-toplevel-hlevel 2
 #+options: toc:nil num:nil
 #+startup: noindent fnadjust
 #+exclude_tags: nonexport
+#+export_file_name: ../docs/Emacs-Early-Init
 #+macro: kbd @@html:<kbd>@@ $1 @@html:</kbd>@@
 
 #+title: GNU Emacs Early Init File

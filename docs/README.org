@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
-#+BIND: org-md-toplevel-hlevel 2
-#+OPTIONS: toc:nil ^:nil
-#+STARTUP: noindent fnadjust
-#+EXPORT_FILE_NAME: ../.github/README
+#+bind: org-md-toplevel-hlevel 2
+#+options: toc:nil ^:nil
+#+startup: noindent fnadjust
+#+export_file_name: ../.github/README
 
-#+TITLE: emacs.d
-#+AUTHOR: Burgess Chang
-#+EMAIL: (concat bsc at-sign brsvh dot org)
+#+title: emacs.d
+#+author: Burgess Chang
+#+email: (concat bsc at-sign brsvh dot org)
 
 #+begin_center
 Personal GNU Emacs configuration

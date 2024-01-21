@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
+#+bind: org-md-toplevel-hlevel 2
 #+options: toc:nil num:nil ^:nil
 #+startup: noindent fnadjust
 #+exclude_tags: nonexport
+#+export_file_name: ../docs/Emacs-Init
 #+macro: kbd @@html:<kbd>@@ $1 @@html:</kbd>@@
 
 #+title: GNU Emacs Init File
@@ -744,7 +746,7 @@ backs up the file being edited, or more aptly put, creates a snapshot.
 
 Inherently, Emacs periodically auto-saves your modifications to a file.
 In the event of an unforeseen circumstance, you can retrieve a file
-using {{{kdb(M-x recover-file RET)}}}.
+using {{{kbd(M-x recover-file RET)}}}.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
