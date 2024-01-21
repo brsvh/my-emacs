@@ -18,7 +18,7 @@
 , init
 , writeShellScriptBin
 , ...
-}: name: emacs-env:
+}: name: emacs:
 writeShellScriptBin name ''
   set +u
   set -x
@@ -34,5 +34,5 @@ writeShellScriptBin name ''
   ln -s ${init}/init.el "$initdir/init.el"
   ln -s ${early-init} "$initdir/early-init.el"
 
-  ${emacs-env}/bin/emacs --init-directory="$initdir" "$@"
+  ${emacs}/bin/emacs --kill --batch --load "$initdir/init.el"  "$@"
 ''

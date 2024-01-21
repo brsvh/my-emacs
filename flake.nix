@@ -369,9 +369,19 @@
                   languages = [ "emacs-lisp" ];
                 };
 
-              emacsDWithWrapper = env:
+              emacsDAppWrapper = env:
                 assert pkgs.stdenv.isLinux;
-                pkgs.callPackage ./nix/wrapper.nix
+                pkgs.callPackage ./nix/appWrapper.nix
+                  {
+                    early-init = emacsD-early-init-el;
+                    init = emacsD-init-el;
+                  }
+                  "emacs"
+                  env;
+
+              emacsDBatchWrapper = env:
+                assert pkgs.stdenv.isLinux;
+                pkgs.callPackage ./nix/batchWrapper.nix
                   {
                     early-init = emacsD-early-init-el;
                     init = emacsD-init-el;
@@ -404,11 +414,13 @@
 
                 default = self'.packages.x11;
 
-                nogui = emacsDWithWrapper emacsD-nogui;
+                batch = emacsDBatchWrapper emacsD-nogui;
 
-                pgtk = emacsDWithWrapper emacsD-pgtk;
+                nogui = emacsDAppWrapper emacsD-nogui;
 
-                x11 = emacsDWithWrapper emacsD;
+                pgtk = emacsDAppWrapper emacsD-pgtk;
+
+                x11 = emacsDAppWrapper emacsD;
               };
             };
 
