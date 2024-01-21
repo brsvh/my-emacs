@@ -116,6 +116,12 @@
       repo = "s.el";
       type = "github";
     };
+    switch-window = {
+      flake = false;
+      owner = "dimitri";
+      repo = "switch-window";
+      type = "github";
+    };
     transient = {
       flake = false;
       owner = "magit";

@@ -310,6 +310,7 @@
         "org-side-tree": "org-side-tree",
         "promise": "promise",
         "s": "s",
+        "switch-window": "switch-window",
         "transient": "transient",
         "vertico": "vertico",
         "with-editor": "with-editor",
@@ -329,6 +330,22 @@
       "original": {
         "owner": "magnars",
         "repo": "s.el",
+        "type": "github"
+      }
+    },
+    "switch-window": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1660340253,
+        "narHash": "sha256-XgRSVeDKwFm8huIqrbdF33mR0NOB9gFDbcXGkSQAwaA=",
+        "owner": "dimitri",
+        "repo": "switch-window",
+        "rev": "71ef2f54c97f3fd2e7ff7964d82e6562eb6282f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dimitri",
+        "repo": "switch-window",
         "type": "github"
       }
     },
