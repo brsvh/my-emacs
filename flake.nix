@@ -28,14 +28,14 @@
 
     extra-substituters =
       [
-        "https://brsvh.cachix.org"
         "https://nix-community.cachix.org"
+        "https://brsvh.cachix.org"
       ];
 
     extra-trusted-public-keys =
       [
-        "brsvh.cachix.org-1:DqtlvqnpP9g39l8Eo74AXRftGx1KJLid/ViADTNgDNE="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "brsvh.cachix.org-1:DqtlvqnpP9g39l8Eo74AXRftGx1KJLid/ViADTNgDNE="
       ];
   };
 
