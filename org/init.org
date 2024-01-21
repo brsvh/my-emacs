@@ -257,7 +257,8 @@ which encapsulate the newer ~keymap-set~ function.
                                                    `',(cdar args*))))
                   args* (cdr args*)))
            ((keywordp (car args*))
-            (setq ctx-map (intern (substring (symbol-name (car args*)) 1))
+            (setq ctx-map (intern (substring (symbol-name (car args*))
+                                             1))
                   result (nconc result
                                 (my--use-package-normalize-keymap-set
                                  name keyword (cdr args*) ctx-map))
@@ -274,7 +275,8 @@ which encapsulate the newer ~keymap-set~ function.
                      " function, or a list of such values")))))
         result))
 
-    (defun my--use-package-handle-keymap-set (name keyword args rest state)
+    (defun my--use-package-handle-keymap-set
+        (name keyword args rest state)
       "`use-package' handler of :keymap-set keyword."
       (use-package-concat
        (mapcar
@@ -1013,6 +1015,19 @@ headline when {{{kbd(C-a)}}} is pressed.  The same applies to
 {{{kbd(C-e)}}}, which moves to the end of the headline when editing a
 folded block.
 
+Upon completing the aforementioned configurations, I achieved a visually
+appealing aesthetic enhancement for Org Mode.  However, its default
+hierarchical heading symbols remain somewhat unsightly.  In certain
+fonts, the size of the diamond symbol is inconsistent with that of the
+circle symbol.  I used a more uniform set of circle symbols to
+distinguish between heading levels.
+
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :config
+    (setq org-modern-star '( "●" "◉" "◎" "○" "◌")))
+#+end_src
+
 *** Displaying Outline on the Sidebar
 
 When I am composing or perusing an exceedingly lengthy org, I anticipate
@@ -1030,7 +1045,9 @@ extensive works.  I use ~org-sidebar-tree~[fn:13] to achieve this.
     (org-side-tree)
     :keymap-set
     (:org-mode-map
-     ("C-c m o" . org-side-tree)))
+     ("C-c m o" . org-side-tree))
+    :hook
+    (org-side-tree-mode-hook . org-indent-mode))
 #+end_src
 
 * Programming
