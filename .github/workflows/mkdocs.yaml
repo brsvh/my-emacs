@@ -39,7 +39,11 @@ jobs:
           done
 
       - name: Auto commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: |-
-            chore(docs): apply automatic changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --all
+          git checkout -b auto-commit
+          git add **/*.md
+          git commit -m "docs: apply automatic changes"
+          git push -v origin auto-commit\:main
