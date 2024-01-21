@@ -80,6 +80,11 @@ in
           }
         ]
       );
+
+      packages = with pkgs;
+        [
+          multimarkdown
+        ];
     };
 
     programs = {

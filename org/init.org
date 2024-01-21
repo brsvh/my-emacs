@@ -1251,12 +1251,33 @@ Although I have set ~org-md-toplevel-hlevel~ to ~2~ to fulfill the
 demotion of headlines during export, it is still possible to alter this
 behavior in the necessary documents through the BIND keyword.
 
+** Writing with Markdown
+
+Markdown[fn:15], perhaps the most prevalent text markup language of the first
+half of the 21st century, is utilized by virtually all open-source
+developers. I, unable to escape the trend, occasionally find myself
+editing these documents.
+
 * Programming
 
 Emacs is an exceptionally potent programming environment. However, it
 necessitates meticulous configuration; otherwise, its functioning will
 be subpar.  Let me to tailor Emacs to accommodate all the programming
 languages I used.
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure markdown-mode
+    :mode
+    ("\\.markdown\\'" . markdown-mode)
+    ("\\.md\\'" . markdown-mode)
+    ("\\.mdown\\'" . markdown-mode)
+    ("\\.mkd\\'" . markdown-mode)
+    ("\\.mkdn\\'" . markdown-mode)
+    ("README\\.md\\'" . gfm-mode)
+    :config
+    (setq markdown-command "multimarkdown"))
+#+end_src
 
 ** Emacs Lisp
 
@@ -1288,7 +1309,7 @@ predicated on the extension name.
 
 ** YAML
 
-YAML[fn:15] is an exceedingly prevalent configuration language. Despite my
+YAML[fn:16] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
@@ -1342,4 +1363,6 @@ behavior, bind it in ~yaml-mode~.
 
 [fn:14] Org Side Tree, https://github.com/localauthor/org-side-tree
 
-[fn:15] YAML, https://yaml.org/
+[fn:15] Markdown, https://daringfireball.net/projects/markdown/
+
+[fn:16] YAML, https://yaml.org/

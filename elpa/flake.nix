@@ -44,6 +44,12 @@
       repo = "marginalia";
       type = "github";
     };
+    markdown-mode = {
+      flake = false;
+      owner = "jrblevin";
+      repo = "markdown-mode";
+      type = "github";
+    };
     minions = {
       flake = false;
       owner = "tarsius";

@@ -112,6 +112,22 @@
         "type": "github"
       }
     },
+    "markdown-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704616303,
+        "narHash": "sha256-AC6UthVWpRGrxQ5p2QteSp4iYe1STKwQnWcYkvK38a8=",
+        "owner": "jrblevin",
+        "repo": "markdown-mode",
+        "rev": "e096bb97a91fcd4dc2b46d8b6e093194b03b7364",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jrblevin",
+        "repo": "markdown-mode",
+        "type": "github"
+      }
+    },
     "minions": {
       "flake": false,
       "locked": {
@@ -282,6 +298,7 @@
         "magit-nix3": "magit-nix3",
         "magit-section": "magit-section",
         "marginalia": "marginalia",
+        "markdown-mode": "markdown-mode",
         "minions": "minions",
         "modus-themes": "modus-themes",
         "moody": "moody",
