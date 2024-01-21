@@ -47,7 +47,7 @@
               }
               {
                 name = "emacs";
-                package = self'.packages.nogui.wrappers.tmpdir;
+                package = self'.packages.nogui;
                 help = "The extensible, customizable GNU text editor";
                 category = "development";
               }
