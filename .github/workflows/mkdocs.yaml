@@ -31,6 +31,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Export to Markdown
+        id: export
         if: steps.changes.outputs.org == 'true'
         run: |
           for org in ${{ steps.changes.outputs.org_files }}
@@ -39,6 +40,7 @@ jobs:
           done
 
       - name: Auto commit
+        if: steps.export.outcome == 'success'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
