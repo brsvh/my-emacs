@@ -1,0 +1,120 @@
+# Copyright (C) 2022-2024 Burgess Chang
+
+# This file is part of emacs.d.
+
+# emacs.d is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+
+# emacs.d is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
+
+#+BIND: org-md-toplevel-hlevel 2
+#+OPTIONS: toc:nil
+#+STARTUP: noindent fnadjust
+#+EXPORT_FILE_NAME: ../.github/README
+
+#+TITLE: emacs.d
+#+AUTHOR: Burgess Chang
+#+EMAIL: (concat bsc at-sign brsvh dot org)
+
+#+begin_center
+Personal GNU Emacs configuration
+
+[[https://brsvh.cachix.org][file:https://img.shields.io/badge/cachix-brsvh-blue.svg]]
+[[https://github.com/brsvh/emacs.d/actions][file:https://github.com/brsvh/emacs.d/actions/workflows/ci.yaml/badge.svg]]
+#+end_center
+
+* Overview
+
+Emacs.d, my personal Emacs configuration, is managed using Nix[fn:1].  I
+employ Twist[fn:2] for the management and construction of my configuration
+and Emacs Lisp Packages.  I use the use-package[fn:3] distributed with
+Emacs to manage my package configuration.
+
+There are several subdirectories:
+
+- =docs= holds the source code for documentation of my configuraiton.
+- =elpa= holds the all ELPA dependencies infomation, these are
+  automatically updated, *NEVER EDIT THEM MANUALLY*.
+- =lisp= holds the Emacs Lisp source code of my package.
+- =melpa= holds my customized MELPA[fn:5] recipes[fn:6].
+- =nix= holds my Nix source code.
+- =org= holds my literate configuraitons.
+
+* Getting Started
+
+If you wish to directly glimpse my Emacs configuration, you need to
+ensure that you have installed the latest Nix, and then simply execute
+the following commands.
+
+If you are a Wayland user, you can use the pgtk version.
+
+#+begin_src shell
+  nix run github:brsvh/emacs.d#pgtk
+#+end_src
+
+If you are a character-only (tty) user, you can use the nogui version.
+
+#+begin_src shell
+  nix run github:brsvh/emacs.d#nogui
+#+end_src
+
+If you need to run on X11, you can use the x11 version.
+
+#+begin_src shell
+  nix run github:brsvh/emacs.d#x11
+#+end_src
+
+** Use with home-manager
+
+emacs.d also provides a home-manager[fn:4] module. This module provides a
+rewrap of the Twsit module, including presets for some of Twsit options.
+
+#+begin_src nix
+  {
+    inputs = {
+      brsvh-emacs.url = "github:brsvh/emacs.d/main";
+      home-manager.url = "github:nix-community/home-manager/master";
+    };
+
+    output = { brsvh-emacs, home-manager, ... } @ inputs: {
+      homeConfigurations.YOUR-CONFIGURATION-NAME =
+        home-manager.lib.homeManagerConfiguration {
+          system = "x86_64-linux";
+          modules = [
+            brsvh-emacs.homeModules.twist
+          ];
+        };
+    };
+  }
+#+end_src
+
+The source files for this module are located in the =nix/homeModules= directory.
+
+* License
+
+This work is free.  You can redistribute it and/or modify it under the
+terms of The GNU General Public License v3.0.  You should have received
+a copy of it.  See the COPYING file for more details.  If you did not
+recive it, see <https://www.gnu.org/licenses/> for more details.
+
+* Footnotes
+
+[fn:1] Nix, https://nixos.org/
+
+[fn:2] Twist, https://github.com/emacs-twist/twist.nix
+
+[fn:3] use-package, https://github.com/jwiegley/use-package
+
+[fn:4] Home Manager, https://nix-community.github.io/home-manager
+
+[fn:5] melpa, https://melpa.org
+
+[fn:6] melpa recipe format, https://github.com/melpa/melpa#recipe-format
