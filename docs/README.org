@@ -115,6 +115,16 @@ named =batch= for script execution, as demonstrated below:
   nix run github:brsvh/emacs.d#batch -- --eval '(message "hello")'
 #+end_src
 
+* Documentation
+
+This project intends to furnish two categories of documentation.  One
+pertains to the usage of my Emacs configuration or Emacs Lisp packages,
+while the other relates to my specific Emacs configuration.  I will
+provide individual explanations for the former, maintaining them in the
+=docs= directory.  As for the latter, my configuration is composed in a
+literate programming way, thus you can get detailed interpretations and
+explanations by perusing the files in the =org= directory.
+
 * License
 
 This work is free.  You can redistribute it and/or modify it under the
