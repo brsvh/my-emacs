@@ -358,7 +358,7 @@ for categorization purposes.
 - {{{kbd(n)}}}: Nix(Flake) commands.
 - {{{kbd(v)}}}: Version Control commands.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :export none
   (defvar ctl-c-m-map (make-keymap)
     "Default keymap for C-c m commands.")
 
