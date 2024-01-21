@@ -1151,6 +1151,60 @@ extensive works.  I use ~org-sidebar-tree~[fn:13] to achieve this.
     (org-side-tree-mode-hook . org-indent-mode))
 #+end_src
 
+*** File Export Support
+
+The default distribution of Org Mode already supports exporting to
+renowned file formats in the open world, such as Markdown, LaTeX, ODT,
+Texinfo, etc.  However, Org Mode only enables a small portion of its
+backends by default—HTML, LaTeX, Plain Text—which is far from sufficient
+for my daily use.  Therefore, I need to add more default backends.
+
+I except that during the execution of export operations, the specifics
+can be controlled via Local Variables, hence I invariably permit the
+usage of the BIND keyword.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :defer t
+    :config
+    (setq org-export-allow-bind-keywords t))
+#+end_src
+
+**** Markdown
+
+When exporting an Org file to Markdown, the default behavior appears
+somewhat peculiar, or rather, it does not align with my requirements.  I
+anticipate that the Title will export to a Level 1 headline in Markdown,
+while the headlines in the Org file will be demoted one level
+accordingly.  However, Emacs does not export the Title by default, and
+the first level in Org corresponds to the first level in Markdown.  I
+will make some adjustments to meet my expectations.
+
+#+begin_src emacs-lisp
+  (use-package ox-md
+    :after org
+    :config
+    (defvar-local org-md-export-title-as-hlevel-1 t
+      "Non nil export TITLE as the level 1 heading line.")
+
+    (defun org-md-export-title-to-hlevel-1 (orig-fun &rest args)
+      "An advice for export TITLE as the level 1 heading line."
+      (let* ((res (apply orig-fun args))
+             (title (org-element-interpret-data (plist-get (nth 1 args)
+                                                           :title))))
+        (concat "# " title "\n\n" res)))
+
+    (advice-add 'org-md-template
+                :around
+                #'org-md-export-title-to-hlevel-1)
+
+    (setq-default org-md-toplevel-hlevel 2))
+#+end_src
+
+Although I have set ~org-md-toplevel-hlevel~ to ~2~ to fulfill the
+demotion of headlines during export, it is still possible to alter this
+behavior in the necessary documents through the BIND keyword.
+
 * Programming
 
 Emacs is an exceptionally potent programming environment. However, it
