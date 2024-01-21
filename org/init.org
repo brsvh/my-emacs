@@ -1192,7 +1192,9 @@ will make some adjustments to meet my expectations.
       (let* ((res (apply orig-fun args))
              (title (org-element-interpret-data (plist-get (nth 1 args)
                                                            :title))))
-        (concat "# " title "\n\n" res)))
+        (if org-md-export-title-as-hlevel-1
+            (concat "# " title "\n\n" res)
+          res)))
 
     (advice-add 'org-md-template
                 :around
