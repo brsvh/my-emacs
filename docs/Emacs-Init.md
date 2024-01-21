@@ -290,6 +290,31 @@ be activated through `after-init-hook`.
       (after-init-hook emacs-startup-hook))
 
 
+## Performance
+
+As an Emacs user dealing with demanding tasks, Emacs is
+performance-sensitive.  Given my lack of patience, I consistently harbor
+enthusiasm for Emacs' performance optimization, acceleration, and
+diagnostics.
+
+
+### Intelligent garbage collection strategy
+
+The majority of Emacs Lisp Packages are written in Emacs Lisp,
+supporting automatic memory management.  By default, Emacs used a fixed
+threshold to initiate Garbage Collection, a method that lacks
+flexibility and may lead to performance deterioration due to frequent
+Garbage Collection.  To minimize the interference of Garbage Collection
+with user activity, I adopt a cunning Garbage Collection strategy
+provided by gcmh<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup>.  This strategy utilizes a low Garbage Collection
+threshold when idle, and a high threshold during regular operation.
+
+    (use-package gcmh
+      :ensure gcmh
+      :hook
+      (emacs-startup-hook . gcmh-mode))
+
+
 ## Customization system
 
 Emacs is a real-time, extensible, and customizable editor.  Its
@@ -357,7 +382,7 @@ Emacs, provides details about the current buffer, encompassing aspects
 such as encoding, buffer size, cursor position, major mode, and minor
 mode.
 
-I employ moody<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> to acquire a mode line styled with tabs and ribbons.
+I employ moody<sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> to acquire a mode line styled with tabs and ribbons.
 Its merit lies in its minimalistic alterations to the mode line, merely
 adding or substituting a select few elements.
 
@@ -387,7 +412,7 @@ Upon activation of numerous minor modes in a buffer, the Mode Line
 consequently displays an extensive list of minor mode names.  This is
 less than ideal, as overly verbose mode information can result in other
 useful details falling outside the frame's scope.  To address this, I
-employ `minions`<sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> to supplant the minor modes list with a menu button
+employ `minions`<sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> to supplant the minor modes list with a menu button
 that enumerates the enabled minor modes.
 
     (use-package minions
@@ -422,7 +447,7 @@ echo area.
 Emacs' inherent theme is somewhat lackluster, lacking the polished and
 lustrous appearance that typically appeals to novices, often resulting
 in a superficial and unfavorable initial impression of the
-system. Subsequently, I use Modus Themes<sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> that enhances Emacs'
+system. Subsequently, I use Modus Themes<sup><a id="fnr.6" class="footref" href="#fn.6" role="doc-backlink">6</a></sup> that enhances Emacs'
 aesthetic appeal, rendering it more user-friendly.
 
     (use-package modus-themes
@@ -539,7 +564,7 @@ of Emacs for various tasks, the number of windows opened within a single
 Frame frequently exceeds two.  This necessitates repeated pressing of
 <kbd> C-x o </kbd> to cycle through the windows, an operation that can be
 mentally and physically exhausting.  To alleviate this, I employ
-`switch-window`<sup><a id="fnr.6" class="footref" href="#fn.6" role="doc-backlink">6</a></sup> as a remedy.
+`switch-window`<sup><a id="fnr.7" class="footref" href="#fn.7" role="doc-backlink">7</a></sup> as a remedy.
 
     (use-package switch-window
       :ensure switch-window
@@ -651,7 +676,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#org89b90ed), I apply my custom transformation rule for
+my [File conventions](#orgdf28abf), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -685,7 +710,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#org89b90ed).
+directory in accordance with my [File conventions](#orgdf28abf).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -731,7 +756,7 @@ method for both.
 
 ### Input completion
 
-My choice is to provided input completion support with `vertico` <sup><a id="fnr.7" class="footref" href="#fn.7" role="doc-backlink">7</a></sup>,
+My choice is to provided input completion support with `vertico` <sup><a id="fnr.8" class="footref" href="#fn.8" role="doc-backlink">8</a></sup>,
 which is a performant, minimalistic vertical completion UI for Emacs.
 It reuses built-in facilities for full compatibility with Emacs'
 completion commands and tables.
@@ -815,7 +840,7 @@ these inputs:
 Here, \_ denotes the cursor's position.
 
 While the default is adequate, I prefer to be permitted to complete the
-input using spaces as separators.  Consequently, I use orderless<sup><a id="fnr.8" class="footref" href="#fn.8" role="doc-backlink">8</a></sup>,
+input using spaces as separators.  Consequently, I use orderless<sup><a id="fnr.9" class="footref" href="#fn.9" role="doc-backlink">9</a></sup>,
 which offers a completion style named orderless that segments the
 pattern into space-separated components and matches them.
 
@@ -836,7 +861,7 @@ contains a wildcard.
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.<sup><a id="fnr.9" class="footref" href="#fn.9" role="doc-backlink">9</a></sup>
+of the minibuffer for your completion candidates.<sup><a id="fnr.10" class="footref" href="#fn.10" role="doc-backlink">10</a></sup>
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -877,7 +902,7 @@ stress associated with these activities.
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit<sup><a id="fnr.10" class="footref" href="#fn.10" role="doc-backlink">10</a></sup>.  I am acquainted with
+specifically, Emacs equipped with Magit<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup>.  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -908,7 +933,7 @@ Git subcategory of the Version control category.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup>, an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>, an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -970,7 +995,7 @@ editing line to be highlighted.
       :hook
       (text-mode-hook . hl-line-mode))
 
-Emacs supports a variety of line-folding methods<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>, including:
+Emacs supports a variety of line-folding methods<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup>, including:
 
 -   **Hard Wrap** ：Modes such as AutoFillMode insert a line ending after
     the last word that occurs before the value of option `fill-column` (a
@@ -1019,7 +1044,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-`org-modern`<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup> to enhance the appearance of Org Mode headings by
+`org-modern`<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup> to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1069,7 +1094,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup> to achieve this.
+extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup> to achieve this.
 
     (use-package org-side-tree
       :ensure org-side-tree
@@ -1138,7 +1163,7 @@ usage of the BIND keyword.
 
 ### Writing with Markdown
 
-Markdown<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup>, perhaps the most prevalent text markup language of the first
+Markdown<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup>, perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -1191,7 +1216,7 @@ predicated on the extension name.
 
 ### YAML
 
-YAML<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup> is an exceedingly prevalent configuration language. Despite my
+YAML<sup><a id="fnr.17" class="footref" href="#fn.17" role="doc-backlink">17</a></sup> is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
     (use-package yaml-mode
@@ -1219,30 +1244,32 @@ behavior, bind it in `yaml-mode`.
 
 <sup><a id="fn.2" href="#fnr.2">2</a></sup> Twist, <https://github.com/emacs-twist/twist.nix>
 
-<sup><a id="fn.3" href="#fnr.3">3</a></sup> Moody Mode Line, <https://github.com/tarsius/moody>
+<sup><a id="fn.3" href="#fnr.3">3</a></sup> GCMH Mode, <https://gitlab.com/koral/gcmh>
 
-<sup><a id="fn.4" href="#fnr.4">4</a></sup> Minions, <https://github.com/tarsius/minions>
+<sup><a id="fn.4" href="#fnr.4">4</a></sup> Moody Mode Line, <https://github.com/tarsius/moody>
 
-<sup><a id="fn.5" href="#fnr.5">5</a></sup> Modus Themes, <https://protesilaos.com/emacs/modus-themes>
+<sup><a id="fn.5" href="#fnr.5">5</a></sup> Minions, <https://github.com/tarsius/minions>
 
-<sup><a id="fn.6" href="#fnr.6">6</a></sup> Switch Window, <https://github.com/dimitri/switch-window>
+<sup><a id="fn.6" href="#fnr.6">6</a></sup> Modus Themes, <https://protesilaos.com/emacs/modus-themes>
 
-<sup><a id="fn.7" href="#fnr.7">7</a></sup> Vertico, <https://github.com/minad/vertico>
+<sup><a id="fn.7" href="#fnr.7">7</a></sup> Switch Window, <https://github.com/dimitri/switch-window>
 
-<sup><a id="fn.8" href="#fnr.8">8</a></sup> Orderless, <https://github.com/oantolin/orderless>
+<sup><a id="fn.8" href="#fnr.8">8</a></sup> Vertico, <https://github.com/minad/vertico>
 
-<sup><a id="fn.9" href="#fnr.9">9</a></sup> Marginalia, <https://github.com/minad/marginalia>
+<sup><a id="fn.9" href="#fnr.9">9</a></sup> Orderless, <https://github.com/oantolin/orderless>
 
-<sup><a id="fn.10" href="#fnr.10">10</a></sup> Magit, <https://magit.vc>
+<sup><a id="fn.10" href="#fnr.10">10</a></sup> Marginalia, <https://github.com/minad/marginalia>
 
-<sup><a id="fn.11" href="#fnr.11">11</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
+<sup><a id="fn.11" href="#fnr.11">11</a></sup> Magit, <https://magit.vc>
 
-<sup><a id="fn.12" href="#fnr.12">12</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
+<sup><a id="fn.12" href="#fnr.12">12</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
 
-<sup><a id="fn.13" href="#fnr.13">13</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
+<sup><a id="fn.13" href="#fnr.13">13</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
 
-<sup><a id="fn.14" href="#fnr.14">14</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
+<sup><a id="fn.14" href="#fnr.14">14</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
 
-<sup><a id="fn.15" href="#fnr.15">15</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+<sup><a id="fn.15" href="#fnr.15">15</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
 
-<sup><a id="fn.16" href="#fnr.16">16</a></sup> YAML, <https://yaml.org/>
+<sup><a id="fn.16" href="#fnr.16">16</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+
+<sup><a id="fn.17" href="#fnr.17">17</a></sup> YAML, <https://yaml.org/>
