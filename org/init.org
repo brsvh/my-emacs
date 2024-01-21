@@ -515,7 +515,7 @@ underlines at the same height as the font descent line.
   (use-package emacs
     :no-require t
     :init
-    (setq-default x-underline-at-descent-line t))  
+    (setq-default x-underline-at-descent-line t))
 #+end_src
 
 *** Replace Minor Mode menu with a button
@@ -711,6 +711,107 @@ based on Category.
     :init
     (setq-default word-wrap-by-category t))
 #+end_src
+
+* Text editing
+
+As persistently discussed in this document, I utilize Emacs to
+accomplish a myriad of tasks.  The vast majority of these tasks involve
+text operation, which is not solely because I use Linux (where
+everything is a file in Unix-like operating systems), but also because
+the majority of what the Emacs interface presents is character-based.
+Therefore, most of my operations in Emacs are essentially modifying
+characters, or in other words, editing text.
+
+The efficiency of text editing is a frequently discussed topic among
+Emacs users, and I am no exception.  I need to make endless improvements
+to my Emacs configuration to achieve a more efficient text editing
+experience.  So, what are we truly focusing on when editing text? From
+my personal perspective, the main functionalities of interest are
+navigation, search, replacement, and disaster recovery.
+
+** Disaster recovery
+
+In this context, disaster recovery refers to how I recover modifications
+made to a file after the buffer has been accidentally closed or Emacs
+has unexpectedly exited.  In Emacs, we can maintain composure in the
+face of unexpected file editing incidents through two methods: auto-save
+and backup.
+
+*** Automatic saving
+
+Automatic saving, like the majority of editors worldwide, periodically
+backs up the file being edited, or more aptly put, creates a snapshot.
+
+Inherently, Emacs periodically auto-saves your modifications to a file.
+In the event of an unforeseen circumstance, you can retrieve a file
+using {{{kdb(M-x recover-file RET)}}}.
+
+Emacs generates the auto-saved file by appending a # to both ends of the
+visited file name in place.  To maintain a tidy directory and adhere to
+my [[*File conventions]], I apply my custom transformation rule for
+creating auto-save file names to ~auto-save-file-name-transforms~.
+
+#+begin_src emacs-lisp
+  (use-package files
+    :config
+    (setq auto-save-default t
+          auto-save-no-message t
+          auto-save-include-big-deletions t
+          auto-save-file-name-transforms
+          (append `((".*"
+                     ,(expand-file-name "auto-save/" my-data-directory)
+                     t))
+                  auto-save-file-name-transforms)))
+#+end_src
+
+By default, erasing a significant portion of the text deactivates
+auto-save in the buffer.  Consequently, if I make numerous alterations
+and my computer abruptly malfunctions, all my changes will be forfeited.
+Therefore, it is imperative to save all changes regardless. To ensure
+failsafe always takes precedence, I must set
+~auto-save-include-big-deletions~ to t.
+
+*** Automatic backup
+
+A backup refers to a copy of the original file prior to revision.  At
+face value, it may seem as though I have already obtained a historical
+backup of the file through auto-saving.  However, in reality, the backup
+referred to here is vastly different from auto-saving.  This is because a
+single revision of a file may encompass multiple auto-saves.  After all,
+I am not a ceaseless typewriter, so the majority of auto-save archives
+are unsuitable as versions before and after revision.
+
+By default, Emacs saves backup files—those ending in =~= —in the current
+directory, thereby leading to clutter.  Let's relocate them to a
+directory in accordance with my [[*File conventions]].
+
+I aim to retain multiple versions of my backup files to help preserve my
+sanity.  Emacs permits the saving of an unlimited number of backups, but
+maintaining a backup of five versions seems appropriate.
+
+#+begin_src emacs-lisp
+  (use-package files
+    :config
+    (setq make-backup-files t
+          version-control t)
+
+    (setq backup-by-copying t)
+
+    (setq delete-old-versions t
+          kept-old-versions 5
+          kept-new-versions 5)
+
+    (setq backup-directory-alist
+          (append `(("."
+                     .
+                     ,(expand-file-name "backup/" my-data-directory)))
+                  backup-directory-alist)))
+#+end_src
+
+You may have observed that I set ~backup-by-copying~ to ~t~, which
+prompts Emacs to create backups by duplicating the original file.  This
+deviates from the default method, which generates backups by renaming
+the original file.
 
 * Completion
 
