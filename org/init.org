@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 
-#+options: toc:nil num:nil
+#+options: toc:nil num:nil ^:nil
 #+startup: noindent fnadjust
 #+exclude_tags: nonexport
 #+macro: kbd @@html:<kbd>@@ $1 @@html:</kbd>@@
@@ -890,11 +890,53 @@ the candidates.
     (vertico-mode-hook . vertico-mouse-mode))
 #+end_src
 
+*** Completion style
+
+Emacs accommodates an array of completion styles, with three variants
+activated by default: ~basic~, ~emacs22~, and ~partial-completion~.
+
+These correspond to:
+
+- ~basic~: Completion of the prefix preceding the cursor and the suffix
+  following the cursor.
+- ~emacs22~: Prefix completion that exclusively operates on the text
+  preceding the cursor.
+- ~partial-completion~: Completion of multiple words, each treated as a
+  prefix.
+
+For instance, given a command ~foo-bar~, it could be completed with
+these inputs:
+
+- f_b, completed by the ~basic~ style
+- f_r, completed by the ~emacs22~ style
+- f-_a, completed by the ~partial-completion~ style.
+
+Here, _ denotes the cursor's position.
+
+While the default is adequate, I prefer to be permitted to complete the
+input using spaces as separators.  Consequently, I use orderless[fn:8],
+which offers a completion style named orderless that segments the
+pattern into space-separated components and matches them.
+
+Furthermore, enable ~partial-completion~ for file path expansion.
+~partial-completion~ is crucial for file wildcard support.  Multiple
+files can be simultaneously opened with ~find-file~ if the input
+contains a wildcard.
+
+#+begin_src emacs-lisp
+  (use-package minibuffer
+    :ensure orderless
+    :init
+    (setq completion-styles '(substring orderless basic)
+          completion-category-overrides
+          '((file (styles basic partial-completion)))))
+#+end_src
+
 *** Show mariginalia of completions
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.[fn:8]
+of the minibuffer for your completion candidates.[fn:9]
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -934,7 +976,7 @@ stress associated with these activities.
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:9].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:10].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -966,7 +1008,7 @@ Git subcategory of the Version control category.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:10], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:11], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1033,7 +1075,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:11], including:
+Emacs supports a variety of line-folding methods[fn:12], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -1083,7 +1125,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:12] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:13] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1136,7 +1178,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:13] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:14] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -1244,7 +1286,7 @@ predicated on the extension name.
 
 ** YAML
 
-YAML[fn:14] is an exceedingly prevalent configuration language. Despite my
+YAML[fn:15] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
@@ -1284,16 +1326,18 @@ behavior, bind it in ~yaml-mode~.
 
 [fn:7] Vertico, https://github.com/minad/vertico
 
-[fn:8] Marginalia, https://github.com/minad/marginalia
+[fn:8] Orderless, https://github.com/oantolin/orderless
 
-[fn:9] Magit, https://magit.vc
+[fn:9] Marginalia, https://github.com/minad/marginalia
 
-[fn:10] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:10] Magit, https://magit.vc
 
-[fn:11] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:11] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:12] Modern Org Style, https://github.com/minad/org-modern
+[fn:12] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:13] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:13] Modern Org Style, https://github.com/minad/org-modern
 
-[fn:14] YAML, https://yaml.org/
+[fn:14] Org Side Tree, https://github.com/localauthor/org-side-tree
+
+[fn:15] YAML, https://yaml.org/

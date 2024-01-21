@@ -192,6 +192,22 @@
         "type": "github"
       }
     },
+    "orderless": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1699627697,
+        "narHash": "sha256-xB9AFpa/IP2Q3LugvDRNDW6fF8KDONX+0P3YzT+LrJQ=",
+        "owner": "oantolin",
+        "repo": "orderless",
+        "rev": "b24748093b00b37c3a572c4909f61c08fa27504f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oantolin",
+        "repo": "orderless",
+        "type": "github"
+      }
+    },
     "org": {
       "flake": false,
       "locked": {
@@ -271,6 +287,7 @@
         "moody": "moody",
         "nix-mode": "nix-mode",
         "nix3": "nix3",
+        "orderless": "orderless",
         "org": "org",
         "org-modern": "org-modern",
         "org-side-tree": "org-side-tree",

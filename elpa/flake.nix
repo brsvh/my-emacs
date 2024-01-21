@@ -74,6 +74,12 @@
       repo = "nix3.el";
       type = "github";
     };
+    orderless = {
+      flake = false;
+      owner = "oantolin";
+      repo = "orderless";
+      type = "github";
+    };
     org = {
       flake = false;
       ref = "bugfix";
