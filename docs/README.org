@@ -24,12 +24,8 @@
 #+author: Burgess Chang
 #+email: (concat bsc at-sign brsvh dot org)
 
-#+begin_center
-Personal GNU Emacs configuration
 
-[[https://brsvh.cachix.org][file:https://img.shields.io/badge/cachix-brsvh-blue.svg]]
-[[https://github.com/brsvh/emacs.d/actions][file:https://github.com/brsvh/emacs.d/actions/workflows/ci.yaml/badge.svg]]
-#+end_center
+[[https://brsvh.cachix.org][file:https://img.shields.io/badge/cachix-brsvh-blue.svg]] [[https://github.com/brsvh/emacs.d/actions][file:https://github.com/brsvh/emacs.d/actions/workflows/ci.yaml/badge.svg]]
 
 * Overview
 
