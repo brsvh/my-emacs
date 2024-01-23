@@ -20,7 +20,6 @@
   nixConfig = {
     experimental-features =
       [
-        "ca-derivations"
         "flakes"
         "nix-command"
         "repl-flake"
