@@ -451,6 +451,35 @@ threshold when idle, and a high threshold during regular operation.
     (emacs-startup-hook . gcmh-mode))
 #+end_src
 
+** Using Emacs as a server
+
+As Emacs users continually incorporate new Emacs Lisp Packages, a
+convenient approach is to operate Emacs in the classic Server-Client
+mode, advancing the startup time overhead, thereby making the delay
+imperceptible.
+
+Furthermore, some conveniences can be obtained.  When I invoke Emacs in
+other locations, I desire to share buffers, a command history, or
+supplementary data with the existing Emacs process.  Using the Emacs
+Client can achieve this.
+
+#+begin_src emacs-lisp
+  (use-package server
+    :preface
+    (defun my/server-start ()
+      "Allow this Emacs process to be a server for client processes."
+      (interactive)
+      (eval-when-compile (require 'server))
+      (unless (server-running-p) (server-start)))
+
+    :config
+    (setq server-auth-dir
+          (expand-file-name "server/" my-state-directory))
+
+    :hook
+    (emacs-startup-hook . my/server-start))
+#+end_src
+
 * Customization system
 
 Emacs is a real-time, extensible, and customizable editor.  Its
@@ -785,7 +814,7 @@ based on Category.
     (setq-default word-wrap-by-category t))
 #+end_src
 
-* Text editing
+* File and Text editing
 
 As persistently discussed in this document, I utilize Emacs to
 accomplish a myriad of tasks.  The vast majority of these tasks involve
@@ -801,6 +830,41 @@ to my Emacs configuration to achieve a more efficient text editing
 experience.  So, what are we truly focusing on when editing text? From
 my personal perspective, the main functionalities of interest are
 navigation, search, replacement, and disaster recovery.
+
+** More detailed and user-friendly information prompts
+
+While editing files and texts, I desire more user-friendly information
+prompts to help me understand the extent of my modifications, such as
+whether I have saved them, cursor position, file location, and so on.
+
+Regrettably, despite the provision of related functionality with the
+distribution of Emacs, the presets of Emacs do not enable these.
+
+I always expect Emacs to display the row and column positions of the
+current cursor, and to be able to display the size of the current
+Buffer.  I achieve this by enabling some minor modes provided in
+~simple~.
+
+#+begin_src emacs-lisp
+  (use-package simple
+    :hook
+    (emacs-startup-hook . column-number-mode)
+    (emacs-startup-hook . line-number-mode)
+    (emacs-startup-hook . size-indication-mode))
+#+end_src
+
+When the text I am modifying has corresponding files, the Buffer name
+will use their file paths and display the basename.  However, when I
+open two files that have the same basename, the buffers of these files
+will append the parent directory name with brackets.  This appears
+different from the Unix/Linux file path, and I prefer using prefix paths
+to distinguish them.
+
+#+begin_src emacs-lisp
+  (use-package uniquify
+    :config
+    (setq uniquify-buffer-name-style 'forward))
+#+end_src
 
 ** Disaster recovery
 
