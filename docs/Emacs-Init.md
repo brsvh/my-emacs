@@ -315,6 +315,34 @@ threshold when idle, and a high threshold during regular operation.
       (emacs-startup-hook . gcmh-mode))
 
 
+### Using Emacs as a server
+
+As Emacs users continually incorporate new Emacs Lisp Packages, a
+convenient approach is to operate Emacs in the classic Server-Client
+mode, advancing the startup time overhead, thereby making the delay
+imperceptible.
+
+Furthermore, some conveniences can be obtained.  When I invoke Emacs in
+other locations, I desire to share buffers, a command history, or
+supplementary data with the existing Emacs process.  Using the Emacs
+Client can achieve this.
+
+    (use-package server
+      :preface
+      (defun my/server-start ()
+        "Allow this Emacs process to be a server for client processes."
+        (interactive)
+        (eval-when-compile (require 'server))
+        (unless (server-running-p) (server-start)))
+    
+      :config
+      (setq server-auth-dir
+            (expand-file-name "server/" my-state-directory))
+    
+      :hook
+      (emacs-startup-hook . my/server-start))
+
+
 ## Customization system
 
 Emacs is a real-time, extensible, and customizable editor.  Its
@@ -638,7 +666,7 @@ based on Category.
       (setq-default word-wrap-by-category t))
 
 
-## Text editing
+## File and Text editing
 
 As persistently discussed in this document, I utilize Emacs to
 accomplish a myriad of tasks.  The vast majority of these tasks involve
@@ -654,6 +682,86 @@ to my Emacs configuration to achieve a more efficient text editing
 experience.  So, what are we truly focusing on when editing text? From
 my personal perspective, the main functionalities of interest are
 navigation, search, replacement, and disaster recovery.
+
+
+### More detailed and user-friendly information prompts
+
+While editing files and texts, I desire more user-friendly information
+prompts to help me understand the extent of my modifications, such as
+whether I have saved them, cursor position, file location, and so on.
+
+Regrettably, despite the provision of related functionality with the
+distribution of Emacs, the presets of Emacs do not enable these.
+
+I always expect Emacs to display the row and column positions of the
+current cursor, and to be able to display the size of the current
+Buffer.  I achieve this by enabling some minor modes provided in
+`simple`.
+
+    (use-package simple
+      :hook
+      (emacs-startup-hook . column-number-mode)
+      (emacs-startup-hook . line-number-mode)
+      (emacs-startup-hook . size-indication-mode))
+
+When the text I am modifying has corresponding files, the Buffer name
+will use their file paths and display the basename.  However, when I
+open two files that have the same basename, the buffers of these files
+will append the parent directory name with brackets.  This appears
+different from the Unix/Linux file path, and I prefer using prefix paths
+to distinguish them.
+
+    (use-package uniquify
+      :config
+      (setq uniquify-buffer-name-style 'forward))
+
+
+### Text replacement
+
+Text replacement is one of the common scenarios in file editing.
+Evidently, Emacs supports this, but the problem is that the presets are
+not user-friendly.
+
+When I am operating on a segment of multi-character text, I first select
+them, then delete or replace them with new text.  Strangely, Emacs does
+not replace the selected text with new input by default, but instead
+appends it.  This is counter-intuitive, and I enable
+`delete-selection-mode` to make it more natural.
+
+    (use-package delsel
+      :hook
+      (emacs-startup-hook . delete-selection-mode))
+
+
+### Text cutting, copying and pasting
+
+Emacs maintains its own clipboard, but strictly speaking, it cannot be
+called a clipboard, but rather a Kill Ring.  The kill ring is a
+compilation of text blocks that were previously eliminated.  The
+clipboard is the mechanism that most graphical applications utilize for
+cutting, copying and pasting.  Therefore, I believe that, informally,
+the kill ring can be referred to as a clipboard.
+
+I want to synchronize the content of kill ring and the system's
+clipboard.  Consequently, I need to configure Emacs to save the kill
+ring to the clipboard upon exit.
+
+    (use-package simple
+      :config
+      (setq kill-do-not-save-duplicates t
+            save-interprogram-paste-before-kill t))
+
+Also use `kill-do-not-save-duplicates` de-duplication to sift out
+duplicates.
+
+For excessively lengthy content, I opt to obtain further preview support
+through `consult`, which assists me in glimpsing the result after
+modifications have taken effect in the target modification area.
+
+    (use-package consult
+      :keymap-set
+      ("<remap> <yank>" . consult-yank-from-kill-ring)
+      ("<remap> <yank-pop>" . consult-yank-pop))
 
 
 ### Disaster recovery
@@ -676,7 +784,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#orgdf28abf), I apply my custom transformation rule for
+my [File conventions](#org114ad6d), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -710,7 +818,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#orgdf28abf).
+directory in accordance with my [File conventions](#org114ad6d).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -1230,12 +1338,6 @@ personal aversion towards it, I have to incorporate its support.
 Unlike `python-mode`, this mode follows the Emacs convention of not
 binding the <kbd> ENTER </kbd> key to `newline-and-indent`.  To get this
 behavior, bind it in `yaml-mode`.
-
-
-## File footer
-
-    (provide 'init)
-    ;;; init.el ends here
 
 
 ## Footnotes
