@@ -866,6 +866,24 @@ to distinguish them.
     (setq uniquify-buffer-name-style 'forward))
 #+end_src
 
+** Text replacement
+
+Text replacement is one of the common scenarios in file editing.
+Evidently, Emacs supports this, but the problem is that the presets are
+not user-friendly.
+
+When I am operating on a segment of multi-character text, I first select
+them, then delete or replace them with new text.  Strangely, Emacs does
+not replace the selected text with new input by default, but instead
+appends it.  This is counter-intuitive, and I enable
+~delete-selection-mode~ to make it more natural.
+
+#+begin_src emacs-lisp
+  (use-package delsel
+    :hook
+    (emacs-startup-hook . delete-selection-mode))
+#+end_src
+
 ** Disaster recovery
 
 In this context, disaster recovery refers to how I recover modifications
