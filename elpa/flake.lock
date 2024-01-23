@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "consult": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705963741,
+        "narHash": "sha256-x9UuFXHi7djEA925tXQnnfJab92VjJw9oWeo1ja9cOI=",
+        "owner": "minad",
+        "repo": "consult",
+        "rev": "e06292f43eb68948393a45f7c31be025d7fab6a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "minad",
+        "repo": "consult",
+        "type": "github"
+      }
+    },
     "dash": {
       "flake": false,
       "locked": {
@@ -308,6 +324,7 @@
     "root": {
       "inputs": {
         "compat": "compat",
+        "consult": "consult",
         "dash": "dash",
         "gcmh": "gcmh",
         "git-commit": "git-commit",

@@ -8,6 +8,12 @@
       repo = "compat";
       type = "github";
     };
+    consult = {
+      flake = false;
+      owner = "minad";
+      repo = "consult";
+      type = "github";
+    };
     dash = {
       flake = false;
       owner = "magnars";
