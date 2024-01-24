@@ -18,7 +18,7 @@
 #+bind: org-md-toplevel-hlevel 2
 #+options: toc:nil ^:nil
 #+startup: noindent fnadjust
-#+export_file_name: ../.github/README
+#+export_file_name: ../docs/README
 
 #+title: emacs.d
 #+author: Burgess Chang
