@@ -16,3 +16,122 @@ repository:
   allow_merge_commit: true
   allow_rebase_merge: true
   delete_branch_on_merge: true
+
+labels:
+  # Standard labels commonly used in most repositories.
+  - name: breaking
+    color: D73A4A
+    description: Indicates a breaking change to any existing job.
+
+  - name: good first issue
+    color: 7057FF
+    description: Indicates a good issue for first-time contributors.
+
+  - name: help
+    color: 0E8A16
+    description: Indicates that a maintainer wants help on an issue or pull request
+
+  # Describes the relative effort to complete an issue or pull request.
+  - name: "effort: 1"
+    color: 91CA55
+    description: The relative effort to complete an issue or pull request.
+
+  - name: "effort: 2"
+    color: C2E2A2
+    description: The relative effort to complete an issue or pull request.
+
+  - name: "effort: 3"
+    color: E9F4DC
+    description: The relative effort to complete an issue or pull request.
+
+  - name: "effort: 5"
+    color: FEF6D7
+    description: The relative effort to complete an issue or pull request.
+
+  - name: "effort: 8"
+    color: FEF2C0
+    description: The relative effort to complete an issue or pull request.
+
+  - name: "effort: 13"
+    color: FBCA04
+    description: The relative effort to complete an issue or pull request.
+
+  # Priority labels, but focused on describing the immediacy of attention required.
+  - name: "priority: now"
+    color: D73A4A
+    description: Indicates it should be done immediately.
+
+  - name: "priority: 2day"
+    color: FBCA04
+    description: Indicates a short delay is possible.
+
+  - name: "priority: soon"
+    color: FFB8C6
+    description: Indicates it should be done as soon as possible.
+
+  # Describes the decision state of the issue or pull request.
+  - name: "state: approved"
+    color: 91CA55
+    description: Approved to proceed.
+
+  - name: "state: blocked"
+    color: D73A4A
+    description: Something is blocking action.
+
+  - name: "state: pending"
+    color: FBCA04
+    description: Taking action, but need a few things to happen first. A feature that needs dependencies merged, or a bug that needs further data.
+
+  - name: "state: inactive"
+    color: E6E6E6
+    description: No action needed or possible. The issue is either fixed, addressed better by other issues, or just out of product scope.
+
+  # Describes the type of issue or pull request.
+  - name: "type: bug"
+    color: D73A4A
+    description: Something isn't working.
+
+  - name: "type: chore"
+    color: FEF2C0
+    description: Converting measurements, reorganizing folder structure, and other necessary (but less impactful) tasks.
+
+  - name: "type: discussion"
+    color: D4C5F9
+    description: Questions, proposals and info that requires discussion.
+
+  - name: "type: docs"
+    color: FEF2C0
+    description: Related to documentation and information.
+
+  - name: "type: feature"
+    color: 5EBEFF
+    description: Brand new functionality, features, pages, workflows, endpoints, etc.
+
+  - name: "type: fix"
+    color: 91CA55
+    description: Iterations on existing features or infrastructure.
+
+  - name: "type: security"
+    color: D73A4A
+    description: Something is vulnerable or not secure.
+
+  - name: "type: testing"
+    color: FBCA04
+    description: Related to testing.
+
+  # Describes the kind of work involved in resolving the issue, using the Cynefin framework.
+  - name: "work: chaotic"
+    color: FBCA04
+    description: The situation is chaotic, novel practices used.
+
+  - name": "work: complex"
+    color": D4C5F9
+    description": The situation is complex, emergent practices used.
+
+  - name": "work: complicated"
+    color": FFB8C6
+    description": The situation is complicated, good practices used.
+
+  - name": "work: obvious"
+    color": 91CA55
+    description": The situation is obvious, best practices used.
