@@ -91,7 +91,7 @@ in
       emacs-twist = {
         enable = true;
 
-        name = "emacs.d";
+        name = "emacs";
 
         directory = config.emacs.d.directory;
 
