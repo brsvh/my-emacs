@@ -50,11 +50,19 @@ jobs:
         with:
           files: 'elpa/**'
 
+      - name: Import GPG key
+        if: steps.check-changed-files.outputs.files_changed == 'true'
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
       - name: Lock updates of dependent packages
         if: steps.check-changed-files.outputs.files_changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(elpa): bump version"
+          commit_options: '-S 7B740DB9F2AC6D3B226BC53078D74502D92E0218'
           file_pattern: 'elpa/**'
 
   build:
@@ -67,9 +75,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-
-      - name: Checkout latest source
-        run: git pull
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup Nix
         uses: nixbuild/nix-quick-install-action@v26
@@ -97,45 +104,60 @@ jobs:
           CACHIX_AUTH_TOKEN: "${{ secrets.CACHIX_AUTH_TOKEN }}"
         run: cachix push brsvh ./result
 
-      - name: Check configuration changes
-        if: |
-          github.ref == 'refs/heads/main' &&
-          matrix.package == 'emacsD-nogui'
-        uses: tj-actions/changed-files@v42
-        id: check-changed-configs
-        with:
-          files: 'org/**.org'
-
       - name: Export configuration to Markdown
         id: ox-md
         if: |
           github.ref == 'refs/heads/main' &&
-          matrix.package == 'emacsD-nogui' &&
-          steps.check-changed-configs.outputs.any_changed == 'true'
-        env:
-          CONFIGS: ${{ steps.check-changed-configs.outputs.all_changed_files }}
+          matrix.package == 'emacsD-nogui'
         run: |
-          for org in $CONFIGS
+          for org in org/**.org
           do
              nix run .#batch -- $org --funcall org-md-export-to-markdown
           done
 
-      - name: Check changed Markdown
-        if: |
-          github.ref == 'refs/heads/main' &&
-          matrix.package == 'emacsD-nogui' &&
-          steps.ox-md.outcome == 'success'
-        uses: tj-actions/verify-changed-files@v17
-        id: check-changed-docs
+      - name: Upload Markdown artifacts
+        if: steps.ox-md.outcome == 'success'
+        uses: actions/upload-artifact@v4
         with:
-          files: 'docs/**.md'
+          name: docs-markdown
+          path: docs/**.md
+
+  publish-md:
+    name: Publish Markdown
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: docs
+
+      - name: Download Markdown artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-markdown
+
+      - name: Move Markdown
+        run: mv docs/**.md ./
+
+      - name: Check changed Markdown
+        uses: tj-actions/verify-changed-files@v17
+        id: check-changed-md
+        with:
+          files: '**.md'
+
+      - name: Import GPG key
+        if: steps.check-changed-md.outputs.files_changed == 'true'
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
 
       - name: Publish Markdown
-        if: |
-          github.ref == 'refs/heads/main' &&
-          matrix.package == 'emacsD-nogui' &&
-          steps.check-changed-docs.outputs.files_changed == 'true'
+        if: steps.check-changed-md.outputs.files_changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: auto update"
+          commit_options: '-S 7B740DB9F2AC6D3B226BC53078D74502D92E0218'
           file_pattern: 'docs/**.md'
