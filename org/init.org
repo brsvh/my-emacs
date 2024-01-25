@@ -779,6 +779,24 @@ window switching and splitting in one fell swoop.
     ("<remap> <split-window-right>" . switch-window-then-split-right))
 #+end_src
 
+** Minibuffer
+
+The *Minibuffer* is a crucial interactive interface in Emacs.  Apart
+from Buffer, it is where most of our operations will be performed.
+Before starting any operation, I need to enhance its default settings.
+
+By default, Emacs does not allow a new minibuffer in the current
+minibuffer.  This inconveniences many everyday tasks, and many of my
+actions involve seeking further input completion in the minibuffer to
+save time.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq enable-recursive-minibuffers t))
+#+end_src
+
 * Multilingual environment
 
 As a polyglot (it may not qualify as such, but I want to be.), it is
