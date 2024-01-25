@@ -733,6 +733,29 @@ rectification.
      my--reset-modus-themes-line-number-face-when-highlight))
 #+end_src
 
+** Frame operation
+
+When utilizing graphical Emacs, a *Frame* essentially embodies the
+concept of *Window* in other applications.  However, to attain a user
+experience as straightforward as manipulating Windows in other graphical
+applications, additional configurations are requisite, which is
+precisely what I intend to accomplish here.
+
+*** Pixel-based Resizing
+
+By default, Emacs alters its size based on lines, which is generally
+inconsequential.  However, under certain circumstances, gaps may appear
+at the edges of Emacs.  Therefore, it is preferable to resize the frame
+and window pixelwise rather than linewise.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq frame-resize-pixelwise t
+          window-resize-pixelwise t))
+#+end_src
+
 ** Buffer operation
 
 The document you manipulate in Emacs is contained within an entity known
@@ -798,6 +821,40 @@ rules.
             (display-buffer-reuse-window display-buffer-below-selected)
             (window-height . 0.4))
           display-buffer-alist))
+#+end_src
+
+*** Scrolling
+
+Scrolling pertains to the act of navigating forwards or backwards within
+a buffer.  Given that the size of a buffer (measured in lines) typically
+surpasses the maximum content displayable by a window, scrolling becomes
+necessary when I need to peruse text located further ahead or behind.
+Well, in simpler terms, it is akin to the natural operation of a mouse
+wheel.  The default behaviour is primarily designed with low refresh
+rate devices in mind, hence the need for altering the preset.
+
+**** Minimum scroll distance
+
+Emacs will approximately scroll half of the screen when I am situated at
+the buffer's bottom and wish to proceed downwards.  This action results
+in my visual focus departing from the buffer's bottom.
+
+I require a slower scrolling, perhaps advancing by one or two lines
+downwards, and keep current position after screen scroll.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq auto-window-vscroll nil
+          fast-but-imprecise-scrolling t)
+
+    (setq scroll-preserve-screen-position t
+          scroll-margin 0
+          scroll-conservatively 101)
+
+    (setq hscroll-margin 2
+          hscroll-step 1))
 #+end_src
 
 ** Window operation
@@ -1173,7 +1230,7 @@ I have enabled ~global-auto-revert-mode~.
     :config
     (setq auto-revert-verbose nil)
     :hook
-    (emacs-startup-hook . global-auto-revert-mode))  
+    (emacs-startup-hook . global-auto-revert-mode))
 #+end_src
 
 * Completion
