@@ -24,7 +24,6 @@
 #+author: Burgess Chang
 #+email: (concat bsc at-sign brsvh dot org)
 
-
 [[https://brsvh.cachix.org][file:https://img.shields.io/badge/cachix-brsvh-blue.svg]] [[https://github.com/brsvh/emacs.d/actions][file:https://github.com/brsvh/emacs.d/actions/workflows/ci.yaml/badge.svg]]
 
 * Overview
