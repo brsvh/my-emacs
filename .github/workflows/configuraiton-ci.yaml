@@ -1,4 +1,4 @@
-name: Configuration - CI
+name: CI
 
 on:
   push:
@@ -35,11 +35,11 @@ jobs:
           purge: true
           purge-created: 604800
 
-      - name: Check flake
-        run: nix flake check
-
       - name: Update dependent packages
         run: nix run .#lock --impure
+
+      - name: Check flake
+        run: nix flake check
 
       - name: Check dependent packages
         run: nix build .#emacsD.depsCheck --print-build-logs
@@ -68,6 +68,9 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Checkout latest source
+        run: git pull
+
       - name: Setup Nix
         uses: nixbuild/nix-quick-install-action@v26
         with:
@@ -80,7 +83,7 @@ jobs:
           restore-prefixes-first-match: ${{ runner.os }}-build-
           purge: true
           purge-created: 604800
-          
+
       - name: Build
         run: nix build .#${{ matrix.package }} --print-build-logs
 
@@ -131,7 +134,7 @@ jobs:
         if: |
           github.ref == 'refs/heads/main' &&
           matrix.package == 'emacsD-nogui' &&
-          steps.check-changed-docs.outputs.files_changed == 'true' 
+          steps.check-changed-docs.outputs.files_changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: auto update"
