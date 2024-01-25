@@ -80,11 +80,11 @@ labels:
 
   - name: "state: pending"
     color: FBCA04
-    description: Taking action, but need a few things to happen first. A feature that needs dependencies merged, or a bug that needs further data.
+    description: Taking action, but need a few things to happen first.
 
   - name: "state: inactive"
     color: E6E6E6
-    description: No action needed or possible. The issue is either fixed, addressed better by other issues, or just out of product scope.
+    description: No action needed or possible.
 
   # Describes the type of issue or pull request.
   - name: "type: bug"
@@ -93,7 +93,7 @@ labels:
 
   - name: "type: chore"
     color: FEF2C0
-    description: Converting measurements, reorganizing folder structure, and other necessary (but less impactful) tasks.
+    description: Converting measurements, reorganizing folder structure, and other necessary tasks.
 
   - name: "type: discussion"
     color: D4C5F9
@@ -124,14 +124,14 @@ labels:
     color: FBCA04
     description: The situation is chaotic, novel practices used.
 
-  - name": "work: complex"
-    color": D4C5F9
-    description": The situation is complex, emergent practices used.
+  - name: "work: complex"
+    color: D4C5F9
+    description: The situation is complex, emergent practices used.
 
-  - name": "work: complicated"
-    color": FFB8C6
-    description": The situation is complicated, good practices used.
+  - name: "work: complicated"
+    color: FFB8C6
+    description: The situation is complicated, good practices used.
 
-  - name": "work: obvious"
-    color": 91CA55
-    description": The situation is obvious, best practices used.
+  - name: "work: obvious"
+    color: 91CA55
+    description: The situation is obvious, best practices used.
