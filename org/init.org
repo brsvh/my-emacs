@@ -895,6 +895,30 @@ to distinguish them.
     (setq uniquify-buffer-name-style 'forward))
 #+end_src
 
+** Text navigation
+
+When editing text, primarily use cursor movement to locate the text I
+need to edit.  This is usually sufficient for my work, but I am not
+content with this. Let me request more!
+
+*** Move Where I Mean
+
+By default, Emacs uses ~move-beginning-of-line~ ({{{kbd(C-a)}}} and
+~move-end-of-line~({{{kbd(C-e)}}}) to help me quickly locate the
+beginning and end of a text line.  However, for code, the beginning may
+contain a large number of spaces for indention, and the end may contain
+a large number of comments.  This forces me to press the forward and
+backward keys countless times when there are indents and comments.  I
+want the Emacs cursor to move where I mean.
+
+#+begin_src emacs-lisp
+  (use-package mwim
+    :ensure mwim
+    :keymap-set
+    ("<remap> <move-beginning-of-line>" . mwim-beginning-of-code-or-line)
+    ("<remap> <move-end-of-line>" . mwim-end-of-code-or-line))
+#+end_src
+
 ** Text replacement
 
 Text replacement is one of the common scenarios in file editing.
