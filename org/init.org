@@ -354,11 +354,15 @@ Consequently, I bind the commands I require to the letter keys with
 {{{kbd(C-c)}}} as the prefix key. These letter keys are also employed
 for categorization purposes.
 
+- {{{kbd(f)}}}: File management commands.
 - {{{kbd(m)}}}: Major mode commands.
 - {{{kbd(n)}}}: Nix(Flake) commands.
 - {{{kbd(v)}}}: Version Control commands.
 
 #+begin_src emacs-lisp :export none
+  (defvar ctl-c-f-map (make-keymap)
+    "Default keymap for C-c f commands.")
+
   (defvar ctl-c-m-map (make-keymap)
     "Default keymap for C-c m commands.")
 
@@ -368,6 +372,7 @@ for categorization purposes.
   (defvar ctl-c-v-map (make-keymap)
     "Default keymap for C-c v commands.")
 
+  (keymap-set ctl-c-map "f" ctl-c-f-map)
   (keymap-set ctl-c-map "m" ctl-c-m-map)
   (keymap-set ctl-c-map "n" ctl-c-n-map)
   (keymap-set ctl-c-map "v" ctl-c-v-map)
@@ -958,6 +963,38 @@ save time.
     (setq enable-recursive-minibuffers t))
 #+end_src
 
+Prior to the termination of an Emacs session, commands invoked and
+operations executed within the Emacs Minibuffer are duly logged, thereby
+facilitating their convenient re-execution.  However, upon repeated
+execution, multiple identical histories are created, hindering the
+ability to trace back to earlier histories and necessitating additional
+keystrokes.  Consequently, it is desirable for Emacs to refrain from
+logging duplicate inputs.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :no-require t
+    :init
+    (setq history-delete-duplicates t))
+#+end_src
+
+** Save input history
+
+Upon executing certain operations within the Minibuffer and subsequently
+terminating Emacs, the record of these operations is unfortunately not
+retained.  This necessitates the re-entry of all commands, a process
+which I find rather disconcerting.  Consequently, I have enabled
+savehist-mode to ensure the preservation of all input within the
+Minibuffer.
+
+#+begin_src emacs-lisp
+  (use-package savehist
+    :config
+    (setq savehist-file (expand-file-name "hist.el" my-state-directory))
+    :hook
+    (emacs-startup-hook . savehist-mode))
+#+end_src
+
 * Multilingual environment
 
 As a polyglot (it may not qualify as such, but I want to be.), it is
@@ -1215,6 +1252,61 @@ You may have observed that I set ~backup-by-copying~ to ~t~, which
 prompts Emacs to create backups by duplicating the original file.  This
 deviates from the default method, which generates backups by renaming
 the original file.
+
+** Crime scene returns
+
+Text editing is invariably verbose, and we often find ourselves in a
+cycle of modification, saving, and further modification.  Regrettably,
+when Emacs reopens a previously modified file, the cursor defaults to
+the beginning.  This is frustrating, as I have to spend extra seconds
+each time to locate my last modification.  Let Emacs remember the
+position where I left the file!
+
+#+begin_src emacs-lisp
+  (use-package saveplace
+    :config
+    (setq save-place-file
+          (expand-file-name "place.el" my-state-directory))
+    :hook
+    (emacs-startup-hook . save-place-mode))
+#+end_src
+
+While Emacs now retains the position of my transgressions within the
+file, when I attempt to recall my recent activities, I often confuse the
+files I've recently edited (╥﹏╥).  Let Emacs likewise remember the
+files I've recently opened and their paths, aiding me in swiftly
+returning to the scene of the crime!
+
+#+begin_src emacs-lisp
+  (use-package recentf
+    :config
+    (define-advice recentf-load-list
+        (:around (fn &rest args) silence-message)
+      "Silencing load message."
+      (cl-letf (((symbol-function #'message) #'ignore))
+        (apply fn args)))
+
+    (define-advice recentf-cleanup
+        (:around (fn &rest args) silence-message)
+      "Silencing clean up message."
+      (cl-letf (((symbol-function #'message) #'ignore))
+        (apply fn args)))
+
+    (setq recentf-save-file
+          (expand-file-name "recent.el" my-state-directory))
+    :hook
+    (emacs-startup-hook . recentf-mode))
+
+  (use-package consult
+    :keymap-set
+    (:ctl-c-f-map
+     ("r" . consult-recent-file)))
+#+end_src
+
+In the aforementioned, I have also bound the command provided by
+~consult~ to retrieve a list of recently opened files as candidates,
+which can be selected through input completion.  And it also prevents
+the annoying messages during recent file memory.
 
 ** Sync changes
 
