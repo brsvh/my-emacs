@@ -843,7 +843,7 @@ based on Category.
     (setq-default word-wrap-by-category t))
 #+end_src
 
-* File and Text editing
+* File, Buffer and Text editing
 
 As persistently discussed in this document, I utilize Emacs to
 accomplish a myriad of tasks.  The vast majority of these tasks involve
@@ -1055,6 +1055,23 @@ prompts Emacs to create backups by duplicating the original file.  This
 deviates from the default method, which generates backups by renaming
 the original file.
 
+** Sync changes
+
+In certain typical scenarios, such as switching branches in version
+control systems or continuous log output, the files and text that I am
+about to edit and manipulate will undergo changes on the disk.  Emacs
+supports their automatic refresh. I expect all files to always
+automatically stay consistent with the actual content on the disk, hence
+I have enabled ~global-auto-revert-mode~.
+
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :config
+    (setq auto-revert-verbose nil)
+    :hook
+    (emacs-startup-hook . global-auto-revert-mode))  
+#+end_src
+
 * Completion
 
 The completion feature in Emacs significantly enhances my interaction
@@ -1169,7 +1186,7 @@ contains a wildcard.
   (use-package minibuffer
     :ensure orderless
     :init
-    (setq completion-styles '(substring orderless basic)
+    (setq completion-styles '(substring orderless basic partial-completion)
           completion-category-overrides
           '((file (styles basic partial-completion)))))
 #+end_src
