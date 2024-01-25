@@ -1189,12 +1189,37 @@ check out remote repositories, manipulate local version data, and push
 to remote repositories.  Fortunately, Emacs significantly alleviates the
 stress associated with these activities.
 
+*** Highlighting of the changes
+
+When working in any folder that uses a version control system, whether
+browsing or editing files, I would like to highlight all changes.  I
+obtain this feature through ~diff-hl~[fn:13].
+
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure diff-hl
+    :hook
+    (find-file-hook . diff-hl-mode)
+    (diff-hl-mode-hook . diff-hl-flydiff-mode))
+#+end_src
+
+There's no fringe when Emacs is running in the console, but the
+navigation and revert commands still work. I turning
+~diff-hl-margin-mode~ on, to show the indicators in the margin instead.
+
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :unless (display-graphic-p)
+    :hook
+    (diff-hl-mode-hook . diff-hl-margin-mode))
+#+end_src
+
 *** Git
 
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:13].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:14].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1222,11 +1247,26 @@ Git subcategory of the Version control category.
      ("s" . magit-status)))
 #+end_src
 
+Becuase I use ~magit~ other than ~vc~ to commit changes, it not run
+~vc-checkin-hook~ after commits.  In that case, I need to called refresh
+functions in the buffer after its state has changed.
+
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :functions
+    (diff-hl-magit-pre-refresh
+     diff-hl-magit-post-refresh)
+    :after magit-mode
+    :hook
+    (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+    (magit-post-refresh-hook . diff-hl-magit-post-refresh))
+#+end_src
+
 ** Nix
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:14], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:15], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1293,7 +1333,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:15], including:
+Emacs supports a variety of line-folding methods[fn:16], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -1343,7 +1383,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:16] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:17] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1396,7 +1436,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:17] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:18] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -1469,7 +1509,7 @@ behavior in the necessary documents through the BIND keyword.
 
 ** Writing with Markdown
 
-Markdown[fn:18], perhaps the most prevalent text markup language of the first
+Markdown[fn:19], perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -1525,7 +1565,7 @@ predicated on the extension name.
 
 ** YAML
 
-YAML[fn:19] is an exceedingly prevalent configuration language. Despite my
+YAML[fn:20] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
@@ -1575,16 +1615,18 @@ behavior, bind it in ~yaml-mode~.
 
 [fn:12] Marginalia, https://github.com/minad/marginalia
 
-[fn:13] Magit, https://magit.vc
+[fn:13] diff-hl, https://github.com/dgutov/diff-hl
 
-[fn:14] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:14] Magit, https://magit.vc
 
-[fn:15] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:15] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:16] Modern Org Style, https://github.com/minad/org-modern
+[fn:16] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:17] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:17] Modern Org Style, https://github.com/minad/org-modern
 
-[fn:18] Markdown, https://daringfireball.net/projects/markdown/
+[fn:18] Org Side Tree, https://github.com/localauthor/org-side-tree
 
-[fn:19] YAML, https://yaml.org/
+[fn:19] Markdown, https://daringfireball.net/projects/markdown/
+
+[fn:20] YAML, https://yaml.org/
