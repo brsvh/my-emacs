@@ -109,9 +109,3 @@ here I turned off **Menu Bar**, **Tool Bar**, and **Scroll Bar**.
     (push (cons 'vertical-scroll-bars nil) default-frame-alist)
     (push (cons 'horizontal-scroll-bars nil) default-frame-alist)
 
-
-## File footer
-
-    (provide 'early-init)
-    ;;; early-init.el ends here
-

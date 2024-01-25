@@ -575,6 +575,74 @@ rectification.
        my--reset-modus-themes-line-number-face-when-highlight))
 
 
+### Buffer operation
+
+The document you manipulate in Emacs is contained within an entity known
+as a **Buffer**.  Hence, when I am interacting with my Emacs, the most
+frequent interaction is with the Buffer.  Herein, I will elucidate how I
+configure Buffer operations to address my specific requirements.
+
+
+#### Display rules
+
+When I am create a new Buffer, I anticipate that different Major Modes
+will display the Buffer according to distinct rules.  For instance, I
+always prefer the Help Buffer to appear as a Popup window at the bottom
+of my screen.  This necessitates control through the
+`display-buffer-alist`, for more information you should see
+<emacs#Window Choice>.  The `display-buffer` function use it to
+match the rules required for displaying a buffer.  `display-buffer` is
+both a command and an important internal function.  Although I can
+invoke it via <kbd> C-x 4 C-o </kbd>, I seldom call it, primarily because
+various commands will call it internally.  The aforementioned rules
+guide the specific parameters that `display-buffer` should use, preset
+through `display-buffer-alist`.
+
+Create a `display-buffer-alist` entry is easy, it consists of a
+condition, an action and an optional flags alist.
+
+Most actions we provide to `display-buffer-alist` are:
+
+-`display-buffer-same-window` use the selected window.
+
+-   `display-buffer-reuse-window` use a window already showing the
+    buffer.
+-   `display-buffer-in-previous-window` use a window that did show the
+    buffer before.
+-   `display-buffer-use-some-window` use some existing
+    window.
+-   `display-buffer-use-least-recent-window` try to avoid re-using windows
+    that have recently been switched to.
+-   `display-buffer-pop-up-window` pop up a new window.
+-   `display-buffer-full-frame` delete other windows and use the full
+    frame.
+-   `display-buffer-below-selected` use or pop up a window below the
+    selected one.
+-   `display-buffer-at-bottom` use or pop up a window at the bottom of
+    the selected frame.
+-   `display-buffer-pop-up-frame` show the buffer on a new frame.
+-   `display-buffer-in-child-frame` show the buffer in a child frame.
+-   `display-buffer-no-window` do not display the buffer and have
+    `display-buffer` return nil immediately.
+
+Here are some alist keys you might want to know about:
+
+-   `inhibit-same-window`
+-   `reusable-frames`
+-   `inhibit-switch-frame`
+-   `window-width` and `window-height`
+
+After understanding this, I started customizing my own `display-buffer`
+rules.
+
+    (use-package window
+      :config
+      (push '("\\*Help\\*"
+              (display-buffer-reuse-window display-buffer-below-selected)
+              (window-height . 0.4))
+            display-buffer-alist))
+
+
 ### Window operation
 
 Emacs refers to the display area of a buffer as a Window. As buffers are
@@ -618,6 +686,56 @@ window switching and splitting in one fell swoop.
       ("<remap> <delete-other-windows>" . switch-window-then-maximize)
       ("<remap> <split-window-below>" . switch-window-then-split-below)
       ("<remap> <split-window-right>" . switch-window-then-split-right))
+
+
+### Tab operation
+
+I recently commenced using `tab-bar-mode`.  Initially, I believed that
+my existing `switch-to-buffer` functionality was sufficient, negating
+the need for tab-based switching of files or working windows, as is
+common in other editors.  However, upon my first use, I discovered its
+utility in maintaining the layout of my Buffer or Window.  I can perform
+some less desirable tasks in a new Tab, and swiftly revert back to a
+clean layout.
+
+Despite it is useful, the default settings are somewhat cumbersome.  I
+would prefer the Tab Bar to be displayed only when there are more than
+two Tabs present.  Simultaneously, open the **Scratch** Buffer by default
+when creating a new Tab.
+
+    (use-package tab-bar
+      :config
+      (setq tab-bar-show 1
+            tab-bar-new-tab-choice "*scratch*")
+      :hook
+      (emacs-startup-hook . tab-bar-mode))
+
+In tandem, I want my Tab Bar to exhibit a more vibrant array of colours.
+I have superseded its default appearance by using the Modus Themes
+colour palette.
+
+    (use-package modus-themes
+      :config
+      (push '(bg-tab-bar bg-active) modus-themes-common-palette-overrides)
+      (push '(bg-tab-current bg-main) modus-themes-common-palette-overrides)
+      (push '(bg-tab-other bg-inactive) modus-themes-common-palette-overrides))
+
+
+### Minibuffer
+
+The **Minibuffer** is a crucial interactive interface in Emacs.  Apart
+from Buffer, it is where most of our operations will be performed.
+Before starting any operation, I need to enhance its default settings.
+
+By default, Emacs does not allow a new minibuffer in the current
+minibuffer.  This inconveniences many everyday tasks, and many of my
+actions involve seeking further input completion in the minibuffer to
+save time.
+
+    (use-package emacs
+      :no-require t
+      :init
+      (setq enable-recursive-minibuffers t))
 
 
 ## Multilingual environment
@@ -666,7 +784,7 @@ based on Category.
       (setq-default word-wrap-by-category t))
 
 
-## File and Text editing
+## File, Buffer and Text editing
 
 As persistently discussed in this document, I utilize Emacs to
 accomplish a myriad of tasks.  The vast majority of these tasks involve
@@ -714,6 +832,30 @@ to distinguish them.
     (use-package uniquify
       :config
       (setq uniquify-buffer-name-style 'forward))
+
+
+### Text navigation
+
+When editing text, primarily use cursor movement to locate the text I
+need to edit.  This is usually sufficient for my work, but I am not
+content with this. Let me request more!
+
+
+#### Move Where I Mean
+
+By default, Emacs uses `move-beginning-of-line` (<kbd> C-a </kbd> and
+~move-end-of-line~(<kbd> C-e </kbd>) to help me quickly locate the
+beginning and end of a text line.  However, for code, the beginning may
+contain a large number of spaces for indention, and the end may contain
+a large number of comments.  This forces me to press the forward and
+backward keys countless times when there are indents and comments.  I
+want the Emacs cursor to move where I mean.
+
+    (use-package mwim
+      :ensure mwim
+      :keymap-set
+      ("<remap> <move-beginning-of-line>" . mwim-beginning-of-code-or-line)
+      ("<remap> <move-end-of-line>" . mwim-end-of-code-or-line))
 
 
 ### Text replacement
@@ -784,7 +926,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#org114ad6d), I apply my custom transformation rule for
+my [File conventions](#orgf892d2a), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -818,7 +960,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#org114ad6d).
+directory in accordance with my [File conventions](#orgf892d2a).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -845,6 +987,22 @@ You may have observed that I set `backup-by-copying` to `t`, which
 prompts Emacs to create backups by duplicating the original file.  This
 deviates from the default method, which generates backups by renaming
 the original file.
+
+
+### Sync changes
+
+In certain typical scenarios, such as switching branches in version
+control systems or continuous log output, the files and text that I am
+about to edit and manipulate will undergo changes on the disk.  Emacs
+supports their automatic refresh. I expect all files to always
+automatically stay consistent with the actual content on the disk, hence
+I have enabled `global-auto-revert-mode`.
+
+    (use-package autorevert
+      :config
+      (setq auto-revert-verbose nil)
+      :hook
+      (emacs-startup-hook . global-auto-revert-mode))  
 
 
 ## Completion
@@ -960,7 +1118,7 @@ contains a wildcard.
     (use-package minibuffer
       :ensure orderless
       :init
-      (setq completion-styles '(substring orderless basic)
+      (setq completion-styles '(substring orderless basic partial-completion)
             completion-category-overrides
             '((file (styles basic partial-completion)))))
 
@@ -1005,12 +1163,39 @@ to remote repositories.  Fortunately, Emacs significantly alleviates the
 stress associated with these activities.
 
 
+#### Highlighting of the changes
+
+When working in any folder that uses a version control system, whether
+browsing or editing files, I would like to highlight all changes.  I
+obtain this feature through `diff-hl`<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup>.
+
+    (use-package diff-hl
+      :ensure diff-hl
+      :hook
+      (find-file-hook . diff-hl-mode))
+    
+    (use-package diff-hl-flydiff
+      :after diff-hl
+      :hook
+      (diff-hl-mode-hook . diff-hl-flydiff-mode))
+
+There's no fringe when Emacs is running in the console, but the
+navigation and revert commands still work. I turning
+`diff-hl-margin-mode` on, to show the indicators in the margin instead.
+
+    (use-package diff-hl-margin
+      :after diff-hl
+      :unless (display-graphic-p)
+      :hook
+      (diff-hl-mode-hook . diff-hl-margin-mode))
+
+
 #### Git
 
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup>.  I am acquainted with
+specifically, Emacs equipped with Magit<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>.  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1036,12 +1221,25 @@ Git subcategory of the Version control category.
        ("d" . magit-dispatch)
        ("s" . magit-status)))
 
+Becuase I use `magit` other than `vc` to commit changes, it not run
+`vc-checkin-hook` after commits.  In that case, I need to called refresh
+functions in the buffer after its state has changed.
+
+    (use-package diff-hl
+      :functions
+      (diff-hl-magit-pre-refresh
+       diff-hl-magit-post-refresh)
+      :after magit-mode
+      :hook
+      (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+      (magit-post-refresh-hook . diff-hl-magit-post-refresh))
+
 
 ### Nix
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>, an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup>, an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1103,7 +1301,7 @@ editing line to be highlighted.
       :hook
       (text-mode-hook . hl-line-mode))
 
-Emacs supports a variety of line-folding methods<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup>, including:
+Emacs supports a variety of line-folding methods<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup>, including:
 
 -   **Hard Wrap** ：Modes such as AutoFillMode insert a line ending after
     the last word that occurs before the value of option `fill-column` (a
@@ -1152,7 +1350,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-`org-modern`<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup> to enhance the appearance of Org Mode headings by
+`org-modern`<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup> to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1202,7 +1400,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup> to achieve this.
+extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup> to achieve this.
 
     (use-package org-side-tree
       :ensure org-side-tree
@@ -1271,7 +1469,7 @@ usage of the BIND keyword.
 
 ### Writing with Markdown
 
-Markdown<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup>, perhaps the most prevalent text markup language of the first
+Markdown<sup><a id="fnr.17" class="footref" href="#fn.17" role="doc-backlink">17</a></sup>, perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -1324,7 +1522,7 @@ predicated on the extension name.
 
 ### YAML
 
-YAML<sup><a id="fnr.17" class="footref" href="#fn.17" role="doc-backlink">17</a></sup> is an exceedingly prevalent configuration language. Despite my
+YAML<sup><a id="fnr.18" class="footref" href="#fn.18" role="doc-backlink">18</a></sup> is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
     (use-package yaml-mode
@@ -1362,16 +1560,18 @@ behavior, bind it in `yaml-mode`.
 
 <sup><a id="fn.10" href="#fnr.10">10</a></sup> Marginalia, <https://github.com/minad/marginalia>
 
-<sup><a id="fn.11" href="#fnr.11">11</a></sup> Magit, <https://magit.vc>
+<sup><a id="fn.11" href="#fnr.11">11</a></sup> diff-hl, <https://github.com/dgutov/diff-hl>
 
-<sup><a id="fn.12" href="#fnr.12">12</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
+<sup><a id="fn.12" href="#fnr.12">12</a></sup> Magit, <https://magit.vc>
 
-<sup><a id="fn.13" href="#fnr.13">13</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
+<sup><a id="fn.13" href="#fnr.13">13</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
 
-<sup><a id="fn.14" href="#fnr.14">14</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
+<sup><a id="fn.14" href="#fnr.14">14</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
 
-<sup><a id="fn.15" href="#fnr.15">15</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
+<sup><a id="fn.15" href="#fnr.15">15</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
 
-<sup><a id="fn.16" href="#fnr.16">16</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+<sup><a id="fn.16" href="#fnr.16">16</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
 
-<sup><a id="fn.17" href="#fnr.17">17</a></sup> YAML, <https://yaml.org/>
+<sup><a id="fn.17" href="#fnr.17">17</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+
+<sup><a id="fn.18" href="#fnr.18">18</a></sup> YAML, <https://yaml.org/>
