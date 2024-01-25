@@ -20,6 +20,12 @@
       repo = "dash.el";
       type = "github";
     };
+    diff-hl = {
+      flake = false;
+      owner = "dgutov";
+      repo = "diff-hl";
+      type = "github";
+    };
     gcmh = {
       flake = false;
       owner = "koral";
@@ -78,6 +84,12 @@
       flake = false;
       owner = "tarsius";
       repo = "moody";
+      type = "github";
+    };
+    mwim = {
+      flake = false;
+      owner = "alezost";
+      repo = "mwim.el";
       type = "github";
     };
     nix-mode = {

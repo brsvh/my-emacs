@@ -48,6 +48,22 @@
         "type": "github"
       }
     },
+    "diff-hl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705880423,
+        "narHash": "sha256-gQhgWjdGGyZ/KKfRz11bhwcq4UwB3u9qXB797nQraoM=",
+        "owner": "dgutov",
+        "repo": "diff-hl",
+        "rev": "2c07ababaa621c593fbd2746551311e14ce5af55",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dgutov",
+        "repo": "diff-hl",
+        "type": "github"
+      }
+    },
     "gcmh": {
       "flake": false,
       "locked": {
@@ -208,6 +224,22 @@
         "type": "github"
       }
     },
+    "mwim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1541876426,
+        "narHash": "sha256-yp9jVUVgzF97RetyfqluAalmoeUiweq26OKl+0Iwc1A=",
+        "owner": "alezost",
+        "repo": "mwim.el",
+        "rev": "b4f3edb4c0fb8f8b71cecbf8095c2c25a8ffbf85",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alezost",
+        "repo": "mwim.el",
+        "type": "github"
+      }
+    },
     "nix-mode": {
       "flake": false,
       "locked": {
@@ -326,6 +358,7 @@
         "compat": "compat",
         "consult": "consult",
         "dash": "dash",
+        "diff-hl": "diff-hl",
         "gcmh": "gcmh",
         "git-commit": "git-commit",
         "magit": "magit",
@@ -336,6 +369,7 @@
         "minions": "minions",
         "modus-themes": "modus-themes",
         "moody": "moody",
+        "mwim": "mwim",
         "nix-mode": "nix-mode",
         "nix3": "nix3",
         "orderless": "orderless",
