@@ -733,6 +733,73 @@ rectification.
      my--reset-modus-themes-line-number-face-when-highlight))
 #+end_src
 
+** Buffer operation
+
+The document you manipulate in Emacs is contained within an entity known
+as a *Buffer*.  Hence, when I am interacting with my Emacs, the most
+frequent interaction is with the Buffer.  Herein, I will elucidate how I
+configure Buffer operations to address my specific requirements.
+
+*** Display rules
+
+When I am create a new Buffer, I anticipate that different Major Modes
+will display the Buffer according to distinct rules.  For instance, I
+always prefer the Help Buffer to appear as a Popup window at the bottom
+of my screen.  This necessitates control through the
+~display-buffer-alist~, for more information you should see
+[[info:emacs#Window Choice]].  The ~display-buffer~ function use it to
+match the rules required for displaying a buffer.  ~display-buffer~ is
+both a command and an important internal function.  Although I can
+invoke it via {{{kbd(C-x 4 C-o)}}}, I seldom call it, primarily because
+various commands will call it internally.  The aforementioned rules
+guide the specific parameters that ~display-buffer~ should use, preset
+through ~display-buffer-alist~.
+
+Create a ~display-buffer-alist~ entry is easy, it consists of a
+condition, an action and an optional flags alist.
+
+Most actions we provide to ~display-buffer-alist~ are:
+
+ -~display-buffer-same-window~ use the selected window.
+-  ~display-buffer-reuse-window~ use a window already showing the
+  buffer.
+- ~display-buffer-in-previous-window~ use a window that did show the
+  buffer before.
+- ~display-buffer-use-some-window~ use some existing
+  window.
+- ~display-buffer-use-least-recent-window~ try to avoid re-using windows
+  that have recently been switched to.
+- ~display-buffer-pop-up-window~ pop up a new window.
+- ~display-buffer-full-frame~ delete other windows and use the full
+  frame.
+- ~display-buffer-below-selected~ use or pop up a window below the
+  selected one.
+-  ~display-buffer-at-bottom~ use or pop up a window at the bottom of
+  the selected frame.
+- ~display-buffer-pop-up-frame~ show the buffer on a new frame.
+- ~display-buffer-in-child-frame~ show the buffer in a child frame.
+- ~display-buffer-no-window~ do not display the buffer and have
+  ~display-buffer~ return nil immediately.
+
+Here are some alist keys you might want to know about:
+
+- ~inhibit-same-window~
+- ~reusable-frames~
+- ~inhibit-switch-frame~
+- ~window-width~ and ~window-height~
+
+After understanding this, I started customizing my own ~display-buffer~
+rules.
+
+#+begin_src emacs-lisp
+  (use-package window
+    :config
+    (push '("\\*Help\\*"
+            (display-buffer-reuse-window display-buffer-below-selected)
+            (window-height . 0.4))
+          display-buffer-alist))
+#+end_src
+
 ** Window operation
 
 Emacs refers to the display area of a buffer as a Window. As buffers are
@@ -777,6 +844,43 @@ window switching and splitting in one fell swoop.
     ("<remap> <delete-other-windows>" . switch-window-then-maximize)
     ("<remap> <split-window-below>" . switch-window-then-split-below)
     ("<remap> <split-window-right>" . switch-window-then-split-right))
+#+end_src
+
+** Tab operation
+
+I recently commenced using ~tab-bar-mode~.  Initially, I believed that
+my existing ~switch-to-buffer~ functionality was sufficient, negating
+the need for tab-based switching of files or working windows, as is
+common in other editors.  However, upon my first use, I discovered its
+utility in maintaining the layout of my Buffer or Window.  I can perform
+some less desirable tasks in a new Tab, and swiftly revert back to a
+clean layout.
+
+Despite it is useful, the default settings are somewhat cumbersome.  I
+would prefer the Tab Bar to be displayed only when there are more than
+two Tabs present.  Simultaneously, open the *Scratch* Buffer by default
+when creating a new Tab.
+
+#+begin_src emacs-lisp
+  (use-package tab-bar
+    :config
+    (setq tab-bar-show 1
+          tab-bar-new-tab-choice "*scratch*")
+    :hook
+    (emacs-startup-hook . tab-bar-mode))
+#+end_src
+
+
+In tandem, I want my Tab Bar to exhibit a more vibrant array of colours.
+I have superseded its default appearance by using the Modus Themes
+colour palette.
+
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :config
+    (push '(bg-tab-bar bg-active) modus-themes-common-palette-overrides)
+    (push '(bg-tab-current bg-main) modus-themes-common-palette-overrides)
+    (push '(bg-tab-other bg-inactive) modus-themes-common-palette-overrides))
 #+end_src
 
 ** Minibuffer
