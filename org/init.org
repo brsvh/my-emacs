@@ -1813,13 +1813,6 @@ half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
 
-* Programming
-
-Emacs is an exceptionally potent programming environment. However, it
-necessitates meticulous configuration; otherwise, its functioning will
-be subpar.  Let me to tailor Emacs to accommodate all the programming
-languages I used.
-
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :ensure markdown-mode
@@ -1834,6 +1827,15 @@ languages I used.
     (setq markdown-command "multimarkdown"))
 #+end_src
 
+* Programming
+
+Emacs is an exceptionally potent programming environment. However, it
+necessitates meticulous configuration; otherwise, its functioning will
+be subpar.  Let me to tailor Emacs to accommodate all the programming
+languages I used.
+
+
+
 ** Emacs Lisp
 
 When crafting Emacs Lisp programs, we often write and invoke numerous
@@ -1847,6 +1849,48 @@ C-v)}}} key in *Emacs Lisp Mode*.  Here, {{{kbd(v)}}} implies verbose.
     :keymap-set
     (:emacs-lisp-mode-map
      ("C-c C-v" . pp-macroexpand-last-sexp)))
+#+end_src
+
+The fundamental topics of discussion for most individuals when it comes
+to programming are invariably indentation and parenthesis matching,
+which also constitute my basic requirements. While Emacs does distribute
+useful packages pertaining to these, they are not enabled by default.
+
+I utilize the *Electric Pair* and *Electric Indent* modes to acquire
+automatic bracket insertion and indentation support.  Electric Indent is
+character-triggered, defaulting to activation only through new line.  I
+want that the {{{kbd(<DEL>)}}} can similarly trigger an alteration in
+indentation.
+
+#+begin_src emacs-lisp
+  (use-package elec-pair
+    :after prog-mode
+    :hook
+    (prog-mode-hook . electric-pair-local-mode))
+
+  (use-package electric
+    :after prog-mode
+    :config
+    (push ?\^? electric-indent-chars)
+    :hook
+    (prog-mode-hook . electric-indent-local-mode))
+#+end_src
+
+The functionality of the parentheses is now sufficiently operational.
+However, I want a more conspicuous display, with matching parentheses
+highlighted and supplemented by a richer color palette.
+
+#+begin_src emacs-lisp
+  (use-package paren
+    :init
+    (setq-default show-paren-mode nil)
+    :hook
+    (prog-mode-hook . show-paren-local-mode))
+
+  (use-package rainbow-delimiters
+    :ensure rainbow-delimiters
+    :hook
+    (prog-mode-hook . rainbow-delimiters-mode))
 #+end_src
 
 ** Nix
