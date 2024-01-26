@@ -254,10 +254,14 @@ Consequently, I bind the commands I require to the letter keys with
 <kbd> C-c </kbd> as the prefix key. These letter keys are also employed
 for categorization purposes.
 
+-   <kbd> f </kbd>: File management commands.
 -   <kbd> m </kbd>: Major mode commands.
 -   <kbd> n </kbd>: Nix(Flake) commands.
 -   <kbd> v </kbd>: Version Control commands.
 
+    (defvar ctl-c-f-map (make-keymap)
+      "Default keymap for C-c f commands.")
+    
     (defvar ctl-c-m-map (make-keymap)
       "Default keymap for C-c m commands.")
     
@@ -267,6 +271,7 @@ for categorization purposes.
     (defvar ctl-c-v-map (make-keymap)
       "Default keymap for C-c v commands.")
     
+    (keymap-set ctl-c-map "f" ctl-c-f-map)
     (keymap-set ctl-c-map "m" ctl-c-m-map)
     (keymap-set ctl-c-map "n" ctl-c-n-map)
     (keymap-set ctl-c-map "v" ctl-c-v-map)
@@ -575,6 +580,29 @@ rectification.
        my--reset-modus-themes-line-number-face-when-highlight))
 
 
+### Frame operation
+
+When utilizing graphical Emacs, a **Frame** essentially embodies the
+concept of **Window** in other applications.  However, to attain a user
+experience as straightforward as manipulating Windows in other graphical
+applications, additional configurations are requisite, which is
+precisely what I intend to accomplish here.
+
+
+#### Pixel-based Resizing
+
+By default, Emacs alters its size based on lines, which is generally
+inconsequential.  However, under certain circumstances, gaps may appear
+at the edges of Emacs.  Therefore, it is preferable to resize the frame
+and window pixelwise rather than linewise.
+
+    (use-package emacs
+      :no-require t
+      :init
+      (setq frame-resize-pixelwise t
+            window-resize-pixelwise t))
+
+
 ### Buffer operation
 
 The document you manipulate in Emacs is contained within an entity known
@@ -641,6 +669,39 @@ rules.
               (display-buffer-reuse-window display-buffer-below-selected)
               (window-height . 0.4))
             display-buffer-alist))
+
+
+#### Scrolling
+
+Scrolling pertains to the act of navigating forwards or backwards within
+a buffer.  Given that the size of a buffer (measured in lines) typically
+surpasses the maximum content displayable by a window, scrolling becomes
+necessary when I need to peruse text located further ahead or behind.
+Well, in simpler terms, it is akin to the natural operation of a mouse
+wheel.  The default behaviour is primarily designed with low refresh
+rate devices in mind, hence the need for altering the preset.
+
+-   Minimum scroll distance
+
+    Emacs will approximately scroll half of the screen when I am situated at
+    the buffer's bottom and wish to proceed downwards.  This action results
+    in my visual focus departing from the buffer's bottom.
+    
+    I require a slower scrolling, perhaps advancing by one or two lines
+    downwards, and keep current position after screen scroll.
+    
+        (use-package emacs
+          :no-require t
+          :init
+          (setq auto-window-vscroll nil
+                fast-but-imprecise-scrolling t)
+        
+          (setq scroll-preserve-screen-position t
+                scroll-margin 0
+                scroll-conservatively 101)
+        
+          (setq hscroll-margin 2
+                hscroll-step 1))
 
 
 ### Window operation
@@ -736,6 +797,35 @@ save time.
       :no-require t
       :init
       (setq enable-recursive-minibuffers t))
+
+Prior to the termination of an Emacs session, commands invoked and
+operations executed within the Emacs Minibuffer are duly logged, thereby
+facilitating their convenient re-execution.  However, upon repeated
+execution, multiple identical histories are created, hindering the
+ability to trace back to earlier histories and necessitating additional
+keystrokes.  Consequently, it is desirable for Emacs to refrain from
+logging duplicate inputs.
+
+    (use-package emacs
+      :no-require t
+      :init
+      (setq history-delete-duplicates t))
+
+
+### Save input history
+
+Upon executing certain operations within the Minibuffer and subsequently
+terminating Emacs, the record of these operations is unfortunately not
+retained.  This necessitates the re-entry of all commands, a process
+which I find rather disconcerting.  Consequently, I have enabled
+savehist-mode to ensure the preservation of all input within the
+Minibuffer.
+
+    (use-package savehist
+      :config
+      (setq savehist-file (expand-file-name "hist.el" my-state-directory))
+      :hook
+      (emacs-startup-hook . savehist-mode))
 
 
 ## Multilingual environment
@@ -926,7 +1016,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#orgf892d2a), I apply my custom transformation rule for
+my [File conventions](#org79e0c2c), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -960,7 +1050,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#orgf892d2a).
+directory in accordance with my [File conventions](#org79e0c2c).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -989,6 +1079,58 @@ deviates from the default method, which generates backups by renaming
 the original file.
 
 
+### Crime scene returns
+
+Text editing is invariably verbose, and we often find ourselves in a
+cycle of modification, saving, and further modification.  Regrettably,
+when Emacs reopens a previously modified file, the cursor defaults to
+the beginning.  This is frustrating, as I have to spend extra seconds
+each time to locate my last modification.  Let Emacs remember the
+position where I left the file!
+
+    (use-package saveplace
+      :config
+      (setq save-place-file
+            (expand-file-name "place.el" my-state-directory))
+      :hook
+      (emacs-startup-hook . save-place-mode))
+
+While Emacs now retains the position of my transgressions within the
+file, when I attempt to recall my recent activities, I often confuse the
+files I've recently edited (╥﹏╥).  Let Emacs likewise remember the
+files I've recently opened and their paths, aiding me in swiftly
+returning to the scene of the crime!
+
+    (use-package recentf
+      :config
+      (define-advice recentf-load-list
+          (:around (fn &rest args) silence-message)
+        "Silencing load message."
+        (cl-letf (((symbol-function #'message) #'ignore))
+          (apply fn args)))
+    
+      (define-advice recentf-cleanup
+          (:around (fn &rest args) silence-message)
+        "Silencing clean up message."
+        (cl-letf (((symbol-function #'message) #'ignore))
+          (apply fn args)))
+    
+      (setq recentf-save-file
+            (expand-file-name "recent.el" my-state-directory))
+      :hook
+      (emacs-startup-hook . recentf-mode))
+    
+    (use-package consult
+      :keymap-set
+      (:ctl-c-f-map
+       ("r" . consult-recent-file)))
+
+In the aforementioned, I have also bound the command provided by
+`consult` to retrieve a list of recently opened files as candidates,
+which can be selected through input completion.  And it also prevents
+the annoying messages during recent file memory.
+
+
 ### Sync changes
 
 In certain typical scenarios, such as switching branches in version
@@ -1002,7 +1144,7 @@ I have enabled `global-auto-revert-mode`.
       :config
       (setq auto-revert-verbose nil)
       :hook
-      (emacs-startup-hook . global-auto-revert-mode))  
+      (emacs-startup-hook . global-auto-revert-mode))
 
 
 ## Completion
@@ -1474,14 +1616,6 @@ half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
 
-
-## Programming
-
-Emacs is an exceptionally potent programming environment. However, it
-necessitates meticulous configuration; otherwise, its functioning will
-be subpar.  Let me to tailor Emacs to accommodate all the programming
-languages I used.
-
     (use-package markdown-mode
       :ensure markdown-mode
       :mode
@@ -1495,6 +1629,14 @@ languages I used.
       (setq markdown-command "multimarkdown"))
 
 
+## Programming
+
+Emacs is an exceptionally potent programming environment. However, it
+necessitates meticulous configuration; otherwise, its functioning will
+be subpar.  Let me to tailor Emacs to accommodate all the programming
+languages I used.
+
+
 ### Emacs Lisp
 
 When crafting Emacs Lisp programs, we often write and invoke numerous
@@ -1506,6 +1648,44 @@ current macro expansion.  For convenience, it is bound to the <kbd> C-c C-v </kb
       :keymap-set
       (:emacs-lisp-mode-map
        ("C-c C-v" . pp-macroexpand-last-sexp)))
+
+The fundamental topics of discussion for most individuals when it comes
+to programming are invariably indentation and parenthesis matching,
+which also constitute my basic requirements. While Emacs does distribute
+useful packages pertaining to these, they are not enabled by default.
+
+I utilize the **Electric Pair** and **Electric Indent** modes to acquire
+automatic bracket insertion and indentation support.  Electric Indent is
+character-triggered, defaulting to activation only through new line.  I
+want that the <kbd> <DEL> </kbd> can similarly trigger an alteration in
+indentation.
+
+    (use-package elec-pair
+      :after prog-mode
+      :hook
+      (prog-mode-hook . electric-pair-local-mode))
+    
+    (use-package electric
+      :after prog-mode
+      :config
+      (push ?\^? electric-indent-chars)
+      :hook
+      (prog-mode-hook . electric-indent-local-mode))
+
+The functionality of the parentheses is now sufficiently operational.
+However, I want a more conspicuous display, with matching parentheses
+highlighted and supplemented by a richer color palette.
+
+    (use-package paren
+      :init
+      (setq-default show-paren-mode nil)
+      :hook
+      (prog-mode-hook . show-paren-local-mode))
+    
+    (use-package rainbow-delimiters
+      :ensure rainbow-delimiters
+      :hook
+      (prog-mode-hook . rainbow-delimiters-mode))
 
 
 ### Nix
