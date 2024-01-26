@@ -105,6 +105,7 @@ in
 
       packages = with pkgs;
         [
+          imagemagick
           multimarkdown
         ];
     };
