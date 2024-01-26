@@ -353,6 +353,22 @@
         "type": "github"
       }
     },
+    "rainbow-delimiters": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1693411222,
+        "narHash": "sha256-JcNRW0+L65NtOBronwyT7SHP9QsNa3ysj4cHv88yfoI=",
+        "owner": "Fanael",
+        "repo": "rainbow-delimiters",
+        "rev": "f40ece58df8b2f0fb6c8576b527755a552a5e763",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Fanael",
+        "repo": "rainbow-delimiters",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "compat": "compat",
@@ -377,6 +393,7 @@
         "org-modern": "org-modern",
         "org-side-tree": "org-side-tree",
         "promise": "promise",
+        "rainbow-delimiters": "rainbow-delimiters",
         "s": "s",
         "switch-window": "switch-window",
         "transient": "transient",

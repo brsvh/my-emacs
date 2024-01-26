@@ -134,6 +134,12 @@
       repo = "emacs-promise";
       type = "github";
     };
+    rainbow-delimiters = {
+      flake = false;
+      owner = "Fanael";
+      repo = "rainbow-delimiters";
+      type = "github";
+    };
     "s" = {
       flake = false;
       owner = "magnars";
