@@ -24,8 +24,20 @@ with builtins;
 with lib;
 let
   cfg = config.emacs.d;
-  init-el = packages.${pkgs.system}.emacsD-init-el;
-  early-init-el = packages.${pkgs.system}.emacsD-early-init-el;
+
+  emacsD = config.programs.emacs-twist.config;
+
+  genInitFile = emacs:
+    pkgs.runCommandLocal "user-init-file" { } ''
+      mkdir -p $out
+      touch $out/init.el
+      for file in ${concatStringsSep " " emacs.initFiles}
+      do
+      cat "$file" >> $out/init.el
+      echo >> $out/init.el
+      done
+    '';
+
 in
 {
   options = {
@@ -79,13 +91,13 @@ in
           {
             name = "${cfg.directory}/init.el";
             value = {
-              source = "${init-el}/init.el";
+              source = "${(genInitFile emacsD)}/init.el";
             };
           }
           {
             name = "${cfg.directory}/early-init.el";
             value = {
-              source = "${early-init-el}";
+              source = packages.${pkgs.system}.early-init-file;
             };
           }
         ]

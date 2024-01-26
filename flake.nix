@@ -356,19 +356,19 @@
                   }
                 );
 
-              emacsD-init-el =
-                pkgs.runCommandLocal "emacsD-init-el" { } ''
+              genInitFile = emacs:
+                pkgs.runCommandLocal "user-init-file" { } ''
                   mkdir -p $out
                   touch $out/init.el
-                  for file in ${concatStringsSep " " emacsD.initFiles}
+                  for file in ${concatStringsSep " " emacs.initFiles}
                   do
                   cat "$file" >> $out/init.el
                   echo >> $out/init.el
                   done
                 '';
 
-              emacsD-early-init-el =
-                tangleOrgBabelFile "early-init.el" ./org/early-init.org {
+              early-init-file =
+                tangleOrgBabelFile "early-init-file" ./org/early-init.org {
                   languages = [ "emacs-lisp" ];
                 };
 
@@ -376,8 +376,8 @@
                 assert pkgs.stdenv.isLinux;
                 pkgs.callPackage ./nix/appWrapper.nix
                   {
-                    early-init = emacsD-early-init-el;
-                    init = emacsD-init-el;
+                    early-init = early-init-file;
+                    init = (genInitFile env);
                   }
                   "emacs"
                   env;
@@ -386,8 +386,8 @@
                 assert pkgs.stdenv.isLinux;
                 pkgs.callPackage ./nix/batchWrapper.nix
                   {
-                    early-init = emacsD-early-init-el;
-                    init = emacsD-init-el;
+                    early-init = early-init-file;
+                    init = (genInitFile env);
                   }
                   "emacs"
                   env;
@@ -409,9 +409,8 @@
 
               packages = {
                 inherit
+                  early-init-file
                   emacsD
-                  emacsD-early-init-el
-                  emacsD-init-el
                   emacsD-nogui
                   emacsD-pgtk;
 
