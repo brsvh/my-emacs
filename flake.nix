@@ -236,6 +236,9 @@
                   languages = [ "emacs-lisp" ];
                 };
 
+              postInitFile = el:
+                pkgs.writeText "init-postlude.el" el;
+
               initTreeSitterFile =
                 pkgs.writeText "init-tree-sitter.el" ''
                   (add-to-list 'treesit-extra-load-path "${
@@ -256,12 +259,6 @@
                       )
                   }/")
                 '';
-
-              initFiles =
-                [
-                  initFile
-                  initTreeSitterFile
-                ];
 
               my-milkypostman-elpa = {
                 name = "my-melpa";
@@ -291,8 +288,9 @@
                 auto-sync-only = true;
               };
 
-              makeEmacsD =
-                { nativeCompileAheadDefault ? true
+              mkEmacsD =
+                { appendToInit ? ""
+                , nativeCompileAheadDefault ? true
                 , pgtk ? false
                 , x ? true
                 , nogui ? !(pgtk || x)
@@ -310,10 +308,16 @@
                   emacsTwist {
                     inherit
                       emacsPackage
-                      initFiles
                       nativeCompileAheadDefault;
 
                     configurationRevision = revision;
+
+                    initFiles =
+                      [
+                        initFile
+                        (postInitFile appendToInit)
+                        initTreeSitterFile
+                      ];
 
                     initialLibraries =
                       (
@@ -334,7 +338,7 @@
                   }
                 ).overrideScope' twist-overrides.overlays.twistScope;
 
-              emacsD = makeOverridable makeEmacsD { };
+              emacsD = makeOverridable mkEmacsD { };
 
               emacsD-pgtk = emacsD.override
                 (

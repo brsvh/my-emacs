@@ -23,6 +23,7 @@ packages:
 with builtins;
 with lib;
 let
+  cfg = config.emacs.d;
   init-el = packages.${pkgs.system}.emacsD-init-el;
   early-init-el = packages.${pkgs.system}.emacsD-early-init-el;
 in
@@ -59,21 +60,30 @@ in
         default = ".config/emacs";
         example = ".local/share/emacs";
       };
+
+      extraInitConfig = mkOption {
+        type = types.str;
+        default = "";
+        description = ''
+          Extra configuration will be append to the user-init-file of
+          GNU Emacs.
+        '';
+      };
     };
   };
 
-  config = mkIf config.emacs.d.enable {
+  config = mkIf cfg.enable {
     home = {
       file = listToAttrs (
         [
           {
-            name = "${config.emacs.d.directory}/init.el";
+            name = "${cfg.directory}/init.el";
             value = {
               source = "${init-el}/init.el";
             };
           }
           {
-            name = "${config.emacs.d.directory}/early-init.el";
+            name = "${cfg.directory}/early-init.el";
             value = {
               source = "${early-init-el}";
             };
@@ -93,14 +103,24 @@ in
 
         name = "emacs";
 
-        directory = config.emacs.d.directory;
+        directory = cfg.directory;
 
         createManifestFile = true;
 
         config =
-          if config.emacs.d.platform == "wayland"
-          then packages.${pkgs.system}.emacsD-pgtk
-          else packages.${pkgs.system}.emacsD;
+          if cfg.platform == "wayland"
+          then
+            packages.${pkgs.system}.emacsD-pgtk.override
+              (
+                _:
+                { appendToInit = cfg.extraInitConfig; }
+              )
+          else
+            packages.${pkgs.system}.emacsD.override
+              (
+                _:
+                { appendToInit = cfg.extraInitConfig; }
+              );
 
         serviceIntegration = {
           enable = mkDefault true;
