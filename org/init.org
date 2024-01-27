@@ -103,6 +103,26 @@ variables.
   ~my--~.
 - Interactive commands start with the prefix ~my/~.
 
+** Customization conventions
+
+All the customizable options I declare will in the ~my~ group.
+
+#+begin_src emacs-lisp
+  (defgroup my nil
+    "Customize my Emacs Configuration (emacs.d) experience."
+    :prefix "my-"
+    :group 'emacs
+    :link '(url-link :tag "GitHub" "https://github.com/brsvh/emacs.d"))
+
+  (defgroup my-hooks nil
+    "Startup hooks for my Emacs Configuration (emacs.d)."
+    :group 'my
+    :link '(url-link :tag "GitHub" "https://github.com/brsvh/emacs.d"))
+#+end_src
+
+All the hooks I declare will in the ~my-hooks~ group.
+
+
 ** File conventions
 
 The default pathways used for the storage of configuration files and
@@ -376,7 +396,7 @@ for categorization purposes.
   (defvar ctl-c-v-map (make-keymap)
     "Default keymap for C-c v commands.")
 
-  (keymap-set ctl-c-map "5" ctl-c-f-map)
+  (keymap-set ctl-c-map "5" ctl-c-5-map)
   (keymap-set ctl-c-map "f" ctl-c-f-map)
   (keymap-set ctl-c-map "m" ctl-c-m-map)
   (keymap-set ctl-c-map "n" ctl-c-n-map)
@@ -530,6 +550,65 @@ The inherent interface of Emacs exudes a vintage and traditional aura,
 which, as a youthful individual, I find less appealing.  My preference
 leans towards a more contemporary aesthetic.
 
+** Check graphic display
+
+When using the Emacs Service to start the background service,
+~display-graphic-p~ falsely returns ~nil~, it mean multiple Emacs frames
+are associated with a single Emacs instance.  Some of these may be
+located on the terminal, while others may be on the window system. That
+is to say, even within a single Emacs instance, you can obtain different
+~display-graphics-p~ values.  Therefore, I need to place
+GUI/terminal-specific code in ~after-make-frame-functions~.
+
+#+begin_src emacs-lisp
+  (defcustom my-make-graphics-frame-hook nil
+    "Hook run just after make frame."
+    :group 'my-hooks
+    :type 'hook)
+
+  (defmacro my-when-display-graphic (&rest body)
+    "Eval body when the `display-graphic-p' in new frame is non nil.
+
+  The place where the function is added depends on the DEPTH
+  parameter.  DEPTH defaults to 0.  By convention, it should be a
+  number between -100 and 100 where 100 means that the function
+  should be at the very end of the list, whereas -100 means that
+  the function should always come first.
+  "
+    (declare (indent 0))
+    `(add-hook 'my-make-graphics-frame-hook
+               #'(lambda (&rest _) ,@body)))
+
+  (defun my-graphics-init (&rest _)
+    "Initialize graphics frames."
+    (when (display-graphic-p)
+      (run-hooks 'my-make-graphics-frame-hook)))
+
+  (add-hook 'after-init-hook #'my-graphics-init)
+
+  (add-hook 'after-make-frame-functions #'my-graphics-init)
+#+end_src
+
+Because the ~after-make-frame-functions~ isn’t run for the initial
+frame, so it’s often necessary to also add ~my-make-graphics-frame-hook~
+to the ~after-init-hook~.
+
+When ~display-graphic-p~ is used before the frame initialization is
+complete, it lies by returning nil.  I use ~initial-window-system~ to
+get the truth.
+
+#+begin_src emacs-lisp
+  (defun my--get-window-system-when-no-display (func &optional display)
+    "Make `display-graphic-p' use `initial-window-system' when no DISPLAY."
+      (if display
+          (funcall func display)
+        initial-window-system))
+
+  (advice-add #'display-graphic-p
+              :around
+              #'my--get-window-system-when-no-display)
+#+end_src
+
 ** Default frame layout
 
 Emacs facilitates operations on both graphical and non-graphical frames.
@@ -556,9 +635,9 @@ to be done in ~early-init~[fn:1].
     (tool-bar-mode -1))
 
   (use-package scroll-bar
-    :when (display-graphic-p)
     :init
-    (scroll-bar-mode -1))
+    (my-when-display-graphic
+      (scroll-bar-mode -1)))
 #+end_src
 
 *** Mode Line
@@ -666,7 +745,7 @@ aesthetic appeal, rendering it more user-friendly.
                                   (3 . (1.10 bold))
                                   (t . (1.05 semibold))))
     :hook
-    (after-init-hook . my-theme-init))
+    (my-make-graphics-frame-hook . my-theme-init))
 #+end_src
 
 As you may have noticed, I have used a rudimentary configuration of
@@ -1358,6 +1437,30 @@ modifications have taken effect in the target modification area.
     ("<remap> <yank-pop>" . consult-yank-pop))
 #+end_src
 
+** Text completion
+
+As one of the two completion methods in Emacs, I use text completion to
+further accomplish text filling tasks.  It effectively assists me in
+completing longer texts with fewer inputs by selecting candidates.
+
+I opt for the tried-and-tested ~company-mode~[fn:15] as the primary text
+completion minor mode, expanding the completion capabilities at
+different times through more backend support provided by its community.
+In fact, I typically only use text completion to obtain automatic
+associations and supplements of code when editing program text, so you
+will see me striving to avoid activating the global completion feature.
+
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure company
+    :after prog-mode
+    :config
+    (keymap-set company-active-map "M-/" 'company-complete)
+    (setq company-tooltip-align-annotations t)
+    :hook
+    (prog-mode-hook . company-mode))
+#+end_src
+
 ** Disaster recovery
 
 In this context, disaster recovery refers to how I recover modifications
@@ -1538,7 +1641,7 @@ stress associated with these activities.
 
 When working in any folder that uses a version control system, whether
 browsing or editing files, I would like to highlight all changes.  I
-obtain this feature through ~diff-hl~[fn:15].
+obtain this feature through ~diff-hl~[fn:16].
 
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -1559,9 +1662,16 @@ navigation and revert commands still work. I turning
 #+begin_src emacs-lisp
   (use-package diff-hl-margin
     :after diff-hl
-    :unless (display-graphic-p)
-    :hook
-    (diff-hl-mode-hook . diff-hl-margin-mode))
+    :init
+    (defun my--inhibit-diff-hl-margin-mode ()
+      "Enable `'diff-hl-margin-mode' on in non-graphic frame."
+      (if diff-hl-mode
+          (if (display-graphic-p)
+              (diff-hl-margin-mode -1)
+            (diff-hl-margin-mode +1))
+          (diff-hl-margin-mode -1)))
+
+    (add-hook 'diff-hl-mode-hook #'my--inhibit-diff-hl-margin-mode))
 #+end_src
 
 *** Git
@@ -1569,7 +1679,7 @@ navigation and revert commands still work. I turning
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:16].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:17].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1616,7 +1726,7 @@ functions in the buffer after its state has changed.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:17], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:18], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1683,7 +1793,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:18], including:
+Emacs supports a variety of line-folding methods[fn:19], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -1733,7 +1843,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:19] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:20] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1786,7 +1896,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:20] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:21] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -1799,6 +1909,20 @@ extensive works.  I use ~org-sidebar-tree~[fn:20] to achieve this.
      ("C-c m o" . org-side-tree))
     :hook
     (org-side-tree-mode-hook . org-indent-mode))
+#+end_src
+
+*** Selection
+
+Org has some built-in dispatches that provide candidate operations,
+their default pop-up style is a bit ugly, improve them.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (push '("\\*Org Select\\*"
+            (display-buffer-reuse-window display-buffer-below-selected)
+            (window-parameters (mode-line-format . none)))
+          display-buffer-alist))
 #+end_src
 
 *** File Export Support
@@ -1859,7 +1983,7 @@ behavior in the necessary documents through the BIND keyword.
 
 ** Writing with Markdown
 
-Markdown[fn:21], perhaps the most prevalent text markup language of the first
+Markdown[fn:22], perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -1957,7 +2081,7 @@ predicated on the extension name.
 
 ** YAML
 
-YAML[fn:22] is an exceedingly prevalent configuration language. Despite my
+YAML[fn:23] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
@@ -2011,18 +2135,20 @@ behavior, bind it in ~yaml-mode~.
 
 [fn:14] which-key, https://github.com/justbur/emacs-which-key
 
-[fn:15] diff-hl, https://github.com/dgutov/diff-hl
+[fn:15] Company Anything, http://company-mode.github.io/
 
-[fn:16] Magit, https://magit.vc
+[fn:16] diff-hl, https://github.com/dgutov/diff-hl
 
-[fn:17] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:17] Magit, https://magit.vc
 
-[fn:18] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:18] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:19] Modern Org Style, https://github.com/minad/org-modern
+[fn:19] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:20] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:20] Modern Org Style, https://github.com/minad/org-modern
 
-[fn:21] Markdown, https://daringfireball.net/projects/markdown/
+[fn:21] Org Side Tree, https://github.com/localauthor/org-side-tree
 
-[fn:22] YAML, https://yaml.org/
+[fn:22] Markdown, https://daringfireball.net/projects/markdown/
+
+[fn:23] YAML, https://yaml.org/
