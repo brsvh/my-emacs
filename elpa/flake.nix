@@ -44,6 +44,12 @@
       repo = "embark";
       type = "github";
     };
+    "f" = {
+      flake = false;
+      owner = "rejeep";
+      repo = "f.el";
+      type = "github";
+    };
     frameshot = {
       flake = false;
       owner = "tarsius";
@@ -110,6 +116,12 @@
       repo = "moody";
       type = "github";
     };
+    mu4e = {
+      flake = false;
+      owner = "djcb";
+      repo = "mu";
+      type = "github";
+    };
     mwim = {
       flake = false;
       owner = "alezost";
@@ -150,6 +162,25 @@
       flake = false;
       owner = "localauthor";
       repo = "org-side-tree";
+      type = "github";
+    };
+    pass = {
+      flake = false;
+      owner = "brsvh";
+      ref = "correct-password-store-otp-version";
+      repo = "pass.el";
+      type = "github";
+    };
+    password-store = {
+      flake = false;
+      owner = "zx2c4";
+      repo = "password-store";
+      type = "github";
+    };
+    password-store-otp = {
+      flake = false;
+      owner = "volrath";
+      repo = "password-store-otp.el";
       type = "github";
     };
     promise = {
