@@ -1155,6 +1155,18 @@ the candidates.
     (vertico-mode-hook . vertico-mouse-mode))
 #+end_src
 
+Similarly, the need for completion sometimes arises when input in the
+minibuffer, such as commands like {{{kbd(M-:)}}} (~eval-expression~) or
+{{{kbd(M-!)}}} (~shell-command~), which read from the minibuffer.  I use
+~consult-completion-in-region~ to get it.
+
+#+begin_src emacs-lisp
+  (use-package minibuffer
+    :after vertico
+    :config
+    (setq completion-in-region-function #'consult-completion-in-region))
+#+end_src
+
 *** Completion style
 
 Emacs accommodates an array of completion styles, with three variants
