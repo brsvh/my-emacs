@@ -1776,8 +1776,8 @@ access credentials stored outside of Emacs.
   (use-package auth-source
     :config
     (setq auth-sources
-          `((:source ,(expand-file-name "authinfo.gpg"
-                                        my-data-directory)))))
+          `(,(expand-file-name "authinfo.gpg" my-data-directory)
+            ,(expand-file-name "authinfo" my-data-directory))))
 
   (use-package auth-source-pass
     :after auth-source
