@@ -20,6 +20,24 @@ variables.
 -   Interactive commands start with the prefix `my/`.
 
 
+### Customization conventions
+
+All the customizable options I declare will in the `my` group.
+
+    (defgroup my nil
+      "Customize my Emacs Configuration (emacs.d) experience."
+      :prefix "my-"
+      :group 'emacs
+      :link '(url-link :tag "GitHub" "https://github.com/brsvh/emacs.d"))
+    
+    (defgroup my-hooks nil
+      "Startup hooks for my Emacs Configuration (emacs.d)."
+      :group 'my
+      :link '(url-link :tag "GitHub" "https://github.com/brsvh/emacs.d"))
+
+All the hooks I declare will in the `my-hooks` group.
+
+
 ### File conventions
 
 The default pathways used for the storage of configuration files and
@@ -254,11 +272,19 @@ Consequently, I bind the commands I require to the letter keys with
 <kbd> C-c </kbd> as the prefix key. These letter keys are also employed
 for categorization purposes.
 
+-   <kbd> 5 </kbd>: Frame management commands
+-   <kbd> a </kbd>: Action commands..
 -   <kbd> f </kbd>: File management commands.
 -   <kbd> m </kbd>: Major mode commands.
 -   <kbd> n </kbd>: Nix(Flake) commands.
 -   <kbd> v </kbd>: Version Control commands.
 
+    (defvar ctl-c-5-map (make-keymap)
+      "Default keymap for C-c 5 commands.")
+    
+    (defvar ctl-c-a-map (make-keymap)
+      "Default keymap for C-c a commands.")
+    
     (defvar ctl-c-f-map (make-keymap)
       "Default keymap for C-c f commands.")
     
@@ -271,6 +297,8 @@ for categorization purposes.
     (defvar ctl-c-v-map (make-keymap)
       "Default keymap for C-c v commands.")
     
+    (keymap-set ctl-c-map "5" ctl-c-5-map)
+    (keymap-set ctl-c-map "a" ctl-c-a-map)
     (keymap-set ctl-c-map "f" ctl-c-f-map)
     (keymap-set ctl-c-map "m" ctl-c-m-map)
     (keymap-set ctl-c-map "n" ctl-c-n-map)
@@ -378,6 +406,62 @@ which, as a youthful individual, I find less appealing.  My preference
 leans towards a more contemporary aesthetic.
 
 
+### Check graphic display
+
+When using the Emacs Service to start the background service,
+`display-graphic-p` falsely returns `nil`, it mean multiple Emacs frames
+are associated with a single Emacs instance.  Some of these may be
+located on the terminal, while others may be on the window system. That
+is to say, even within a single Emacs instance, you can obtain different
+`display-graphics-p` values.  Therefore, I need to place
+GUI/terminal-specific code in `after-make-frame-functions`.
+
+    (defcustom my-make-graphics-frame-hook nil
+      "Hook run just after make frame."
+      :group 'my-hooks
+      :type 'hook)
+    
+    (defmacro my-when-display-graphic (&rest body)
+      "Eval body when the `display-graphic-p' in new frame is non nil.
+    
+    The place where the function is added depends on the DEPTH
+    parameter.  DEPTH defaults to 0.  By convention, it should be a
+    number between -100 and 100 where 100 means that the function
+    should be at the very end of the list, whereas -100 means that
+    the function should always come first.
+    "
+      (declare (indent 0))
+      `(add-hook 'my-make-graphics-frame-hook
+                 #'(lambda (&rest _) ,@body)))
+    
+    (defun my-graphics-init (&rest _)
+      "Initialize graphics frames."
+      (when (display-graphic-p)
+        (run-hooks 'my-make-graphics-frame-hook)))
+    
+    (add-hook 'after-init-hook #'my-graphics-init)
+    
+    (add-hook 'after-make-frame-functions #'my-graphics-init)
+
+Because the `after-make-frame-functions` isn’t run for the initial
+frame, so it’s often necessary to also add `my-make-graphics-frame-hook`
+to the `after-init-hook`.
+
+When `display-graphic-p` is used before the frame initialization is
+complete, it lies by returning nil.  I use `initial-window-system` to
+get the truth.
+
+    (defun my--get-window-system-when-no-display (func &optional display)
+      "Make `display-graphic-p' use `initial-window-system' when no DISPLAY."
+        (if display
+            (funcall func display)
+          initial-window-system))
+    
+    (advice-add #'display-graphic-p
+                :around
+                #'my--get-window-system-when-no-display)
+
+
 ### Default frame layout
 
 Emacs facilitates operations on both graphical and non-graphical frames.
@@ -403,9 +487,9 @@ to be done in `early-init`<sup><a id="fnr.1.100" class="footref" href="#fn.1" ro
       (tool-bar-mode -1))
     
     (use-package scroll-bar
-      :when (display-graphic-p)
       :init
-      (scroll-bar-mode -1))
+      (my-when-display-graphic
+        (scroll-bar-mode -1)))
 
 
 #### Mode Line
@@ -507,7 +591,7 @@ aesthetic appeal, rendering it more user-friendly.
                                     (3 . (1.10 bold))
                                     (t . (1.05 semibold))))
       :hook
-      (after-init-hook . my-theme-init))
+      (my-make-graphics-frame-hook . my-theme-init))
 
 As you may have noticed, I have used a rudimentary configuration of
 Modus Themes.  When utilizing the graphical interface of Emacs, I prefer
@@ -601,6 +685,18 @@ and window pixelwise rather than linewise.
       :init
       (setq frame-resize-pixelwise t
             window-resize-pixelwise t))
+
+
+#### Take screenshot of a frame
+
+Create a screenshot request within Emacs sounds cool and useful, so
+configure it.
+
+    (use-package frameshot
+      :ensure frameshot
+      :keymap-set
+      (:ctl-c-5-map
+       ("s" . frameshot-take)))
 
 
 ### Buffer operation
@@ -812,7 +908,140 @@ logging duplicate inputs.
       (setq history-delete-duplicates t))
 
 
-### Save input history
+#### Input completion
+
+The completion feature in Emacs significantly enhances my interaction
+with the Emacs.  Primarily, Emacs offers two types of completion:
+
+-   Input completion, which provides completion when entering input in the
+    minibuffer.
+-   Text completion, which provides completion during text editing in the
+    buffer.
+
+Given the substantial differences in the scenarios for these two types
+of completion, I refrain from employing a uniform completion interaction
+method for both.
+
+My choice is to provided input completion support with `vertico` <sup><a id="fnr.8" class="footref" href="#fn.8" role="doc-backlink">8</a></sup>,
+which is a performant, minimalistic vertical completion UI for Emacs.
+It reuses built-in facilities for full compatibility with Emacs'
+completion commands and tables.
+
+It can be effortlessly enabled by activating **Vertico Mode**.  Of course,
+additional configurations are indispensable for catering to personalized
+requirements.
+
+Upon the initiation of **Vertico Mode**, a minibuffer of immutable
+dimensions is exhibited during the completion process.  My inclination,
+however, is towards a flexible height contingent upon the quantity of
+remaining candidates.
+
+An additional facet necessitates refinement.  Upon navigating to the
+last candidate, I require assistance to expediently back to the top.
+Consequently, I enable the cyclical functionality of `vertico-next` and
+`vertico-previous`.
+
+By default, `find-file` initiates the opening of files residing in the
+current directory, rendering the modification of the `find-file` path a
+prevalent procedure.  Regrettably, the default setting permits the
+deletion of a solitary character at a time, a process that is not only
+cumbersome but also exhausts my patience.  Fortunately, `vertico`
+incorporates an extension, `vertico-directory`, which proffers commands
+capable of eliminating multiple characters in the path simultaneously by
+word.  I have elected to assign these commands to the
+<kbd> <backspace> </kbd> key.
+
+And a litte help, I set **Vertico Mouse Mode** to use the mouse to select
+the candidates.
+
+    (use-package vertico
+      :ensure vertico
+      :pin gnu
+      :config
+      (setq vertico-resize t)
+    
+      (setq vertico-cycle t)
+      :hook
+      (emacs-startup-hook . vertico-mode))
+    
+    (use-package vertico-directory
+      :ensure vertico
+      :pin gnu
+      :after vertico
+      :keymap-set
+      (:vertico-map
+       ("<return>" . vertico-directory-enter)
+       ("<backspace>" . vertico-directory-delete-char)
+       ("M-<backspace>" . vertico-directory-delete-word)))
+    
+    (use-package vertico-mouse
+      :ensure vertico
+      :pin gnu
+      :after vertico
+      :hook
+      (vertico-mode-hook . vertico-mouse-mode))
+
+
+#### Completion style
+
+Emacs accommodates an array of completion styles, with three variants
+activated by default: `basic`, `emacs22`, and `partial-completion`.
+
+These correspond to:
+
+-   `basic`: Completion of the prefix preceding the cursor and the suffix
+    following the cursor.
+-   `emacs22`: Prefix completion that exclusively operates on the text
+    preceding the cursor.
+-   `partial-completion`: Completion of multiple words, each treated as a
+    prefix.
+
+For instance, given a command `foo-bar`, it could be completed with
+these inputs:
+
+-   f\_b, completed by the `basic` style
+-   f\_r, completed by the `emacs22` style
+-   f-\_a, completed by the `partial-completion` style.
+
+Here, \_ denotes the cursor's position.
+
+While the default is adequate, I prefer to be permitted to complete the
+input using spaces as separators.  Consequently, I use orderless<sup><a id="fnr.9" class="footref" href="#fn.9" role="doc-backlink">9</a></sup>,
+which offers a completion style named orderless that segments the
+pattern into space-separated components and matches them.
+
+Furthermore, enable `partial-completion` for file path expansion.
+`partial-completion` is crucial for file wildcard support.  Multiple
+files can be simultaneously opened with `find-file` if the input
+contains a wildcard.
+
+    (use-package minibuffer
+      :ensure orderless
+      :init
+      (setq completion-styles '(substring orderless basic partial-completion)
+            completion-category-overrides
+            '((file (styles basic partial-completion)))))
+
+
+#### Show mariginalia of completions
+
+Marginalia are marks or annotations placed at the margin of the page of
+a book or in this case helpful colorful annotations placed at the margin
+of the minibuffer for your completion candidates.<sup><a id="fnr.10" class="footref" href="#fn.10" role="doc-backlink">10</a></sup>
+
+I use it to glance at docstring, the values of variables, and even file
+permissions.
+
+    (use-package marginalia
+      :ensure marginalia
+      :pin gnu
+      :config
+      (setq marginalia-align 'right)
+      :hook
+      (emacs-startup-hook . marginalia-mode))
+
+
+#### Save input history
 
 Upon executing certain operations within the Minibuffer and subsequently
 terminating Emacs, the record of these operations is unfortunately not
@@ -826,6 +1055,40 @@ Minibuffer.
       (setq savehist-file (expand-file-name "hist.el" my-state-directory))
       :hook
       (emacs-startup-hook . savehist-mode))
+
+
+### Actions
+
+I use Embark<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup> to summon additional shortcut actions at the current
+location, intelligently offering available operations based on the
+current buffer or minibuffer.
+
+    (use-package embark
+      :ensure embark
+      :keymap-set
+      (("C-." . embark-act)
+       ("C-;" . embark-dwim)
+       ("C-h B" . embark-bindings))
+      :init
+      (setq prefix-help-command #'embark-prefix-help-command)
+      :config
+      (push '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+              (display-buffer-reuse-window display-buffer-below-selected)
+              (window-height . 0.4))
+            display-buffer-alist)
+    
+      (setq embark-verbose-indicator-display-action
+            '(display-buffer-reuse-window display-buffer-below-selected)))
+    
+    (use-package embark-consult
+      :ensure embark-consult
+      :hook
+      (embark-collect-mode . consult-preview-at-point-mode))
+
+By rebinding the `prefix-help-command`, I utilize Embark to provide a
+superior key helper.  It offers a completion-based interface for finding
+available keybingdings, which is more user-friendly compared to
+`which-key`<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>.
 
 
 ## Multilingual environment
@@ -996,6 +1259,29 @@ modifications have taken effect in the target modification area.
       ("<remap> <yank-pop>" . consult-yank-pop))
 
 
+### Text completion
+
+As one of the two completion methods in Emacs, I use text completion to
+further accomplish text filling tasks.  It effectively assists me in
+completing longer texts with fewer inputs by selecting candidates.
+
+I opt for the tried-and-tested `company-mode`<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup> as the primary text
+completion minor mode, expanding the completion capabilities at
+different times through more backend support provided by its community.
+In fact, I typically only use text completion to obtain automatic
+associations and supplements of code when editing program text, so you
+will see me striving to avoid activating the global completion feature.
+
+    (use-package company
+      :ensure company
+      :after prog-mode
+      :config
+      (keymap-set company-active-map "M-/" 'company-complete)
+      (setq company-tooltip-align-annotations t)
+      :hook
+      (prog-mode-hook . company-mode))
+
+
 ### Disaster recovery
 
 In this context, disaster recovery refers to how I recover modifications
@@ -1016,7 +1302,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#org79e0c2c), I apply my custom transformation rule for
+my [File conventions](#orgc2fe3c5), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -1050,7 +1336,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#org79e0c2c).
+directory in accordance with my [File conventions](#orgc2fe3c5).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -1147,142 +1433,6 @@ I have enabled `global-auto-revert-mode`.
       (emacs-startup-hook . global-auto-revert-mode))
 
 
-## Completion
-
-The completion feature in Emacs significantly enhances my interaction
-with the Emacs.  Primarily, Emacs offers two types of completion:
-
--   Input completion, which provides completion when entering input in the
-    minibuffer.
--   Text completion, which provides completion during text editing in the
-    buffer.
-
-Given the substantial differences in the scenarios for these two types
-of completion, I refrain from employing a uniform completion interaction
-method for both.
-
-
-### Input completion
-
-My choice is to provided input completion support with `vertico` <sup><a id="fnr.8" class="footref" href="#fn.8" role="doc-backlink">8</a></sup>,
-which is a performant, minimalistic vertical completion UI for Emacs.
-It reuses built-in facilities for full compatibility with Emacs'
-completion commands and tables.
-
-It can be effortlessly enabled by activating **Vertico Mode**.  Of course,
-additional configurations are indispensable for catering to personalized
-requirements.
-
-Upon the initiation of **Vertico Mode**, a minibuffer of immutable
-dimensions is exhibited during the completion process.  My inclination,
-however, is towards a flexible height contingent upon the quantity of
-remaining candidates.
-
-An additional facet necessitates refinement.  Upon navigating to the
-last candidate, I require assistance to expediently back to the top.
-Consequently, I enable the cyclical functionality of `vertico-next` and
-`vertico-previous`.
-
-By default, `find-file` initiates the opening of files residing in the
-current directory, rendering the modification of the `find-file` path a
-prevalent procedure.  Regrettably, the default setting permits the
-deletion of a solitary character at a time, a process that is not only
-cumbersome but also exhausts my patience.  Fortunately, `vertico`
-incorporates an extension, `vertico-directory`, which proffers commands
-capable of eliminating multiple characters in the path simultaneously by
-word.  I have elected to assign these commands to the
-<kbd> <backspace> </kbd> key.
-
-And a litte help, I set **Vertico Mouse Mode** to use the mouse to select
-the candidates.
-
-    (use-package vertico
-      :ensure vertico
-      :pin gnu
-      :config
-      (setq vertico-resize t)
-    
-      (setq vertico-cycle t)
-      :hook
-      (emacs-startup-hook . vertico-mode))
-    
-    (use-package vertico-directory
-      :ensure vertico
-      :pin gnu
-      :after vertico
-      :keymap-set
-      (:vertico-map
-       ("<return>" . vertico-directory-enter)
-       ("<backspace>" . vertico-directory-delete-char)
-       ("M-<backspace>" . vertico-directory-delete-word)))
-    
-    (use-package vertico-mouse
-      :ensure vertico
-      :pin gnu
-      :after vertico
-      :hook
-      (vertico-mode-hook . vertico-mouse-mode))
-
-
-#### Completion style
-
-Emacs accommodates an array of completion styles, with three variants
-activated by default: `basic`, `emacs22`, and `partial-completion`.
-
-These correspond to:
-
--   `basic`: Completion of the prefix preceding the cursor and the suffix
-    following the cursor.
--   `emacs22`: Prefix completion that exclusively operates on the text
-    preceding the cursor.
--   `partial-completion`: Completion of multiple words, each treated as a
-    prefix.
-
-For instance, given a command `foo-bar`, it could be completed with
-these inputs:
-
--   f\_b, completed by the `basic` style
--   f\_r, completed by the `emacs22` style
--   f-\_a, completed by the `partial-completion` style.
-
-Here, \_ denotes the cursor's position.
-
-While the default is adequate, I prefer to be permitted to complete the
-input using spaces as separators.  Consequently, I use orderless<sup><a id="fnr.9" class="footref" href="#fn.9" role="doc-backlink">9</a></sup>,
-which offers a completion style named orderless that segments the
-pattern into space-separated components and matches them.
-
-Furthermore, enable `partial-completion` for file path expansion.
-`partial-completion` is crucial for file wildcard support.  Multiple
-files can be simultaneously opened with `find-file` if the input
-contains a wildcard.
-
-    (use-package minibuffer
-      :ensure orderless
-      :init
-      (setq completion-styles '(substring orderless basic partial-completion)
-            completion-category-overrides
-            '((file (styles basic partial-completion)))))
-
-
-#### Show mariginalia of completions
-
-Marginalia are marks or annotations placed at the margin of the page of
-a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.<sup><a id="fnr.10" class="footref" href="#fn.10" role="doc-backlink">10</a></sup>
-
-I use it to glance at docstring, the values of variables, and even file
-permissions.
-
-    (use-package marginalia
-      :ensure marginalia
-      :pin gnu
-      :config
-      (setq marginalia-align 'right)
-      :hook
-      (emacs-startup-hook . marginalia-mode))
-
-
 ## Project management
 
 When I am engaged in programming or writing, the majority of my trivial
@@ -1309,7 +1459,7 @@ stress associated with these activities.
 
 When working in any folder that uses a version control system, whether
 browsing or editing files, I would like to highlight all changes.  I
-obtain this feature through `diff-hl`<sup><a id="fnr.11" class="footref" href="#fn.11" role="doc-backlink">11</a></sup>.
+obtain this feature through `diff-hl`<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup>.
 
     (use-package diff-hl
       :ensure diff-hl
@@ -1327,9 +1477,16 @@ navigation and revert commands still work. I turning
 
     (use-package diff-hl-margin
       :after diff-hl
-      :unless (display-graphic-p)
-      :hook
-      (diff-hl-mode-hook . diff-hl-margin-mode))
+      :init
+      (defun my--inhibit-diff-hl-margin-mode ()
+        "Enable `'diff-hl-margin-mode' on in non-graphic frame."
+        (if diff-hl-mode
+            (if (display-graphic-p)
+                (diff-hl-margin-mode -1)
+              (diff-hl-margin-mode +1))
+            (diff-hl-margin-mode -1)))
+    
+      (add-hook 'diff-hl-mode-hook #'my--inhibit-diff-hl-margin-mode))
 
 
 #### Git
@@ -1337,7 +1494,7 @@ navigation and revert commands still work. I turning
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit<sup><a id="fnr.12" class="footref" href="#fn.12" role="doc-backlink">12</a></sup>.  I am acquainted with
+specifically, Emacs equipped with Magit<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup>.  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1381,7 +1538,7 @@ functions in the buffer after its state has changed.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el<sup><a id="fnr.13" class="footref" href="#fn.13" role="doc-backlink">13</a></sup>, an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup>, an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1410,6 +1567,40 @@ the **Magit Status Buffer** by enabling `magit-nix3-flake-mode`.
       :after magit-status
       :hook
       (magit-status-mode-hook . magit-nix3-flake-mode))
+
+
+## Credential management
+
+I will require Emacs to manage my login credentials, such as during
+remote access and sending and receiving emails.  I utilize
+`auth-sources` to administer credentials within Emacs, and `pass` to
+access credentials stored outside of Emacs.
+
+    (use-package auth-source
+      :config
+      (setq auth-sources
+            `(,(expand-file-name "authinfo.gpg" my-data-directory)
+              ,(expand-file-name "authinfo" my-data-directory))))
+    
+    (use-package auth-source-pass
+      :after auth-source
+      :config
+      (auth-source-pass-enable))
+    
+    (use-package pass
+      :ensure pass
+      :commands pass)
+
+
+## E-Mail management
+
+I employ Emacs for the transmission and reception of my emails, which
+facilitates the direct capture of emails as tasks within Emacs.  I use
+`mu4e` as the interface for email exchange.
+
+    (use-package mu4e
+      :ensure mu4e
+      :commands mu4e)
 
 
 ## Writing
@@ -1443,7 +1634,7 @@ editing line to be highlighted.
       :hook
       (text-mode-hook . hl-line-mode))
 
-Emacs supports a variety of line-folding methods<sup><a id="fnr.14" class="footref" href="#fn.14" role="doc-backlink">14</a></sup>, including:
+Emacs supports a variety of line-folding methods<sup><a id="fnr.17" class="footref" href="#fn.17" role="doc-backlink">17</a></sup>, including:
 
 -   **Hard Wrap** ：Modes such as AutoFillMode insert a line ending after
     the last word that occurs before the value of option `fill-column` (a
@@ -1492,7 +1683,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-`org-modern`<sup><a id="fnr.15" class="footref" href="#fn.15" role="doc-backlink">15</a></sup> to enhance the appearance of Org Mode headings by
+`org-modern`<sup><a id="fnr.18" class="footref" href="#fn.18" role="doc-backlink">18</a></sup> to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -1542,7 +1733,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.16" class="footref" href="#fn.16" role="doc-backlink">16</a></sup> to achieve this.
+extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.19" class="footref" href="#fn.19" role="doc-backlink">19</a></sup> to achieve this.
 
     (use-package org-side-tree
       :ensure org-side-tree
@@ -1554,6 +1745,19 @@ extensive works.  I use `org-sidebar-tree`<sup><a id="fnr.16" class="footref" hr
        ("C-c m o" . org-side-tree))
       :hook
       (org-side-tree-mode-hook . org-indent-mode))
+
+
+#### Selection
+
+Org has some built-in dispatches that provide candidate operations,
+their default pop-up style is a bit ugly, improve them.
+
+    (use-package org
+      :config
+      (push '("\\*Org Select\\*"
+              (display-buffer-reuse-window display-buffer-below-selected)
+              (window-parameters (mode-line-format . none)))
+            display-buffer-alist))
 
 
 #### File Export Support
@@ -1611,7 +1815,7 @@ usage of the BIND keyword.
 
 ### Writing with Markdown
 
-Markdown<sup><a id="fnr.17" class="footref" href="#fn.17" role="doc-backlink">17</a></sup>, perhaps the most prevalent text markup language of the first
+Markdown<sup><a id="fnr.20" class="footref" href="#fn.20" role="doc-backlink">20</a></sup>, perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -1635,19 +1839,6 @@ Emacs is an exceptionally potent programming environment. However, it
 necessitates meticulous configuration; otherwise, its functioning will
 be subpar.  Let me to tailor Emacs to accommodate all the programming
 languages I used.
-
-
-### Emacs Lisp
-
-When crafting Emacs Lisp programs, we often write and invoke numerous
-macros.  Merely contemplating to decipher the code generated by macros
-is insufficient.  I used `pp-macroexpand-last-sexp` to preview the
-current macro expansion.  For convenience, it is bound to the <kbd> C-c C-v </kbd> key in **Emacs Lisp Mode**.  Here, <kbd> v </kbd> implies verbose.
-
-    (use-package pp
-      :keymap-set
-      (:emacs-lisp-mode-map
-       ("C-c C-v" . pp-macroexpand-last-sexp)))
 
 The fundamental topics of discussion for most individuals when it comes
 to programming are invariably indentation and parenthesis matching,
@@ -1687,6 +1878,30 @@ highlighted and supplemented by a richer color palette.
       :hook
       (prog-mode-hook . rainbow-delimiters-mode))
 
+Another prevalent requirement during programming is the folding of code
+blocks.  When editing and perusing extensive code files, I rely on this
+feature to filter out portions of the code that distract my attention.
+I do not use external Emacs Lisp package to achieve this, but rather, I
+employ the Hide Show Mode that comes with Emacs.
+
+    (use-package hideshow
+      :after prog-mode
+      :hook
+      (prog-mode-hook . hs-minor-mode))
+
+
+### Emacs Lisp
+
+When crafting Emacs Lisp programs, we often write and invoke numerous
+macros.  Merely contemplating to decipher the code generated by macros
+is insufficient.  I used `pp-macroexpand-last-sexp` to preview the
+current macro expansion.  For convenience, it is bound to the <kbd> C-c C-v </kbd> key in **Emacs Lisp Mode**.  Here, <kbd> v </kbd> implies verbose.
+
+    (use-package pp
+      :keymap-set
+      (:emacs-lisp-mode-map
+       ("C-c C-v" . pp-macroexpand-last-sexp)))
+
 
 ### Nix
 
@@ -1702,7 +1917,7 @@ predicated on the extension name.
 
 ### YAML
 
-YAML<sup><a id="fnr.18" class="footref" href="#fn.18" role="doc-backlink">18</a></sup> is an exceedingly prevalent configuration language. Despite my
+YAML<sup><a id="fnr.21" class="footref" href="#fn.21" role="doc-backlink">21</a></sup> is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
     (use-package yaml-mode
@@ -1716,6 +1931,58 @@ personal aversion towards it, I have to incorporate its support.
 Unlike `python-mode`, this mode follows the Emacs convention of not
 binding the <kbd> ENTER </kbd> key to `newline-and-indent`.  To get this
 behavior, bind it in `yaml-mode`.
+
+
+## Life and Work Management
+
+My life and work are perceived as a synthesis of methodical tasks, the
+orchestration of which delineate my day.  It becomes more practicable to
+estimate the duration of a task if I sustain a record of time expended
+by clocking in and out of tasks.
+
+Consequently, I will expedite my life and work more swiftly by
+considering tasks as the fundamental unit.  At the bare minimum, I
+necessitate these few processes:
+
+-   **Capture** - Apprehend any thought that traverses my mind, irrespective
+    of its magnitude.
+-   **Clarify** - Refine the content I have apprehended into lucid and
+    specific action steps.
+-   **Organize** - Systematize and position everything in its rightful
+    place.
+-   **Review** - Scrutinize, update, and modify my lists.
+-   **Engage** - Participate, commence dealing with pertinent matters.
+
+While contemplating these matters, the article **Get Things Done with
+Emacs**<sup><a id="fnr.22" class="footref" href="#fn.22" role="doc-backlink">22</a></sup> by Nicolas P. Rougier<sup><a id="fnr.23" class="footref" href="#fn.23" role="doc-backlink">23</a></sup> provided me with substantial
+insights.   I will harness Org Mode to procure these functionalities and
+persistently optimize the entire process.
+
+
+### Capture everything
+
+Initially, I need to establish a unified entry point for collecting all
+thoughts and tasks.  Here, the entry point refers to the capture action
+and the storage of the results of this action.  I have designated an
+`inbox.org` file under the `org-directory` to collect everything.
+
+    (use-package org
+      :config
+      (setq org-directory "~/org"
+            org-agenda-files '("inbox.org")))
+
+Subsequently, I employ `org-capture` to initiate the capture action,
+which presets the type of capture action via a template.  My initial
+endeavor is to construct a default template for task collection in the
+inbox.
+
+    (use-package org-capture
+      :keymap-set
+      (:ctl-c-a-map
+       ("c" . org-capture))
+      :config
+      (setq org-capture-templates
+           `(("i" "Inbox" entry (file "inbox.org") ,(concat "* TODO %?\n" "CREATED: %U")))))
 
 
 ## Footnotes
@@ -1740,18 +2007,28 @@ behavior, bind it in `yaml-mode`.
 
 <sup><a id="fn.10" href="#fnr.10">10</a></sup> Marginalia, <https://github.com/minad/marginalia>
 
-<sup><a id="fn.11" href="#fnr.11">11</a></sup> diff-hl, <https://github.com/dgutov/diff-hl>
+<sup><a id="fn.11" href="#fnr.11">11</a></sup> Embark, <https://github.com/oantolin/embark>
 
-<sup><a id="fn.12" href="#fnr.12">12</a></sup> Magit, <https://magit.vc>
+<sup><a id="fn.12" href="#fnr.12">12</a></sup> which-key, <https://github.com/justbur/emacs-which-key>
 
-<sup><a id="fn.13" href="#fnr.13">13</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
+<sup><a id="fn.13" href="#fnr.13">13</a></sup> Company Anything, <http://company-mode.github.io/>
 
-<sup><a id="fn.14" href="#fnr.14">14</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
+<sup><a id="fn.14" href="#fnr.14">14</a></sup> diff-hl, <https://github.com/dgutov/diff-hl>
 
-<sup><a id="fn.15" href="#fnr.15">15</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
+<sup><a id="fn.15" href="#fnr.15">15</a></sup> Magit, <https://magit.vc>
 
-<sup><a id="fn.16" href="#fnr.16">16</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
+<sup><a id="fn.16" href="#fnr.16">16</a></sup> Nix3.el, <https://github.com/emacs-twist/nix3.el>
 
-<sup><a id="fn.17" href="#fnr.17">17</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+<sup><a id="fn.17" href="#fnr.17">17</a></sup> Line Wrap, <https://www.emacswiki.org/emacs/LineWrap>
 
-<sup><a id="fn.18" href="#fnr.18">18</a></sup> YAML, <https://yaml.org/>
+<sup><a id="fn.18" href="#fnr.18">18</a></sup> Modern Org Style, <https://github.com/minad/org-modern>
+
+<sup><a id="fn.19" href="#fnr.19">19</a></sup> Org Side Tree, <https://github.com/localauthor/org-side-tree>
+
+<sup><a id="fn.20" href="#fnr.20">20</a></sup> Markdown, <https://daringfireball.net/projects/markdown/>
+
+<sup><a id="fn.21" href="#fnr.21">21</a></sup> YAML, <https://yaml.org/>
+
+<sup><a id="fn.22" href="#fnr.22">22</a></sup> Get Things Done with Emacs, <https://www.labri.fr/perso/nrougier/GTD/index.html>
+
+<sup><a id="fn.23" href="#fnr.23">23</a></sup> Nicolas P. Rougier, <https://www.labri.fr/perso/nrougier/>
