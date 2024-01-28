@@ -1777,6 +1777,21 @@ the *Magit Status Buffer* by enabling ~magit-nix3-flake-mode~.
     (magit-status-mode-hook . magit-nix3-flake-mode))
 #+end_src
 
+* GnuPG keys management
+
+I utilize EasyPG and EasyPG Assistant for the administration of my GnuPG
+keys within Emacs.
+
+During the versions =2.4.1= to =2.4.3= of GnuPG, post-modification of
+the =authinfo.gpg= file, the act of saving precipitates a freeze in
+Emacs.
+
+#+begin_src emacs-lisp
+  (use-package epg
+    :config
+    (advice-add 'epg-wait-for-status :override #'ignore))
+#+end_src
+
 * Credential management
 
 I will require Emacs to manage my login credentials, such as during
