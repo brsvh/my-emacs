@@ -1819,13 +1819,19 @@ access credentials stored outside of Emacs.
 * E-Mail management
 
 I employ Emacs for the transmission and reception of my emails, which
-facilitates the direct capture of emails as tasks within Emacs.  I use
-~mu4e~ as the interface for email exchange.
+facilitates the direct capture of emails as tasks within Emacs.  I
+concurrently use both ~mu4e~ and ~gnus~ for email management, with
+~gnus~ serving as the primary method, and mu4e employed for backup
+purposes.
 
 #+begin_src emacs-lisp
   (use-package mu4e
     :ensure mu4e
     :commands mu4e)
+
+  (use-package gnus
+    :config
+    (setq gnus-startup-file (expand-file-name "gnus.newsrc" my-state-directory)))
 #+end_src
 
 * Writing
