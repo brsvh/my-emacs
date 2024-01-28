@@ -374,7 +374,8 @@ Consequently, I bind the commands I require to the letter keys with
 {{{kbd(C-c)}}} as the prefix key. These letter keys are also employed
 for categorization purposes.
 
-- {{{kbd(5)}}}: Frame management commands.
+- {{{kbd(5)}}}: Frame management commands
+- {{{kbd(a)}}}: Action commands..
 - {{{kbd(f)}}}: File management commands.
 - {{{kbd(m)}}}: Major mode commands.
 - {{{kbd(n)}}}: Nix(Flake) commands.
@@ -383,6 +384,9 @@ for categorization purposes.
 #+begin_src emacs-lisp :export none
   (defvar ctl-c-5-map (make-keymap)
     "Default keymap for C-c 5 commands.")
+
+  (defvar ctl-c-a-map (make-keymap)
+    "Default keymap for C-c a commands.")
 
   (defvar ctl-c-f-map (make-keymap)
     "Default keymap for C-c f commands.")
@@ -397,6 +401,7 @@ for categorization purposes.
     "Default keymap for C-c v commands.")
 
   (keymap-set ctl-c-map "5" ctl-c-5-map)
+  (keymap-set ctl-c-map "a" ctl-c-a-map)
   (keymap-set ctl-c-map "f" ctl-c-f-map)
   (keymap-set ctl-c-map "m" ctl-c-m-map)
   (keymap-set ctl-c-map "n" ctl-c-n-map)
@@ -1760,6 +1765,42 @@ the *Magit Status Buffer* by enabling ~magit-nix3-flake-mode~.
     (magit-status-mode-hook . magit-nix3-flake-mode))
 #+end_src
 
+* Credential management
+
+I will require Emacs to manage my login credentials, such as during
+remote access and sending and receiving emails.  I utilize
+~auth-sources~ to administer credentials within Emacs, and ~pass~ to
+access credentials stored outside of Emacs.
+
+#+begin_src emacs-lisp
+  (use-package auth-source
+    :config
+    (setq auth-sources
+          `((:source ,(expand-file-name "authinfo.gpg"
+                                        my-data-directory)))))
+
+  (use-package auth-source-pass
+    :after auth-source
+    :config
+    (auth-source-pass-enable))
+
+  (use-package pass
+    :ensure pass
+    :commands pass)
+#+end_src
+
+* E-Mail management
+
+I employ Emacs for the transmission and reception of my emails, which
+facilitates the direct capture of emails as tasks within Emacs.  I use
+~mu4e~ as the interface for email exchange.
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :ensure mu4e
+    :commands mu4e)
+#+end_src
+
 * Writing
 
 Emacs is an indispensable companion for authors, the abundant extensions
@@ -2051,6 +2092,19 @@ highlighted and supplemented by a richer color palette.
     (prog-mode-hook . rainbow-delimiters-mode))
 #+end_src
 
+Another prevalent requirement during programming is the folding of code
+blocks.  When editing and perusing extensive code files, I rely on this
+feature to filter out portions of the code that distract my attention.
+I do not use external Emacs Lisp package to achieve this, but rather, I
+employ the Hide Show Mode that comes with Emacs.
+
+#+begin_src emacs-lisp
+  (use-package hideshow
+    :after prog-mode
+    :hook
+    (prog-mode-hook . hs-minor-mode))
+#+end_src
+
 ** Emacs Lisp
 
 When crafting Emacs Lisp programs, we often write and invoke numerous
@@ -2097,6 +2151,61 @@ personal aversion towards it, I have to incorporate its support.
 Unlike ~python-mode~, this mode follows the Emacs convention of not
 binding the {{{kbd(ENTER)}}} key to ~newline-and-indent~.  To get this
 behavior, bind it in ~yaml-mode~.
+
+* Life and Work Management
+
+My life and work are perceived as a synthesis of methodical tasks, the
+orchestration of which delineate my day.  It becomes more practicable to
+estimate the duration of a task if I sustain a record of time expended
+by clocking in and out of tasks.
+
+Consequently, I will expedite my life and work more swiftly by
+considering tasks as the fundamental unit.  At the bare minimum, I
+necessitate these few processes:
+
+- *Capture* - Apprehend any thought that traverses my mind, irrespective
+  of its magnitude.
+- *Clarify* - Refine the content I have apprehended into lucid and
+  specific action steps.
+- *Organize* - Systematize and position everything in its rightful
+  place.
+- *Review* - Scrutinize, update, and modify my lists.
+- *Engage* - Participate, commence dealing with pertinent matters.
+
+
+While contemplating these matters, the article *Get Things Done with
+Emacs*[fn:24] by Nicolas P. Rougier[fn:25] provided me with substantial
+insights.   I will harness Org Mode to procure these functionalities and
+persistently optimize the entire process.
+
+** Capture everything
+
+Initially, I need to establish a unified entry point for collecting all
+thoughts and tasks.  Here, the entry point refers to the capture action
+and the storage of the results of this action.  I have designated an
+=inbox.org= file under the ~org-directory~ to collect everything.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (setq org-directory "~/org"
+          org-agenda-files '("inbox.org")))
+#+end_src
+
+Subsequently, I employ ~org-capture~ to initiate the capture action,
+which presets the type of capture action via a template.  My initial
+endeavor is to construct a default template for task collection in the
+inbox.
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :keymap-set
+    (:ctl-c-a-map
+     ("c" . org-capture))
+    :config
+    (setq org-capture-templates
+         `(("i" "Inbox" entry (file "inbox.org") ,(concat "* TODO %?\n" "CREATED: %U")))))
+#+end_src
 
 * File footer :nonexport:
 
@@ -2152,3 +2261,7 @@ behavior, bind it in ~yaml-mode~.
 [fn:22] Markdown, https://daringfireball.net/projects/markdown/
 
 [fn:23] YAML, https://yaml.org/
+
+[fn:24] Get Things Done with Emacs, https://www.labri.fr/perso/nrougier/GTD/index.html
+
+[fn:25] Nicolas P. Rougier, https://www.labri.fr/perso/nrougier/

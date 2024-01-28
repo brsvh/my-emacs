@@ -1,0 +1,1 @@
+(pass :fetcher github :repo "brsvh/pass.el" :branch "correct-password-store-otp-version")
