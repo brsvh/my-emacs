@@ -981,6 +981,16 @@ the candidates.
       :hook
       (vertico-mode-hook . vertico-mouse-mode))
 
+Similarly, the need for completion sometimes arises when input in the
+minibuffer, such as commands like <kbd> M-: </kbd> (`eval-expression`) or
+<kbd> M-! </kbd> (`shell-command`), which read from the minibuffer.  I use
+`consult-completion-in-region` to get it.
+
+    (use-package minibuffer
+      :after vertico
+      :config
+      (setq completion-in-region-function #'consult-completion-in-region))
+
 
 #### Completion style
 
@@ -1302,7 +1312,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#orgc2fe3c5), I apply my custom transformation rule for
+my [File conventions](#org2a246e1), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -1336,7 +1346,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#orgc2fe3c5).
+directory in accordance with my [File conventions](#org2a246e1).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
