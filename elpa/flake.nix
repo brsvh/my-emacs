@@ -2,6 +2,12 @@
   description =
     "THIS IS AN AUTO-GENERATED FILE. PLEASE DON'T EDIT IT MANUALLY.";
   inputs = {
+    company = {
+      flake = false;
+      owner = "company-mode";
+      repo = "company-mode";
+      type = "github";
+    };
     compat = {
       flake = false;
       owner = "emacs-compat";
@@ -24,6 +30,24 @@
       flake = false;
       owner = "dgutov";
       repo = "diff-hl";
+      type = "github";
+    };
+    embark = {
+      flake = false;
+      owner = "oantolin";
+      repo = "embark";
+      type = "github";
+    };
+    embark-consult = {
+      flake = false;
+      owner = "oantolin";
+      repo = "embark";
+      type = "github";
+    };
+    frameshot = {
+      flake = false;
+      owner = "tarsius";
+      repo = "frameshot";
       type = "github";
     };
     gcmh = {

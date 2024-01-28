@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "company": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706207914,
+        "narHash": "sha256-Zkfb1WIadkmwfIQ9lt6rEihEOT2g81FYkwr+C4pJcHI=",
+        "owner": "company-mode",
+        "repo": "company-mode",
+        "rev": "84b111f26663c65cb9e465a028c9558332b4951b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "company-mode",
+        "repo": "company-mode",
+        "type": "github"
+      }
+    },
     "compat": {
       "flake": false,
       "locked": {
@@ -61,6 +77,54 @@
       "original": {
         "owner": "dgutov",
         "repo": "diff-hl",
+        "type": "github"
+      }
+    },
+    "embark": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706238310,
+        "narHash": "sha256-/kY5FDpBEJL7F+icTK0CPiqeTthvQI+6jmx53cNHl2s=",
+        "owner": "oantolin",
+        "repo": "embark",
+        "rev": "33c392cf3ce5b92ad73ed5c4f44dbca5d0741cde",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oantolin",
+        "repo": "embark",
+        "type": "github"
+      }
+    },
+    "embark-consult": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706238310,
+        "narHash": "sha256-/kY5FDpBEJL7F+icTK0CPiqeTthvQI+6jmx53cNHl2s=",
+        "owner": "oantolin",
+        "repo": "embark",
+        "rev": "33c392cf3ce5b92ad73ed5c4f44dbca5d0741cde",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oantolin",
+        "repo": "embark",
+        "type": "github"
+      }
+    },
+    "frameshot": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704147398,
+        "narHash": "sha256-XpNiaWhx8cLpY4Dkd5fIZFJOvRy+6khbdPgMB1KgwiE=",
+        "owner": "tarsius",
+        "repo": "frameshot",
+        "rev": "77e4f3ad1fd495d983e62a201f6c1f708b616648",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tarsius",
+        "repo": "frameshot",
         "type": "github"
       }
     },
@@ -371,10 +435,14 @@
     },
     "root": {
       "inputs": {
+        "company": "company",
         "compat": "compat",
         "consult": "consult",
         "dash": "dash",
         "diff-hl": "diff-hl",
+        "embark": "embark",
+        "embark-consult": "embark-consult",
+        "frameshot": "frameshot",
         "gcmh": "gcmh",
         "git-commit": "git-commit",
         "magit": "magit",
