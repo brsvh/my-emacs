@@ -1312,7 +1312,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#org2a246e1), I apply my custom transformation rule for
+my [File conventions](#org24f35f6), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -1346,7 +1346,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#org2a246e1).
+directory in accordance with my [File conventions](#org24f35f6).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -1577,6 +1577,20 @@ the **Magit Status Buffer** by enabling `magit-nix3-flake-mode`.
       :after magit-status
       :hook
       (magit-status-mode-hook . magit-nix3-flake-mode))
+
+
+## GnuPG keys management
+
+I utilize EasyPG and EasyPG Assistant for the administration of my GnuPG
+keys within Emacs.
+
+During the versions `2.4.1` to `2.4.3` of GnuPG, post-modification of
+the `authinfo.gpg` file, the act of saving precipitates a freeze in
+Emacs.
+
+    (use-package epg
+      :config
+      (advice-add 'epg-wait-for-status :override #'ignore))
 
 
 ## Credential management
