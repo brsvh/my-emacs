@@ -25,6 +25,8 @@ with lib;
 let
   cfg = config.emacs.d;
 
+  pkgs' = packages."${pkgs.system}";
+
   emacsD = config.programs.emacs-twist.config;
 
   genInitFile = emacs:
@@ -53,6 +55,7 @@ in
       platform = mkOption {
         type = types.enum
           [
+            "console"
             "wayland"
             "x11"
           ];
@@ -81,6 +84,22 @@ in
           GNU Emacs.
         '';
       };
+
+      extraPackages = mkOption {
+        type = types.listOf types.str;
+        default = [ ];
+        description = ''
+          Extra Packages will be add to Emacs environment.
+        '';
+      };
+
+      overrides = mkOption {
+        type = types.unspecified;
+        default = { };
+        description = ''
+          Overriding the input of Emacs.
+        '';
+      };
     };
   };
 
@@ -97,7 +116,7 @@ in
           {
             name = "${cfg.directory}/early-init.el";
             value = {
-              source = packages.${pkgs.system}.early-init-file;
+              source = pkgs'.early-init-file;
             };
           }
         ]
@@ -121,19 +140,19 @@ in
         createManifestFile = true;
 
         config =
-          if cfg.platform == "wayland"
-          then
-            packages.${pkgs.system}.emacsD-pgtk.override
-              (
-                _:
-                { appendToInit = cfg.extraInitConfig; }
-              )
+          let
+            args = {
+              appendToInit = cfg.extraInitConfig;
+              extraPackages = cfg.extraPackages;
+              inputOverrides = cfg.overrides;
+            };
+          in
+          if cfg.platform == "console"
+          then pkgs'.emacsD-nogui.override (_: args)
           else
-            packages.${pkgs.system}.emacsD.override
-              (
-                _:
-                { appendToInit = cfg.extraInitConfig; }
-              );
+            if cfg.platform == "wayland"
+            then pkgs'.emacsD-pgtk.override (_: args)
+            else pkgs'.emacsD.override (_: args);
 
         serviceIntegration = {
           enable = mkDefault true;
@@ -142,6 +161,14 @@ in
         emacsclient = {
           enable = mkDefault true;
         };
+      };
+
+      mu = {
+        enable = true;
+      };
+
+      password-store = {
+        enable = true;
       };
     };
 

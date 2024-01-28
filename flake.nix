@@ -288,8 +288,16 @@
                 auto-sync-only = true;
               };
 
+              defaultInputOverrides = {
+                mu4e = _: _: {
+                  src = pkgs.mu.mu4e;
+                };
+              };
+
               mkEmacsD =
                 { appendToInit ? ""
+                , extraPackages ? [ ]
+                , inputOverrides ? defaultInputOverrides
                 , nativeCompileAheadDefault ? true
                 , pgtk ? false
                 , x ? true
@@ -308,6 +316,8 @@
                   emacsTwist {
                     inherit
                       emacsPackage
+                      extraPackages
+                      inputOverrides
                       nativeCompileAheadDefault;
 
                     configurationRevision = revision;

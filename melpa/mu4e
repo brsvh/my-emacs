@@ -1,0 +1,1 @@
+(mu4e :fetcher github :repo "djcb/mu" :files ("share/emacs/site-lisp/mu4e/*.el"))
