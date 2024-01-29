@@ -2222,7 +2222,7 @@ and the storage of the results of this action.  I have designated an
   (use-package org
     :config
     (setq org-directory "~/org"
-          org-agenda-files '("inbox.org")))
+          org-agenda-files '("inbox.org" "agenda.org")))
 #+end_src
 
 Subsequently, I employ ~org-capture~ to initiate the capture action,
@@ -2234,10 +2234,11 @@ inbox.
   (use-package org-capture
     :keymap-set
     (:ctl-c-a-map
+     ("a" . org-agenda)
      ("c" . org-capture))
     :config
     (setq org-capture-templates
-         `(("i" "Inbox" entry (file "inbox.org") ,(concat "* TODO %?\n" "CREATED: %U")))))
+          `(("i" "Inbox" entry (file+headline "inbox.org" "Inbox") ,(concat "* TODO %?\nEntered on %U\n  %i\n  %a")))))
 #+end_src
 
 * File footer :nonexport:
