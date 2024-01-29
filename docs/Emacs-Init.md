@@ -1312,7 +1312,7 @@ using <kbd> M-x recover-file RET </kbd>.
 
 Emacs generates the auto-saved file by appending a # to both ends of the
 visited file name in place.  To maintain a tidy directory and adhere to
-my [File conventions](#org24f35f6), I apply my custom transformation rule for
+my [File conventions](#org442c7a2), I apply my custom transformation rule for
 creating auto-save file names to `auto-save-file-name-transforms`.
 
     (use-package files
@@ -1346,7 +1346,7 @@ are unsuitable as versions before and after revision.
 
 By default, Emacs saves backup files—those ending in `~` —in the current
 directory, thereby leading to clutter.  Let's relocate them to a
-directory in accordance with my [File conventions](#org24f35f6).
+directory in accordance with my [File conventions](#org442c7a2).
 
 I aim to retain multiple versions of my backup files to help preserve my
 sanity.  Emacs permits the saving of an unlimited number of backups, but
@@ -1619,12 +1619,18 @@ access credentials stored outside of Emacs.
 ## E-Mail management
 
 I employ Emacs for the transmission and reception of my emails, which
-facilitates the direct capture of emails as tasks within Emacs.  I use
-`mu4e` as the interface for email exchange.
+facilitates the direct capture of emails as tasks within Emacs.  I
+concurrently use both `mu4e` and `gnus` for email management, with
+`gnus` serving as the primary method, and mu4e employed for backup
+purposes.
 
     (use-package mu4e
       :ensure mu4e
       :commands mu4e)
+    
+    (use-package gnus
+      :config
+      (setq gnus-startup-file (expand-file-name "gnus.newsrc" my-state-directory)))
 
 
 ## Writing
@@ -1993,7 +1999,7 @@ and the storage of the results of this action.  I have designated an
     (use-package org
       :config
       (setq org-directory "~/org"
-            org-agenda-files '("inbox.org")))
+            org-agenda-files '("inbox.org" "agenda.org")))
 
 Subsequently, I employ `org-capture` to initiate the capture action,
 which presets the type of capture action via a template.  My initial
@@ -2003,10 +2009,11 @@ inbox.
     (use-package org-capture
       :keymap-set
       (:ctl-c-a-map
+       ("a" . org-agenda)
        ("c" . org-capture))
       :config
       (setq org-capture-templates
-           `(("i" "Inbox" entry (file "inbox.org") ,(concat "* TODO %?\n" "CREATED: %U")))))
+            `(("i" "Inbox" entry (file+headline "inbox.org" "Inbox") ,(concat "* TODO %?\nEntered on %U\n  %i\n  %a")))))
 
 
 ## Footnotes
