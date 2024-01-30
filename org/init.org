@@ -1563,7 +1563,7 @@ prompts Emacs to create backups by duplicating the original file.  This
 deviates from the default method, which generates backups by renaming
 the original file.
 
-** Crime scene returns
+** File revisiting 
 
 Text editing is invariably verbose, and we often find ourselves in a
 cycle of modification, saving, and further modification.  Regrettably,
@@ -1584,8 +1584,7 @@ position where I left the file!
 While Emacs now retains the position of my transgressions within the
 file, when I attempt to recall my recent activities, I often confuse the
 files I've recently edited (╥﹏╥).  Let Emacs likewise remember the
-files I've recently opened and their paths, aiding me in swiftly
-returning to the scene of the crime!
+files I've recently opened and their paths.
 
 #+begin_src emacs-lisp
   (use-package recentf
