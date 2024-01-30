@@ -60,8 +60,8 @@ jobs:
       - name: Cache Nix Store
         uses: nix-community/cache-nix-action@v5
         with:
-          primary-key: ${{ runner.os }}-build-${{ hashFiles('**/*.nix') }}
-          restore-prefixes-first-match: ${{ runner.os }}-build-
+          primary-key: ${{ runner.os }}-nix-${{ hashFiles('**/*.nix') }}
+          restore-prefixes-first-match: ${{ runner.os }}-nix-
           purge: true
           purge-created: 604800
 
