@@ -750,7 +750,8 @@ aesthetic appeal, rendering it more user-friendly.
                                   (3 . (1.10 bold))
                                   (t . (1.05 semibold))))
     :hook
-    (my-make-graphics-frame-hook . my-theme-init))
+    (my-make-graphics-frame-hook . my-theme-init)
+    (tty-setup-hook . my-theme-init))
 #+end_src
 
 As you may have noticed, I have used a rudimentary configuration of
