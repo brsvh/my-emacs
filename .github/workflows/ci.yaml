@@ -39,7 +39,7 @@ jobs:
         run: nix flake check
 
       - name: Check dependent packages
-        run: nix build .#emacsD.depsCheck --print-build-logs
+        run: nix build .#brsvh-emacs.depsCheck --print-build-logs
 
   build:
     name: Build
