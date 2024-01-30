@@ -2077,6 +2077,18 @@ editing these documents.
     (setq markdown-command "multimarkdown"))
 #+end_src
 
+*** Edit the source block at point
+
+In Org Mode, I can utilize ~org-edit-special~ ({{{kbd(C-c ')}}}) to edit
+text located within specialized blocks in an indirect buffer in the
+native major mode.  This feature is highly convenient, and I also employ
+its Markdown variant.
+
+#+begin_src emacs-lisp
+  (use-package edit-indirect
+    :ensure edit-indirect)
+#+end_src
+
 * Programming
 
 Emacs is an exceptionally potent programming environment. However, it

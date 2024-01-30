@@ -80,6 +80,22 @@
         "type": "github"
       }
     },
+    "edit-indirect": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706404789,
+        "narHash": "sha256-FC8QDeRitLstVACn7jpdQblxaDiYRbSAtRAAhhyEVuI=",
+        "owner": "Fanael",
+        "repo": "edit-indirect",
+        "rev": "82a28d8a85277cfe453af464603ea330eae41c05",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Fanael",
+        "repo": "edit-indirect",
+        "type": "github"
+      }
+    },
     "embark": {
       "flake": false,
       "locked": {
@@ -521,6 +537,7 @@
         "consult": "consult",
         "dash": "dash",
         "diff-hl": "diff-hl",
+        "edit-indirect": "edit-indirect",
         "embark": "embark",
         "embark-consult": "embark-consult",
         "f": "f",

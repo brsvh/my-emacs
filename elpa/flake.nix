@@ -32,6 +32,12 @@
       repo = "diff-hl";
       type = "github";
     };
+    edit-indirect = {
+      flake = false;
+      owner = "Fanael";
+      repo = "edit-indirect";
+      type = "github";
+    };
     embark = {
       flake = false;
       owner = "oantolin";
