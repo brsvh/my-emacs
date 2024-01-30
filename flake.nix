@@ -169,7 +169,8 @@
   };
 
   outputs =
-    { emacs-overlay
+    { devshell
+    , emacs-overlay
     , flake-parts
     , flake-pins
     , gnu
@@ -177,7 +178,9 @@
     , nixpkgs
     , nongnu
     , org-babel
+    , pre-commit
     , self
+    , treefmt
     , twist
     , twist-overrides
     , ...
@@ -187,7 +190,10 @@
       {
         imports =
           [
-            ./nix/flakes
+            devshell.flakeModule
+            flake-parts.flakeModules.easyOverlay
+            pre-commit.flakeModule
+            treefmt.flakeModule
           ];
 
         flake = {
@@ -205,7 +211,8 @@
         };
 
         perSystem =
-          { final
+          { config
+          , final
           , pkgs
           , self'
           , ...
@@ -294,7 +301,7 @@
                 };
               };
 
-              mkEmacsD =
+              mkEmacs =
                 { appendToInit ? ""
                 , extraPackages ? [ ]
                 , inputOverrides ? defaultInputOverrides
@@ -348,9 +355,9 @@
                   }
                 ).overrideScope' twist-overrides.overlays.twistScope;
 
-              emacsD = makeOverridable mkEmacsD { };
+              brsvh-emacs = makeOverridable mkEmacs { };
 
-              emacsD-pgtk = emacsD.override
+              brsvh-emacs-pgtk = brsvh-emacs.override
                 (
                   _:
                   {
@@ -358,7 +365,7 @@
                   }
                 );
 
-              emacsD-nogui = emacsD.override
+              brsvh-emacs-nogui = brsvh-emacs.override
                 (
                   _:
                   {
@@ -382,9 +389,9 @@
                   languages = [ "emacs-lisp" ];
                 };
 
-              emacsDAppWrapper = env:
+              createApp = env:
                 assert pkgs.stdenv.isLinux;
-                pkgs.callPackage ./nix/appWrapper.nix
+                pkgs.callPackage ./nix/wrappers/app.nix
                   {
                     early-init = early-init-file;
                     init = (genInitFile env);
@@ -392,9 +399,9 @@
                   "emacs"
                   env;
 
-              emacsDBatchWrapper = env:
+              createBatch = env:
                 assert pkgs.stdenv.isLinux;
-                pkgs.callPackage ./nix/batchWrapper.nix
+                pkgs.callPackage ./nix/wrappers/batch.nix
                   {
                     early-init = early-init-file;
                     init = (genInitFile env);
@@ -403,7 +410,49 @@
                   env;
             in
             {
-              apps = emacsD.makeApps { lockDirName = "elpa"; };
+              apps = brsvh-emacs.makeApps { lockDirName = "elpa"; };
+
+              devshells = {
+                default = {
+                  name = "emacs.d:default";
+
+                  devshell = {
+                    startup = {
+                      pre-commit-hook = {
+                        text = config.pre-commit.installationScript;
+                      };
+                    };
+                  };
+
+                  commands =
+                    [
+                      {
+                        name = "git";
+                        package = pkgs.git;
+                        category = "development";
+                      }
+                      {
+                        name = "nix";
+                        package = pkgs.nixUnstable;
+                        category = "development";
+                      }
+                      {
+                        name = "emacs";
+                        package = self'.packages.nogui;
+                        help = "The extensible, customizable GNU text editor";
+                        category = "development";
+                      }
+                    ];
+
+                  env =
+                    [
+                      {
+                        name = "EDITOR";
+                        value = "emacs";
+                      }
+                    ];
+                };
+              };
 
               overlayAttrs =
                 (
@@ -415,24 +464,69 @@
                 (
                   twist.overlays.default final pkgs
                 ) //
-                { inherit emacsD emacsD-pgtk emacsD-nogui; };
+                { inherit brsvh-emacs brsvh-emacs-pgtk brsvh-emacs-nogui; };
 
               packages = {
                 inherit
                   early-init-file
-                  emacsD
-                  emacsD-nogui
-                  emacsD-pgtk;
+                  brsvh-emacs
+                  brsvh-emacs-nogui
+                  brsvh-emacs-pgtk;
 
                 default = self'.packages.x11;
 
-                batch = emacsDBatchWrapper emacsD-nogui;
+                batch = createBatch brsvh-emacs-nogui;
 
-                nogui = emacsDAppWrapper emacsD-nogui;
+                nogui = createApp brsvh-emacs-nogui;
 
-                pgtk = emacsDAppWrapper emacsD-pgtk;
+                pgtk = createApp brsvh-emacs-pgtk;
 
-                x11 = emacsDAppWrapper emacsD;
+                x11 = createApp brsvh-emacs;
+              };
+
+              pre-commit = {
+                check = {
+                  enable = true;
+                };
+                settings = {
+                  hooks = {
+                    nixpkgs-fmt = {
+                      enable = true;
+                    };
+                  };
+                };
+              };
+
+              treefmt = {
+                flakeFormatter = true;
+                projectRootFile = "flake.nix";
+
+                programs = {
+                  nixpkgs-fmt = {
+                    enable = true;
+                  };
+
+                  shellcheck = {
+                    enable = true;
+                  };
+
+                  shfmt = {
+                    enable = true;
+                  };
+
+                  yamlfmt = {
+                    enable = true;
+                  };
+                };
+
+                settings = {
+                  global = {
+                    excludes =
+                      [
+                        "elpa/**"
+                      ];
+                  };
+                };
               };
             };
 

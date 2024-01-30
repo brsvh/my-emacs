@@ -1,12 +1,12 @@
-name: Emacs/Twist - CI
+name: CI
 
 on:
   push:
     paths:
-      - 'flake.*'
+      - 'org/**.org'
   pull_request:
     paths:
-      - 'flake.*'
+      - 'org/**.org'
   workflow_call:
   workflow_dispatch:
 
@@ -38,18 +38,19 @@ jobs:
       - name: Check flake
         run: nix flake check
 
+      - name: Check dependent packages
+        run: nix build .#emacsD.depsCheck --print-build-logs
+
   build:
     name: Build
     needs: [check]
     strategy:
       matrix:
-        package: ['emacsD', 'emacsD-nogui', 'emacsD-pgtk']
+        package: ['brsvh-emacs', 'brsvh-emacs-nogui', 'brsvh-emacs-pgtk']
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Setup Nix
         uses: nixbuild/nix-quick-install-action@v26
@@ -63,7 +64,10 @@ jobs:
           restore-prefixes-first-match: ${{ runner.os }}-build-
           purge: true
           purge-created: 604800
-          
+
+      - name: Cache Nix Binary
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: Build
         run: nix build .#${{ matrix.package }} --print-build-logs
 

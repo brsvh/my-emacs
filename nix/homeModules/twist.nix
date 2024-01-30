@@ -23,11 +23,11 @@ packages:
 with builtins;
 with lib;
 let
-  cfg = config.emacs.d;
+  cfg = config.brsvh.emacs;
 
   pkgs' = packages."${pkgs.system}";
 
-  emacsD = config.programs.emacs-twist.config;
+  brsvh-emacs = config.programs.emacs-twist.config;
 
   genInitFile = emacs:
     pkgs.runCommandLocal "user-init-file" { } ''
@@ -43,62 +43,64 @@ let
 in
 {
   options = {
-    emacs.d = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Whether the Emacs Configuration is used.
-        '';
-      };
+    brsvh = {
+      emacs = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Whether the Emacs Configuration is used.
+          '';
+        };
 
-      platform = mkOption {
-        type = types.enum
-          [
-            "console"
-            "wayland"
-            "x11"
-          ];
-        default = "wayland";
-        description = ''
-          What display server protocol the Emacs configuration will
-          run on.
-        '';
-      };
+        platform = mkOption {
+          type = types.enum
+            [
+              "console"
+              "wayland"
+              "x11"
+            ];
+          default = "wayland";
+          description = ''
+            What display server protocol the Emacs configuration will
+            run on.
+          '';
+        };
 
-      directory = mkOption {
-        type = types.str;
-        description = ''
-          Relative path in string to user-emacs-directory from the
-          home directory
-        '';
-        default = ".config/emacs";
-        example = ".local/share/emacs";
-      };
+        directory = mkOption {
+          type = types.str;
+          description = ''
+            Relative path in string to user-emacs-directory from the
+            home directory
+          '';
+          default = ".config/emacs";
+          example = ".local/share/emacs";
+        };
 
-      extraInitConfig = mkOption {
-        type = types.str;
-        default = "";
-        description = ''
-          Extra configuration will be append to the user-init-file of
-          GNU Emacs.
-        '';
-      };
+        extraInitConfig = mkOption {
+          type = types.str;
+          default = "";
+          description = ''
+            Extra configuration will be append to the user-init-file of
+            GNU Emacs.
+          '';
+        };
 
-      extraPackages = mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-        description = ''
-          Extra Packages will be add to Emacs environment.
-        '';
-      };
+        extraPackages = mkOption {
+          type = types.listOf types.str;
+          default = [ ];
+          description = ''
+            Extra Packages will be add to Emacs environment.
+          '';
+        };
 
-      overrides = mkOption {
-        type = types.unspecified;
-        default = { };
-        description = ''
-          Overriding the input of Emacs.
-        '';
+        overrides = mkOption {
+          type = types.unspecified;
+          default = { };
+          description = ''
+            Overriding the input of Emacs.
+          '';
+        };
       };
     };
   };
@@ -110,7 +112,7 @@ in
           {
             name = "${cfg.directory}/init.el";
             value = {
-              source = "${(genInitFile emacsD)}/init.el";
+              source = "${(genInitFile brsvh-emacs)}/init.el";
             };
           }
           {
@@ -148,11 +150,11 @@ in
             };
           in
           if cfg.platform == "console"
-          then pkgs'.emacsD-nogui.override (_: args)
+          then pkgs'.brsvh-emacs-nogui.override (_: args)
           else
             if cfg.platform == "wayland"
-            then pkgs'.emacsD-pgtk.override (_: args)
-            else pkgs'.emacsD.override (_: args);
+            then pkgs'.brsvh-emacs-pgtk.override (_: args)
+            else pkgs'.brsvh-emacs.override (_: args);
 
         serviceIntegration = {
           enable = mkDefault true;
