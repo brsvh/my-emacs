@@ -96,6 +96,22 @@
         "type": "github"
       }
     },
+    "editorconfig": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706497076,
+        "narHash": "sha256-IVStALhM56tl4dvRNfXbUzEG8uUCnnEozf9M5yRgELI=",
+        "owner": "editorconfig",
+        "repo": "editorconfig-emacs",
+        "rev": "4b81a5992858cbf03bcd7ed6ef31e4be0b55a7c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "editorconfig",
+        "repo": "editorconfig-emacs",
+        "type": "github"
+      }
+    },
     "embark": {
       "flake": false,
       "locked": {
@@ -554,6 +570,7 @@
         "dash": "dash",
         "diff-hl": "diff-hl",
         "edit-indirect": "edit-indirect",
+        "editorconfig": "editorconfig",
         "embark": "embark",
         "embark-consult": "embark-consult",
         "f": "f",
@@ -585,6 +602,7 @@
         "s": "s",
         "switch-window": "switch-window",
         "transient": "transient",
+        "valign": "valign",
         "vertico": "vertico",
         "with-editor": "with-editor",
         "yaml-mode": "yaml-mode"
@@ -635,6 +653,22 @@
       "original": {
         "owner": "magit",
         "repo": "transient",
+        "type": "github"
+      }
+    },
+    "valign": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1619917915,
+        "narHash": "sha256-sT10BVyUarzpdwvkvVr9LQlRE2xneDd96trJj+8xzOk=",
+        "owner": "casouri",
+        "repo": "valign",
+        "rev": "be82f6048118cbc81e6e029be1965f933612d871",
+        "type": "github"
+      },
+      "original": {
+        "owner": "casouri",
+        "repo": "valign",
         "type": "github"
       }
     },

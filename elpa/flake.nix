@@ -38,6 +38,12 @@
       repo = "edit-indirect";
       type = "github";
     };
+    editorconfig = {
+      flake = false;
+      owner = "editorconfig";
+      repo = "editorconfig-emacs";
+      type = "github";
+    };
     embark = {
       flake = false;
       owner = "oantolin";
@@ -223,6 +229,12 @@
       flake = false;
       owner = "magit";
       repo = "transient";
+      type = "github";
+    };
+    valign = {
+      flake = false;
+      owner = "casouri";
+      repo = "valign";
       type = "github";
     };
     vertico = {
