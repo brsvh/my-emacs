@@ -146,6 +146,12 @@
       repo = "nix3.el";
       type = "github";
     };
+    on = {
+      flake = false;
+      owner = "ajgrf";
+      repo = "on.el";
+      type = "gitlab";
+    };
     orderless = {
       flake = false;
       owner = "oantolin";

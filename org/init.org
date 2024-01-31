@@ -408,7 +408,7 @@ for categorization purposes.
   (keymap-set ctl-c-map "v" ctl-c-v-map)
 #+end_src
 
-** Init Conventions
+** Startup conventions
 
 The [[info:elisp#Startup Summary][startup]] of Emacs is rather
 intricate, and I harbor certain compulsions towards controlling this
@@ -426,6 +426,86 @@ be activated through ~after-init-hook~.
     :defines
     (after-init-hook emacs-startup-hook))
 #+end_src
+
+For certain patterns or commands that require a substantial time
+expenditure, I also use a more granular level of control, which hooks
+with an ~on-~ prefix.
+
+#+begin_src emacs-lisp
+  (use-package on
+    :ensure on
+    :defines
+    (on-first-buffer-hook
+     on-first-file-hook
+     on-first-input-hook
+     on-switch-frame-hook
+     on-switch-buffer-hook
+     on-switch-window-hook))
+#+end_src
+
+Moreover, for Emacs sessions with and without Frames, that is, Emacs
+sessions initiated in graphics or in character-only terminals, I have
+two hooks for initialization. They will be evaluated at the end of the
+~after-init-hook~.
+
+#+begin_src emacs-lisp
+  (defcustom my-frame-init-hook nil
+    "Hook run for initialize Frame."
+    :group 'my-hooks
+    :type 'hook)
+
+  (defcustom my-noframe-init-hook nil
+    "Hook run for initialize text terminal."
+    :group 'my-hooks
+    :type 'hook)
+#+end_src
+
+The ~my-frame-init-hook~ is somewhat unique, designed to refine the
+categorized evaluation of Emacs' behavior following the detection of a
+graphical session.
+
+When using the Emacs Service to start the background service,
+~display-graphic-p~ falsely returns ~nil~, it mean multiple Emacs frames
+are associated with a single Emacs instance.  Some of these may be
+located on the terminal, while others may be on the window system. That
+is to say, even within a single Emacs instance, you can obtain different
+~display-graphics-p~ values.  Therefore, I need to place Frame-specific
+code in ~after-make-frame-functions~.
+
+#+begin_src emacs-lisp
+  (defun my-frame-initialization (&rest _)
+    "Initialization of Emacs session with Frame."
+    (run-hooks 'my-frame-init-hook))
+
+  (defun my-noframe-initialization (&rest _)
+    "Initialization of Emacs session with Frame."
+    (run-hooks 'my-noframe-init-hook))
+
+  (add-hook 'after-init-hook #'my-frame-initialization 100)
+
+  (add-hook 'after-make-frame-functions #'my-frame-initialization 100)
+
+  (add-hook 'tty-setup-hook #'my-noframe-initialization 100)
+#+end_src
+
+Because the ~after-make-frame-functions~ isn’t run for the initial
+frame, so it’s often necessary to also add ~my-frame-initialization~ to
+the ~after-init-hook~.
+
+For Emacs session with Frame, arranged according to the startup
+sequence, it can be summarized as:
+
+- Evaluation of the ~user-init-file~ file (this file after tangle).
+- Execution of the ~after-init-hook~  hook.
+- Execution of the ~my-frame-init-hook~  hook.
+- Execution of the ~emacs-startup-hook~  hook.
+
+For Emacs session without Frame:
+
+- Evaluation of the ~user-init-file~ file (this file after tangle)
+- Execution of the ~after-init-hook~  hook.
+- Execution of the ~my-noframe-init-hook~  hook.
+- Execution of the ~emacs-startup-hook~  hook.
 
 * Libraries :nonexport:
 
@@ -470,6 +550,30 @@ It preserves levels, values, and history in a directory named
       (setq transient-history-file (expand-file-name "history.el")
             transient-levels-file (expand-file-name "levels.el")
             transient-values-file (expand-file-name "values.el"))))
+#+end_src
+
+** My library
+
+*** Macros
+
+A macro is used to incorporate the content to be evaluated as a lambda
+function into ~my-frame-init-hook~, when the current session is
+~display-graphic-p~.
+
+#+begin_src emacs-lisp
+  (defmacro my-when-graphic-frame (&rest body)
+    "Eval body when the `display-graphic-p' in new frame is non nil.
+
+  The place where the function is added depends on the DEPTH
+  parameter.  DEPTH defaults to 0.  By convention, it should be a
+  number between -100 and 100 where 100 means that the function
+  should be at the very end of the list, whereas -100 means that
+  the function should always come first.
+  "
+    (declare (indent 0))
+    `(when (display-graphic-p)
+       (add-hook 'my-frame-init-hook
+                 #'(lambda (&rest _) (progn ,@body)))))
 #+end_src
 
 * Performance
@@ -557,47 +661,6 @@ leans towards a more contemporary aesthetic.
 
 ** Check graphic display
 
-When using the Emacs Service to start the background service,
-~display-graphic-p~ falsely returns ~nil~, it mean multiple Emacs frames
-are associated with a single Emacs instance.  Some of these may be
-located on the terminal, while others may be on the window system. That
-is to say, even within a single Emacs instance, you can obtain different
-~display-graphics-p~ values.  Therefore, I need to place
-GUI/terminal-specific code in ~after-make-frame-functions~.
-
-#+begin_src emacs-lisp
-  (defcustom my-make-graphics-frame-hook nil
-    "Hook run just after make frame."
-    :group 'my-hooks
-    :type 'hook)
-
-  (defmacro my-when-display-graphic (&rest body)
-    "Eval body when the `display-graphic-p' in new frame is non nil.
-
-  The place where the function is added depends on the DEPTH
-  parameter.  DEPTH defaults to 0.  By convention, it should be a
-  number between -100 and 100 where 100 means that the function
-  should be at the very end of the list, whereas -100 means that
-  the function should always come first.
-  "
-    (declare (indent 0))
-    `(add-hook 'my-make-graphics-frame-hook
-               #'(lambda (&rest _) ,@body)))
-
-  (defun my-graphics-init (&rest _)
-    "Initialize graphics frames."
-    (when (display-graphic-p)
-      (run-hooks 'my-make-graphics-frame-hook)))
-
-  (add-hook 'after-init-hook #'my-graphics-init)
-
-  (add-hook 'after-make-frame-functions #'my-graphics-init)
-#+end_src
-
-Because the ~after-make-frame-functions~ isn’t run for the initial
-frame, so it’s often necessary to also add ~my-make-graphics-frame-hook~
-to the ~after-init-hook~.
-
 When ~display-graphic-p~ is used before the frame initialization is
 complete, it lies by returning nil.  I use ~initial-window-system~ to
 get the truth.
@@ -641,7 +704,7 @@ to be done in ~early-init~[fn:1].
 
   (use-package scroll-bar
     :init
-    (my-when-display-graphic
+    (my-when-graphic-frame
       (scroll-bar-mode -1)))
 #+end_src
 
@@ -750,8 +813,8 @@ aesthetic appeal, rendering it more user-friendly.
                                   (3 . (1.10 bold))
                                   (t . (1.05 semibold))))
     :hook
-    (my-make-graphics-frame-hook . my-theme-init)
-    (tty-setup-hook . my-theme-init))
+    (my-frame-init-hook . my-theme-init)
+    (my-noframe-init-hook . my-theme-init))
 #+end_src
 
 As you may have noticed, I have used a rudimentary configuration of
@@ -1832,6 +1895,24 @@ purposes.
   (use-package gnus
     :config
     (setq gnus-startup-file (expand-file-name "gnus.newsrc" my-state-directory)))
+#+end_src
+
+* Reading
+
+Reading has occupied a significant portion of my life, so how should I
+read in Emacs? News, emails, books, and even the entire world.
+
+** Read NEWS using ~gnus~
+
+I use ~gnus~ to peruse the majority of information originating from
+the external world, such as news disseminated via NNTP Server, as well
+as emails intended for reading (in contrast to engaging in conversation
+with individuals).
+
+#+begin_src emacs-lisp
+  (use-package gnus
+    :config
+    (setq gnus-select-method '(nntp "news.gmane.io")))
 #+end_src
 
 * Writing

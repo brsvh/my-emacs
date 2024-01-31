@@ -384,6 +384,22 @@
         "type": "github"
       }
     },
+    "on": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1670306400,
+        "narHash": "sha256-gtSVCpQwv4Ui9VpW7SXnsXIkfHN/6laMLqHTezDcMZg=",
+        "owner": "ajgrf",
+        "repo": "on.el",
+        "rev": "3cf623e1a4331e259ef92e49154ed0551f300436",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "ajgrf",
+        "repo": "on.el",
+        "type": "gitlab"
+      }
+    },
     "orderless": {
       "flake": false,
       "locked": {
@@ -556,6 +572,7 @@
         "mwim": "mwim",
         "nix-mode": "nix-mode",
         "nix3": "nix3",
+        "on": "on",
         "orderless": "orderless",
         "org": "org",
         "org-modern": "org-modern",
