@@ -389,11 +389,17 @@
                   languages = [ "emacs-lisp" ];
                 };
 
+              gnus-init-file =
+                tangleOrgBabelFile "gnus-init-file" ./org/gnus.org {
+                  languages = [ "emacs-lisp" ];
+                };
+
               createApp = env:
                 assert pkgs.stdenv.isLinux;
                 pkgs.callPackage ./nix/wrappers/app.nix
                   {
                     early-init = early-init-file;
+                    gnus-init = gnus-init-file;
                     init = (genInitFile env);
                   }
                   "emacs"
@@ -404,6 +410,7 @@
                 pkgs.callPackage ./nix/wrappers/batch.nix
                   {
                     early-init = early-init-file;
+                    gnus-init = gnus-init-file;
                     init = (genInitFile env);
                   }
                   "emacs"
@@ -468,10 +475,11 @@
 
               packages = {
                 inherit
-                  early-init-file
                   brsvh-emacs
                   brsvh-emacs-nogui
-                  brsvh-emacs-pgtk;
+                  brsvh-emacs-pgtk
+                  early-init-file
+                  gnus-init-file;
 
                 default = self'.packages.x11;
 

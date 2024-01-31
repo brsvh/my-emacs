@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with emacs.d.  If not, see <https://www.gnu.org/licenses/>.
 { early-init
+, gnus-init
 , init
 , writeShellScriptBin
 , ...
@@ -33,6 +34,7 @@ writeShellScriptBin name ''
 
   ln -s ${init}/init.el "$initdir/init.el"
   ln -s ${early-init} "$initdir/early-init.el"
+  ln -s ${gnus-init} "$initdir/gnus.el"
 
   ${emacs}/bin/emacs --init-directory="$initdir" "$@"
 ''

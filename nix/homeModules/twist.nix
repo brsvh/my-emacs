@@ -94,6 +94,27 @@ in
           '';
         };
 
+        mail = {
+          aliases = mkOption {
+            type = types.str;
+            default = "";
+            description = ''
+              The aliases of mail commands.
+
+              The content typically should be in same format as the
+              .mailrc file used by the Mail or mailx program.
+            '';
+          };
+
+          signature = mkOption {
+            type = types.str;
+            default = "";
+            description = ''
+              The signature of mail.
+            '';
+          };
+        };
+
         overrides = mkOption {
           type = types.unspecified;
           default = { };
@@ -119,6 +140,24 @@ in
             name = "${cfg.directory}/early-init.el";
             value = {
               source = pkgs'.early-init-file;
+            };
+          }
+          {
+            name = "${cfg.directory}/gnus.el";
+            value = {
+              source = pkgs'.gnus-init-file;
+            };
+          }
+          {
+            name = "${cfg.directory}/mail/mailrc";
+            value = {
+              text = cfg.mail.aliases;
+            };
+          }
+          {
+            name = "${cfg.directory}/mail/signature";
+            value = {
+              text = cfg.mail.signature;
             };
           }
         ]
