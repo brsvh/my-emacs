@@ -40,6 +40,9 @@ let
       done
     '';
 
+  dependencies = import ../dependencies.nix pkgs;
+
+  prelude = import ../prelude.nix pkgs;
 in
 {
   options = {
@@ -163,11 +166,7 @@ in
         ]
       );
 
-      packages = with pkgs;
-        [
-          imagemagick
-          multimarkdown
-        ];
+      packages = dependencies;
     };
 
     programs = {
@@ -183,9 +182,11 @@ in
         config =
           let
             args = {
-              appendToInit = cfg.extraInitConfig;
+              inherit prelude;
+
               extraPackages = cfg.extraPackages;
               inputOverrides = cfg.overrides;
+              postlude = cfg.extraInitConfig;
             };
           in
           if cfg.platform == "console"

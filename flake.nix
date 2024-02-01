@@ -243,8 +243,11 @@
                   languages = [ "emacs-lisp" ];
                 };
 
-              postInitFile = el:
-                pkgs.writeText "init-postlude.el" el;
+              preludeFile = content:
+                pkgs.writeText "init-prelude.el" content;
+
+              postludeFile = content:
+                pkgs.writeText "init-postlude.el" content;
 
               initTreeSitterFile =
                 pkgs.writeText "init-tree-sitter.el" ''
@@ -302,11 +305,12 @@
               };
 
               mkEmacs =
-                { appendToInit ? ""
-                , extraPackages ? [ ]
+                { extraPackages ? [ ]
                 , inputOverrides ? defaultInputOverrides
                 , nativeCompileAheadDefault ? true
                 , pgtk ? false
+                , postlude ? ""
+                , prelude ? ""
                 , x ? true
                 , nogui ? !(pgtk || x)
                 , ...
@@ -331,9 +335,10 @@
 
                     initFiles =
                       [
+                        (preludeFile prelude)
                         initFile
-                        (postInitFile appendToInit)
                         initTreeSitterFile
+                        (postludeFile postlude)
                       ];
 
                     initialLibraries =
@@ -471,7 +476,15 @@
                 (
                   twist.overlays.default final pkgs
                 ) //
-                { inherit brsvh-emacs brsvh-emacs-pgtk brsvh-emacs-nogui; };
+                (
+                  import ./nix/overlay.nix final pkgs
+                ) //
+                {
+                  inherit
+                    brsvh-emacs
+                    brsvh-emacs-pgtk
+                    brsvh-emacs-nogui;
+                };
 
               packages = {
                 inherit

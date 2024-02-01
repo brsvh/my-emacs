@@ -368,19 +368,19 @@
         "type": "github"
       }
     },
-    "nix-mode": {
+    "nix-ts-mode": {
       "flake": false,
       "locked": {
-        "lastModified": 1682109415,
-        "narHash": "sha256-W/bxCAn4cvzKGbhILxtTiWJ5Wln2w6g4TPgk+ziCXsQ=",
-        "owner": "NixOS",
-        "repo": "nix-mode",
-        "rev": "719feb7868fb567ecfe5578f6119892c771ac5e5",
+        "lastModified": 1699375183,
+        "narHash": "sha256-MGbkSqdImoIH/TIzMy5WHiS7sEb2NzOH+dqHTUg+9Kg=",
+        "owner": "remi-gelinas",
+        "repo": "nix-ts-mode",
+        "rev": "2dddc6e9ca33be211675afca3896fd661fc38a0c",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "repo": "nix-mode",
+        "owner": "remi-gelinas",
+        "repo": "nix-ts-mode",
         "type": "github"
       }
     },
@@ -481,6 +481,22 @@
         "type": "github"
       }
     },
+    "parinfer-rust-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704345227,
+        "narHash": "sha256-A/jqelUx4DkamLDtdzDQaBgaR6P7c5i0n55xu6wBr2E=",
+        "owner": "justinbarclay",
+        "repo": "parinfer-rust-mode",
+        "rev": "8df117a3b54d9e01266a3905b132a1d082944702",
+        "type": "github"
+      },
+      "original": {
+        "owner": "justinbarclay",
+        "repo": "parinfer-rust-mode",
+        "type": "github"
+      }
+    },
     "pass": {
       "flake": false,
       "locked": {
@@ -562,6 +578,22 @@
         "type": "github"
       }
     },
+    "reformatter": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705098824,
+        "narHash": "sha256-PaatFrciU1HwCra5AP4BRFBsGw4SS/Y93/KSrMlFpgU=",
+        "owner": "purcell",
+        "repo": "emacs-reformatter",
+        "rev": "76315e32a1c075d943184fe7b32f1cef98a8272a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "purcell",
+        "repo": "emacs-reformatter",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "company": "company",
@@ -587,19 +619,22 @@
         "moody": "moody",
         "mu4e": "mu4e",
         "mwim": "mwim",
-        "nix-mode": "nix-mode",
+        "nix-ts-mode": "nix-ts-mode",
         "nix3": "nix3",
         "on": "on",
         "orderless": "orderless",
         "org": "org",
         "org-modern": "org-modern",
         "org-side-tree": "org-side-tree",
+        "parinfer-rust-mode": "parinfer-rust-mode",
         "pass": "pass",
         "password-store": "password-store",
         "password-store-otp": "password-store-otp",
         "promise": "promise",
         "rainbow-delimiters": "rainbow-delimiters",
+        "reformatter": "reformatter",
         "s": "s",
+        "smartparens": "smartparens",
         "switch-window": "switch-window",
         "transient": "transient",
         "valign": "valign",
@@ -621,6 +656,22 @@
       "original": {
         "owner": "magnars",
         "repo": "s.el",
+        "type": "github"
+      }
+    },
+    "smartparens": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1698170684,
+        "narHash": "sha256-wGR6i6Qr5mhTSlgfhWlhFTMQExPAHyKW1M+Ll90vces=",
+        "owner": "Fuco1",
+        "repo": "smartparens",
+        "rev": "0778a8a84064cf2bc3a9857bd0e7a4619cc1e5c3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Fuco1",
+        "repo": "smartparens",
         "type": "github"
       }
     },

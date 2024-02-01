@@ -140,10 +140,10 @@
       repo = "mwim.el";
       type = "github";
     };
-    nix-mode = {
+    nix-ts-mode = {
       flake = false;
-      owner = "NixOS";
-      repo = "nix-mode";
+      owner = "remi-gelinas";
+      repo = "nix-ts-mode";
       type = "github";
     };
     nix3 = {
@@ -182,6 +182,12 @@
       repo = "org-side-tree";
       type = "github";
     };
+    parinfer-rust-mode = {
+      flake = false;
+      owner = "justinbarclay";
+      repo = "parinfer-rust-mode";
+      type = "github";
+    };
     pass = {
       flake = false;
       owner = "brsvh";
@@ -213,10 +219,22 @@
       repo = "rainbow-delimiters";
       type = "github";
     };
+    reformatter = {
+      flake = false;
+      owner = "purcell";
+      repo = "emacs-reformatter";
+      type = "github";
+    };
     "s" = {
       flake = false;
       owner = "magnars";
       repo = "s.el";
+      type = "github";
+    };
+    smartparens = {
+      flake = false;
+      owner = "Fuco1";
+      repo = "smartparens";
       type = "github";
     };
     switch-window = {

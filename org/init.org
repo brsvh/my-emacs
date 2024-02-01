@@ -539,33 +539,77 @@ extra supplementary extension support and real-time preview support.
     :ensure dash)
 #+end_src
 
-** ~transient~
-
-~transient~[fn:5] implements an abstraction that encompasses a prefix
-command, infix arguments, and suffix commands, which is utilized to
-construct an interface for command-line programs.
-
-It preserves levels, values, and history in a directory named
-=transient= located under ~user-emacs-directory~, thereby adhering to my
-[[*File conventions]].
+For frequently used functions, I want to modify variables based on their
+inherent values, akin to the ~setq~ function.
 
 #+begin_src emacs-lisp
-  (use-package transient
-    :ensure transient
-    :defer t
-    :config
-    (let ((default-directory
-           (expand-file-name "transient/" my-state-directory)))
-      (setq transient-history-file (expand-file-name "history.el")
-            transient-levels-file (expand-file-name "levels.el")
-            transient-values-file (expand-file-name "values.el"))))
+  (defmacro -concatq (seq &rest sequences)
+    "Concatenate SEQ with SEQUENCES in place."
+    (declare (indent nil))
+    `(setq ,seq (-concat ,seq ,@sequences)))
+
+  (defmacro -snocq (list elem &rest elements)
+    "Append ELEM to the end of the list in place."
+    (declare (indent nil))
+    `(setq ,list (-snoc ,list ,elem ,@elements)))
 #+end_src
 
-#+begin_src emacs-lisp :export none
-  (make-directory (expand-file-name "transient/" my-data-directory) t)
+** ~f~
+
+~f~[fn:5] provides encapsulation of the File and Path operation API.
+
+#+begin_src emacs-lisp
+  (use-package f
+    :ensure f)
+#+end_src
+
+** ~s~
+
+~s~[fn:6] provides encapsulation of the String operation API.
+
+#+begin_src emacs-lisp
+  (use-package s
+    :ensure s)
 #+end_src
 
 ** My library
+
+*** Functions
+
+Construct the path while simultaneously creating its parent directory.
+
+#+begin_src emacs-lisp
+  (defun my-expand-file-name-with-make-directory (path &optional dir)
+    "Expand PATH relative to DIR with create its parents.
+  PATH and DIR can be either a directory names or directory file
+  names.  Return a directory name if PATH is a directory name, and
+  a directory file name otherwise.  The parent directory of result
+  will be create at the same time."
+    (or dir (setq dir default-directory))
+    (let ((p (f-expand path dir)))
+      (f-mkdir-full-path (f-dirname p))
+      p))
+#+end_src
+
+Some are used to generate path that are located in a ~my-~ directory.
+
+#+begin_src emacs-lisp
+  (defun my-cache-expand (path)
+    "Expand PATH relative to `my-cache-directory'."
+    (my-expand-file-name-with-make-directory path my-cache-directory))
+
+  (defun my-config-expand (path)
+    "Expand PATH relative to `my-config-directory'."
+    (my-expand-file-name-with-make-directory path my-config-directory))
+
+  (defun my-data-expand (path)
+    "Expand PATH relative to `my-data-directory'."
+    (my-expand-file-name-with-make-directory path my-data-directory))
+
+  (defun my-state-expand (path)
+    "Expand PATH relative to `my-state-directory'."
+    (my-expand-file-name-with-make-directory path my-state-directory))
+#+end_src
 
 *** Macros
 
@@ -589,6 +633,26 @@ function into ~my-frame-init-hook~, when the current session is
                  #'(lambda (&rest _) (progn ,@body)))))
 #+end_src
 
+** ~transient~
+
+~transient~[fn:7] implements an abstraction that encompasses a prefix
+command, infix arguments, and suffix commands, which is utilized to
+construct an interface for command-line programs.
+
+It preserves levels, values, and history in a directory named
+=transient= located under ~user-emacs-directory~, thereby adhering to my
+[[*File conventions]].
+
+#+begin_src emacs-lisp
+  (use-package transient
+    :ensure transient
+    :defer t
+    :config
+    (setq transient-history-file (my-state-expand "transient/history.el")
+          transient-levels-file (my-state-expand "transient/levels.el")
+          transient-values-file (my-state-expand "transient/values.el")))
+#+end_src
+
 * Performance
 
 As an Emacs user dealing with demanding tasks, Emacs is
@@ -604,7 +668,7 @@ threshold to initiate Garbage Collection, a method that lacks
 flexibility and may lead to performance deterioration due to frequent
 Garbage Collection.  To minimize the interference of Garbage Collection
 with user activity, I adopt a cunning Garbage Collection strategy
-provided by gcmh[fn:6].  This strategy utilizes a low Garbage Collection
+provided by gcmh[fn:8].  This strategy utilizes a low Garbage Collection
 threshold when idle, and a high threshold during regular operation.
 
 #+begin_src emacs-lisp
@@ -636,8 +700,7 @@ Client can achieve this.
       (unless (server-running-p) (server-start)))
 
     :config
-    (setq server-auth-dir
-          (expand-file-name "server/" my-state-directory))
+    (setq server-auth-dir (my-state-expand "server/"))
 
     :hook
     (emacs-startup-hook . my/server-start))
@@ -660,10 +723,11 @@ customizations in an alternative location, distinct from my
 initialization file.
 
 #+begin_src emacs-lisp
-  (setq custom-file (expand-file-name "custom.el" my-state-directory))
-
-  (when (file-exists-p custom-file)
-    (load custom-file nil 'nomessage))
+  (use-package cus-edit
+    :init
+    (setq custom-file (my-state-expand "custom.el"))
+    (when (file-exists-p custom-file)
+      (load custom-file nil 'nomessage)))
 #+end_src
 
 * User interface
@@ -728,7 +792,7 @@ Emacs, provides details about the current buffer, encompassing aspects
 such as encoding, buffer size, cursor position, major mode, and minor
 mode.
 
-I employ moody[fn:7] to acquire a mode line styled with tabs and ribbons.
+I employ moody[fn:9] to acquire a mode line styled with tabs and ribbons.
 Its merit lies in its minimalistic alterations to the mode line, merely
 adding or substituting a select few elements.
 
@@ -761,7 +825,7 @@ Upon activation of numerous minor modes in a buffer, the Mode Line
 consequently displays an extensive list of minor mode names.  This is
 less than ideal, as overly verbose mode information can result in other
 useful details falling outside the frame's scope.  To address this, I
-employ ~minions~[fn:8] to supplant the minor modes list with a menu button
+employ ~minions~[fn:10] to supplant the minor modes list with a menu button
 that enumerates the enabled minor modes.
 
 #+begin_src emacs-lisp
@@ -798,7 +862,7 @@ echo area.
 Emacs' inherent theme is somewhat lackluster, lacking the polished and
 lustrous appearance that typically appeals to novices, often resulting
 in a superficial and unfavorable initial impression of the
-system. Subsequently, I use Modus Themes[fn:9] that enhances Emacs'
+system. Subsequently, I use Modus Themes[fn:11] that enhances Emacs'
 aesthetic appeal, rendering it more user-friendly.
 
 #+begin_src emacs-lisp
@@ -846,10 +910,9 @@ can be achieved through ~modus-themes-common-palette-overrides~.
 #+begin_src emacs-lisp
   (use-package modus-themes
     :config
-    (push '(border-mode-line-active unspecified)
-          modus-themes-common-palette-overrides)
-    (push '(border-mode-line-inactive unspecified)
-          modus-themes-common-palette-overrides))
+    (-snocq modus-themes-common-palette-overrides
+            '(border-mode-line-active unspecified)
+            '(border-mode-line-inactive unspecified)))
 #+end_src
 
 Furthermore, there is an additional rectification wherein I have ensured
@@ -1001,10 +1064,11 @@ rules.
 #+begin_src emacs-lisp
   (use-package window
     :config
-    (push '("\\*Help\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))
-          display-buffer-alist))
+    (-snocq display-buffer-alist
+            '("\\*Help\\*"
+              (display-buffer-reuse-window
+               display-buffer-below-selected)
+              (window-height . 0.4))))
 #+end_src
 
 *** Scrolling
@@ -1057,7 +1121,7 @@ of Emacs for various tasks, the number of windows opened within a single
 Frame frequently exceeds two.  This necessitates repeated pressing of
 {{{kbd(C-x o)}}} to cycle through the windows, an operation that can be
 mentally and physically exhausting.  To alleviate this, I employ
-~switch-window~[fn:10] as a remedy.
+~switch-window~[fn:12] as a remedy.
 
 #+begin_src emacs-lisp
   (use-package switch-window
@@ -1119,9 +1183,10 @@ colour palette.
 #+begin_src emacs-lisp
   (use-package modus-themes
     :config
-    (push '(bg-tab-bar bg-active) modus-themes-common-palette-overrides)
-    (push '(bg-tab-current bg-main) modus-themes-common-palette-overrides)
-    (push '(bg-tab-other bg-inactive) modus-themes-common-palette-overrides))
+    (-snocq modus-themes-common-palette-overrides
+            '(bg-tab-bar bg-active)
+            '(bg-tab-current bg-main)
+            '(bg-tab-other bg-inactive)))
 #+end_src
 
 ** Minibuffer
@@ -1171,7 +1236,7 @@ Given the substantial differences in the scenarios for these two types
 of completion, I refrain from employing a uniform completion interaction
 method for both.
 
-My choice is to provided input completion support with ~vertico~ [fn:11],
+My choice is to provided input completion support with ~vertico~ [fn:13],
 which is a performant, minimalistic vertical completion UI for Emacs.
 It reuses built-in facilities for full compatibility with Emacs'
 completion commands and tables.
@@ -1268,7 +1333,7 @@ these inputs:
 Here, _ denotes the cursor's position.
 
 While the default is adequate, I prefer to be permitted to complete the
-input using spaces as separators.  Consequently, I use orderless[fn:12],
+input using spaces as separators.  Consequently, I use orderless[fn:14],
 which offers a completion style named orderless that segments the
 pattern into space-separated components and matches them.
 
@@ -1290,7 +1355,7 @@ contains a wildcard.
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.[fn:13]
+of the minibuffer for your completion candidates.[fn:15]
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -1317,14 +1382,14 @@ Minibuffer.
 #+begin_src emacs-lisp
   (use-package savehist
     :config
-    (setq savehist-file (expand-file-name "hist.el" my-state-directory))
+    (setq savehist-file (my-state-expand "hist.el"))
     :hook
     (emacs-startup-hook . savehist-mode))
 #+end_src
 
 ** Actions
 
-I use Embark[fn:14] to summon additional shortcut actions at the current
+I use Embark[fn:16] to summon additional shortcut actions at the current
 location, intelligently offering available operations based on the
 current buffer or minibuffer.
 
@@ -1338,10 +1403,11 @@ current buffer or minibuffer.
     :init
     (setq prefix-help-command #'embark-prefix-help-command)
     :config
-    (push '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))
-          display-buffer-alist)
+    (-snocq display-buffer-alist
+            '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+              (display-buffer-reuse-window
+               display-buffer-below-selected)
+              (window-height . 0.4)))
 
     (setq embark-verbose-indicator-display-action
           '(display-buffer-reuse-window display-buffer-below-selected)))
@@ -1355,7 +1421,7 @@ current buffer or minibuffer.
 By rebinding the ~prefix-help-command~, I utilize Embark to provide a
 superior key helper.  It offers a completion-based interface for finding
 available keybingdings, which is more user-friendly compared to
-~which-key~[fn:15].
+~which-key~[fn:17].
 
 ** Bookmark
 
@@ -1365,8 +1431,7 @@ impeccable, except for its non-compliance with my file conventions.
 #+begin_src emacs-lisp
   (use-package bookmark
     :config
-    (setq bookmark-default-file (expand-file-name "bookmarks.el"
-                                                  my-data-directory)))
+    (setq bookmark-default-file (my-data-expand "bookmarks.el")))
 #+end_src
 
 * Multilingual environment
@@ -1549,7 +1614,7 @@ As one of the two completion methods in Emacs, I use text completion to
 further accomplish text filling tasks.  It effectively assists me in
 completing longer texts with fewer inputs by selecting candidates.
 
-I opt for the tried-and-tested ~company-mode~[fn:16] as the primary text
+I opt for the tried-and-tested ~company-mode~[fn:18] as the primary text
 completion minor mode, expanding the completion capabilities at
 different times through more backend support provided by its community.
 In fact, I typically only use text completion to obtain automatic
@@ -1597,7 +1662,7 @@ creating auto-save file names to ~auto-save-file-name-transforms~.
           auto-save-include-big-deletions t
           auto-save-file-name-transforms
           (append `((".*"
-                     ,(expand-file-name "auto-save/" my-data-directory)
+                     ,(my-data-expand "auto-save/")
                      t))
                   auto-save-file-name-transforms)))
 #+end_src
@@ -1617,12 +1682,7 @@ of~'auto-save-list-file-name~.
   (use-package startup
     :no-require t
     :init
-    (setq auto-save-list-file-prefix
-          (expand-file-name "auto-save/lists/" my-data-directory)))
-#+end_src
-
-#+begin_src emacs-lisp :export none
-  (make-directory (expand-file-name "auto-save/lists/" my-data-directory) t)
+    (setq auto-save-list-file-prefix (my-data-expand "auto-save/lists/")))
 #+end_src
 
 *** Automatic backup
@@ -1656,9 +1716,7 @@ maintaining a backup of five versions seems appropriate.
           kept-new-versions 5)
 
     (setq backup-directory-alist
-          (append `(("."
-                     .
-                     ,(expand-file-name "backup/" my-data-directory)))
+          (append `(("." . ,(my-data-expand "backup/")))
                   backup-directory-alist)))
 #+end_src
 
@@ -1667,11 +1725,7 @@ prompts Emacs to create backups by duplicating the original file.  This
 deviates from the default method, which generates backups by renaming
 the original file.
 
-#+begin_src emacs-lisp :export none
-  (make-directory (expand-file-name "bacup/" my-data-directory) t)
-#+end_src
-
-** File revisiting 
+** File revisiting
 
 Text editing is invariably verbose, and we often find ourselves in a
 cycle of modification, saving, and further modification.  Regrettably,
@@ -1683,8 +1737,7 @@ position where I left the file!
 #+begin_src emacs-lisp
   (use-package saveplace
     :config
-    (setq save-place-file
-          (expand-file-name "place.el" my-state-directory))
+    (setq save-place-file (my-state-expand "place.el"))
     :hook
     (on-first-file-hook . save-place-mode))
 #+end_src
@@ -1709,8 +1762,7 @@ files I've recently opened and their paths.
       (cl-letf (((symbol-function #'message) #'ignore))
         (apply fn args)))
 
-    (setq recentf-save-file
-          (expand-file-name "recent.el" my-state-directory))
+    (setq recentf-save-file (my-state-expand "recent.el"))
     :hook
     (emacs-startup-hook . recentf-mode))
 
@@ -1750,7 +1802,7 @@ The EditorConfig project consists of a file format for defining coding
 styles and a collection of text editor plugins that enable editors to
 read the file format and adhere to defined styles.  EditorConfig files
 are easily readable and they work nicely with version control
-systems.[fn:17]
+systems.[fn:19]
 
 The versatility of the Editor is exceptional, hence I have also enabled
 Emacs to support it.
@@ -1786,7 +1838,7 @@ stress associated with these activities.
 
 When working in any folder that uses a version control system, whether
 browsing or editing files, I would like to highlight all changes.  I
-obtain this feature through ~diff-hl~[fn:18].
+obtain this feature through ~diff-hl~[fn:20].
 
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -1824,7 +1876,7 @@ navigation and revert commands still work. I turning
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:19].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:21].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1871,7 +1923,7 @@ functions in the buffer after its state has changed.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:20], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:22], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -1920,8 +1972,7 @@ Emacs.
   (use-package nsm
     :config
     (setq network-security-level 'medium
-          nsm-settings-file (expand-file-name "network-security.data"
-                                              my-state-directory)))
+          nsm-settings-file (my-state-expand "network-security.data")))
 #+end_src
 
 ** GnuPG keys management
@@ -1947,12 +1998,10 @@ remote access and sending and receiving emails.  I utilize
 access credentials stored outside of Emacs.
 
 #+begin_src emacs-lisp
-  (defvar my-authinfo-file (expand-file-name "authinfo"
-                                        my-data-directory)
+  (defvar my-authinfo-file (my-data-expand "authinfo")
     "My autoinfo file.")
 
-  (defvar my-authinfo-gpg-file (expand-file-name "authinfo.gpg"
-                                                 my-data-directory)
+  (defvar my-authinfo-gpg-file (my-data-expand "authinfo.gpg")
     "My autoinfo.gpg file.")
 
   (use-package auth-source
@@ -1982,24 +2031,20 @@ purposes.
 #+begin_src emacs-lisp
   (use-package message
     :config
-    (setq message-signature-file (expand-file-name "mail/signature"
-                                                   my-config-directory)))
+    (setq message-signature-file (my-config-expand "mail/signature")))
 
   (use-package mail-source
     :config
-    (setq mail-source-crash-box (expand-file-name "mail/crash-box"
-                                                  my-data-directory)))
+    (setq mail-source-crash-box (my-data-expand "mail/crash-box")))
 
   (use-package sendmail
     :config
-    (setq mail-personal-alias-file (expand-file-name "mail/mailrc"
-                                                     my-config-directory)
-          mail-signature-file (expand-file-name "mail/signature"
-                                                my-config-directory)))
+    (setq mail-personal-alias-file (my-config-expand "mail/mailrc")
+          mail-signature-file (my-config-expand "mail/signature")))
 
   (use-package rmail
     :config
-    (setq rmail-file-name (expand-file-name "rmail" my-data-directory)))
+    (setq rmail-file-name (my-data-expand "rmail")))
 
   (use-package mu4e
     :ensure mu4e
@@ -2007,19 +2052,15 @@ purposes.
 
   (use-package nnmail
     :config
-    (setq nnmail-message-id-cache-file
-          (expand-file-name "nnmail-cache" my-cache-directory)))
+    (setq nnmail-message-id-cache-file (my-cache-expand "nnmail-cache")))
 
   (use-package gnus
     :init
-    (setq gnus-directory (expand-file-name "news" my-data-directory))
+    (setq gnus-directory (my-data-expand "news"))
     :config
-    (setq gnus-init-file (expand-file-name "gnus.el"
-                                           my-config-directory)
-          gnus-startup-file (expand-file-name "gnus.newsrc"
-                                              my-state-directory)
-          gnus-registry-cache-file (expand-file-name "gnus.registry.eieio"
-                                                     my-cache-directory)))
+    (setq gnus-init-file (my-config-expand "gnus.el")
+          gnus-registry-cache-file (my-cache-expand "gnus.registry.eieio")
+          gnus-startup-file (my-state-expand "gnus.newsrc")))
 
   (use-package gnus-cloud
     :config
@@ -2027,10 +2068,6 @@ purposes.
                                     ,gnus-init-file
                                     (:directory ,gnus-directory
                                      :match ".*.SCORE\\'"))))
-#+end_src
-
-#+begin_src emacs-lisp :export none
-  (make-directory (expand-file-name "mail/" my-data-directory) t)
 #+end_src
 
 * Reading
@@ -2084,7 +2121,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:21], including:
+Emacs supports a variety of line-folding methods[fn:23], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -2112,6 +2149,20 @@ In the most of my cases, I employ the *Soft Wrap* method.
     (text-mode-hook . visual-line-mode))
 #+end_src
 
+During my writing process, I intermittently incorporate literary markers
+such as =‘= and =’=、 =“= 和 =”=, =«= and =»=, etc.  I anticipate that
+upon inputting the left marker, the corresponding right marker will be
+automatically inserted. I achieve this through the *Electric Pair* Mode.
+It will automatically insert the corresponding symbols in the pair mark
+based on the current buffer's syntax table.
+
+#+begin_src emacs-lisp
+  (use-package elec-pair
+    :hook
+    (outline-mode-hook . electric-pair-local-mode)
+    (text-mode-hook . electric-pair-local-mode))
+#+end_src
+
 ** Writing with ~org-mode~
 
 *Org Mode* is a major mode within GNU Emacs for editing the org file
@@ -2134,7 +2185,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:22] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:24] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -2189,7 +2240,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:23] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:25] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -2212,10 +2263,11 @@ their default pop-up style is a bit ugly, improve them.
 #+begin_src emacs-lisp
   (use-package org
     :config
-    (push '("\\*Org Select\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-parameters (mode-line-format . none)))
-          display-buffer-alist))
+    (-snocq display-buffer-alist
+            '("\\*Org Select\\*"
+              (display-buffer-reuse-window
+               display-buffer-below-selected)
+              (window-parameters (mode-line-format . none)))))
 #+end_src
 
 *** File Export Support
@@ -2279,7 +2331,7 @@ behavior in the necessary documents through the BIND keyword.
 When I insert characters of multiple languages into the tables in Org,
 they are predominantly visually unaligned, specifically when inserting
 both Latin and CJK characters.  I achieve superior visual alignment on
-GUI Emacs for Org Mode through valign[fn:24].
+GUI Emacs for Org Mode through valign[fn:26].
 
 #+begin_src emacs-lisp
   (use-package valign
@@ -2293,7 +2345,7 @@ GUI Emacs for Org Mode through valign[fn:24].
 
 ** Writing with Markdown
 
-Markdown[fn:25], perhaps the most prevalent text markup language of the first
+Markdown[fn:27], perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -2348,24 +2400,32 @@ to programming are invariably indentation and parenthesis matching,
 which also constitute my basic requirements. While Emacs does distribute
 useful packages pertaining to these, they are not enabled by default.
 
-I utilize the *Electric Pair* and *Electric Indent* modes to acquire
-automatic bracket insertion and indentation support.  Electric Indent is
-character-triggered, defaulting to activation only through new line.  I
-want that the {{{kbd(<DEL>)}}} can similarly trigger an alteration in
-indentation.
+I use the *Electric Indent* mode to acquire automatic indentation
+support.  Electric Indent is character-triggered, defaulting to
+activation only through new line.  I want that the {{{kbd(<DEL>)}}} can
+similarly trigger an alteration in indentation.
 
 #+begin_src emacs-lisp
-  (use-package elec-pair
-    :after prog-mode
-    :hook
-    (prog-mode-hook . electric-pair-local-mode))
-
   (use-package electric
     :after prog-mode
     :config
     (push ?\^? electric-indent-chars)
     :hook
     (prog-mode-hook . electric-indent-local-mode))
+#+end_src
+
+I use smartparens[fn:28] as a substitute for the default Electric Pair
+mode, employing it to maintain parentheses balance throughout the
+development process in most programming languages.
+
+#+begin_src emacs-lisp
+  (use-package smartparens-mode
+    :ensure smartparens
+    :after prog-mode
+    :config
+    (require smartparens-config)
+    :hook
+    (prog-mode-hook . smartparens-mode))
 #+end_src
 
 The functionality of the parentheses is now sufficiently operational.
@@ -2398,7 +2458,61 @@ employ the Hide Show Mode that comes with Emacs.
     (prog-mode-hook . hs-minor-mode))
 #+end_src
 
-** Emacs Lisp
+I use Tree-sitter[fn:29] to augment my programming experience, acquiring
+enhanced display, indentation, and structured editing through syntax
+trees.  It is a small, fast C library that parses source code, creating
+a parse tree.  And its integration of Emacs is built in after 29, so
+it's handy.  I strive to use the primary modes that support Tree-sitter,
+particularly when programming.
+
+Another crucial aspect during programming is the utilization of a
+formatter for automatic code formatting, contributing to the robustness,
+correctness, and aesthetics of the code. I opt for ~reformatter~[fn:30],
+which permits me to format the current buffer and upon saving.
+
+#+begin_src emacs-lisp
+  (use-package reformatter
+    :ensure reformatter)
+#+end_src
+
+** Lisp
+
+Developing Lisp code is a joyous endeavor, yet the incessant
+modification of parentheses within Lisp code is an exceedingly arduous
+task.  In the past, formidable Emacs developers have crafted a series of
+plugins to facilitate the development of Lisp code, such as ~lispy~,
+~paredit~, and others.  While they are commendable, each possesses its
+own set of drawbacks, such as complex configuration and performance
+issues.  Currently, ~parinfer-rust-mode~ appears to be gaining
+popularity, and I have opted to select it.
+
+#+begin_src emacs-lisp
+  (use-package parinfer-rust-mode
+    :ensure parinfer-rust-mode
+    :init
+    (require 'parinfer-rust parinfer-rust-library 'noerror)
+
+    :config
+    (defvar-local my--electric-pair-mode-state nil
+      "The state of `electric-pair-mode' in a buffer.")
+
+    (defun my--parinfer-rust-mode-inhibit-electric-pair-mode (&rest _)
+      "Disable `electric-pair-mode' when use `parinfer-rust-mode'."
+      (setq-local my--electric-pair-mode-state electric-pair-mode)
+      (if (bound-and-true-p parinfer-rust-mode) 
+          (electric-pair-local-mode -1)
+        (when my--electric-pair-mode-state
+          (electric-pair-local-mode +1))))
+
+    (add-hook 'parinfer-rust-mode-hook
+              #'my--parinfer-rust-mode-inhibit-electric-pair-mode))
+
+  (use-package lisp-mode
+    :hook
+    (lisp-data-mode-hook . parinfer-rust-mode))
+#+end_src
+
+*** Emacs Lisp
 
 When crafting Emacs Lisp programs, we often write and invoke numerous
 macros.  Merely contemplating to decipher the code generated by macros
@@ -2413,6 +2527,15 @@ C-v)}}} key in *Emacs Lisp Mode*.  Here, {{{kbd(v)}}} implies verbose.
      ("C-c C-v" . pp-macroexpand-last-sexp)))
 #+end_src
 
+Employ ~parinfer-rust-mode~ concurrently to maintain the parentheses
+balance and indentation.
+
+#+begin_src emacs-lisp
+  (use-package elisp-mode
+    :hook
+    (emacs-lisp-mode-hook . parinfer-rust-mode))
+#+end_src
+
 ** Nix
 
 By default, Emacs does not furnish *Nix Mode*.  Consequently, it
@@ -2420,25 +2543,31 @@ necessitates installation from ELPA, followed by automatic activation
 predicated on the extension name.
 
 #+begin_src emacs-lisp
-  (use-package nix-mode
-    :ensure nix-mode
+  (use-package nix-ts-mode
+    :ensure nix-ts-mode
+    :config
+    (reformatter-define my-nix-format :program "nixpkgs-fmt")
+    (add-hook 'nix-ts-mode-hook #'my-nix-format-on-save-mode)
     :mode
-    ("\\.nix\\'" . nix-mode))
+    ("\\.nix\\'" . nix-ts-mode))
 #+end_src
 
 ** YAML
 
-YAML[fn:26] is an exceedingly prevalent configuration language. Despite my
+YAML[fn:31] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
-  (use-package yaml-mode
+  (use-package yaml-ts-mode
     :ensure yaml-mode
     :config
     (keymap-set yaml-mode-map "C-m" 'newline-and-indent)
+    (keymap-set yaml-ts-mode-map "C-m" 'newline-and-indent)
+    (reformatter-define my-yaml-format :program "nixpkgs-fmt")
+    (add-hook 'yaml-ts-mode-hook #'my-yaml-format-on-save-mode)
     :mode
-    ("\\.yaml\\'" . yaml-mode)
-    ("\\.yml\\'" . yaml-mode))
+    ("\\.yaml\\'" . yaml-ts-mode)
+    ("\\.yml\\'" . yaml-ts-mode))
 #+end_src
 
 Unlike ~python-mode~, this mode follows the Emacs convention of not
@@ -2467,7 +2596,7 @@ necessitate these few processes:
 
 
 While contemplating these matters, the article *Get Things Done with
-Emacs*[fn:27] by Nicolas P. Rougier[fn:28] provided me with substantial
+Emacs*[fn:32] by Nicolas P. Rougier[fn:33] provided me with substantial
 insights.   I will harness Org Mode to procure these functionalities and
 persistently optimize the entire process.
 
@@ -2518,50 +2647,60 @@ inbox.
 
 [fn:4] dash.el, https://github.com/magnars/dash.el
 
-[fn:5] Transient, https://github.com/magit/transient
+[fn:5] f.el, https://github.com/rejeep/f.el
 
-[fn:6] GCMH Mode, https://gitlab.com/koral/gcmh
+[fn:6] s.el, https://github.com/magnars/s.el
 
-[fn:7] Moody Mode Line, https://github.com/tarsius/moody
+[fn:7] Transient, https://github.com/magit/transient
 
-[fn:8] Minions, https://github.com/tarsius/minions
+[fn:8] GCMH Mode, https://gitlab.com/koral/gcmh
 
-[fn:9] Modus Themes, https://protesilaos.com/emacs/modus-themes
+[fn:9] Moody Mode Line, https://github.com/tarsius/moody
 
-[fn:10] Switch Window, https://github.com/dimitri/switch-window
+[fn:10] Minions, https://github.com/tarsius/minions
 
-[fn:11] Vertico, https://github.com/minad/vertico
+[fn:11] Modus Themes, https://protesilaos.com/emacs/modus-themes
 
-[fn:12] Orderless, https://github.com/oantolin/orderless
+[fn:12] Switch Window, https://github.com/dimitri/switch-window
 
-[fn:13] Marginalia, https://github.com/minad/marginalia
+[fn:13] Vertico, https://github.com/minad/vertico
 
-[fn:14] Embark, https://github.com/oantolin/embark
+[fn:14] Orderless, https://github.com/oantolin/orderless
 
-[fn:15] which-key, https://github.com/justbur/emacs-which-key
+[fn:15] Marginalia, https://github.com/minad/marginalia
 
-[fn:16] Company Anything, http://company-mode.github.io/
+[fn:16] Embark, https://github.com/oantolin/embark
 
-[fn:17] EditorConfig, https://editorconfig.org/
+[fn:17] which-key, https://github.com/justbur/emacs-which-key
 
-[fn:18] diff-hl, https://github.com/dgutov/diff-hl
+[fn:18] Company Anything, http://company-mode.github.io/
 
-[fn:19] Magit, https://magit.vc
+[fn:19] EditorConfig, https://editorconfig.org/
 
-[fn:20] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:20] diff-hl, https://github.com/dgutov/diff-hl
 
-[fn:21] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:21] Magit, https://magit.vc
 
-[fn:22] Modern Org Style, https://github.com/minad/org-modern
+[fn:22] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:23] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:23] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:24] Valign.el, https://github.com/casouri/valign
+[fn:24] Modern Org Style, https://github.com/minad/org-modern
 
-[fn:25] Markdown, https://daringfireball.net/projects/markdown/
+[fn:25] Org Side Tree, https://github.com/localauthor/org-side-tree
 
-[fn:26] YAML, https://yaml.org/
+[fn:26] Valign.el, https://github.com/casouri/valign
 
-[fn:27] Get Things Done with Emacs, https://www.labri.fr/perso/nrougier/GTD/index.html
+[fn:27] Markdown, https://daringfireball.net/projects/markdown/
 
-[fn:28] Nicolas P. Rougier, https://www.labri.fr/perso/nrougier/
+[fn:28] smartparens, https://github.com/Fuco1/smartparens
+
+[fn:29] tree-sitter, https://tree-sitter.github.io/tree-sitter/
+
+[fn:30] reformatter, https://github.com/purcell/emacs-reformatter
+
+[fn:31] YAML, https://yaml.org/
+
+[fn:32] Get Things Done with Emacs, https://www.labri.fr/perso/nrougier/GTD/index.html
+
+[fn:33] Nicolas P. Rougier, https://www.labri.fr/perso/nrougier/
