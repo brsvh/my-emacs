@@ -41,8 +41,6 @@ let
     '';
 
   dependencies = import ../dependencies.nix pkgs;
-
-  prelude = import ../prelude.nix pkgs;
 in
 {
   options = {
@@ -182,8 +180,6 @@ in
         config =
           let
             args = {
-              inherit prelude;
-
               extraPackages = cfg.extraPackages;
               inputOverrides = cfg.overrides;
               postlude = cfg.extraInitConfig;

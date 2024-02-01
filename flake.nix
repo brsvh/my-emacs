@@ -310,7 +310,7 @@
                 , nativeCompileAheadDefault ? true
                 , pgtk ? false
                 , postlude ? ""
-                , prelude ? ""
+                , prelude ? (import ./nix/prelude.nix final)
                 , x ? true
                 , nogui ? !(pgtk || x)
                 , ...
@@ -463,6 +463,8 @@
                         value = "emacs";
                       }
                     ];
+
+                  packages = import ./nix/dependencies.nix final;
                 };
               };
 
