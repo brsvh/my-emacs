@@ -548,10 +548,20 @@ inherent values, akin to the ~setq~ function.
     (declare (indent nil))
     `(setq ,seq (-concat ,seq ,@sequences)))
 
+  (defmacro -concatq-local (seq &rest sequences)
+    "Make SEQ buffer-local and concatenate it with SEQUENCES in place."
+    (declare (indent nil))
+    `(setq-local ,seq (-concat ,seq ,@sequences)))
+
   (defmacro -snocq (list elem &rest elements)
-    "Append ELEM to the end of the list in place."
+    "Append ELEM and ELEMENTS to the end of the LIST in place."
     (declare (indent nil))
     `(setq ,list (-snoc ,list ,elem ,@elements)))
+
+  (defmacro -snocq-local (list elem &rest elements)
+    "Append ELEM and ELEMENTS to the end of the LIST in place."
+    (declare (indent nil))
+    `(setq-local ,list (-snoc ,list ,elem ,@elements)))
 #+end_src
 
 ** ~f~
@@ -633,9 +643,19 @@ function into ~my-frame-init-hook~, when the current session is
                  #'(lambda (&rest _) (progn ,@body)))))
 #+end_src
 
+** ~refomatter~
+
+~reformatter~[fn:7] provides simple macros for define new formatter
+commands and minor modes.
+
+#+begin_src emacs-lisp
+  (use-package reformatter
+    :ensure reformatter)
+#+end_src
+
 ** ~transient~
 
-~transient~[fn:7] implements an abstraction that encompasses a prefix
+~transient~[fn:8] implements an abstraction that encompasses a prefix
 command, infix arguments, and suffix commands, which is utilized to
 construct an interface for command-line programs.
 
@@ -668,7 +688,7 @@ threshold to initiate Garbage Collection, a method that lacks
 flexibility and may lead to performance deterioration due to frequent
 Garbage Collection.  To minimize the interference of Garbage Collection
 with user activity, I adopt a cunning Garbage Collection strategy
-provided by gcmh[fn:8].  This strategy utilizes a low Garbage Collection
+provided by gcmh[fn:9].  This strategy utilizes a low Garbage Collection
 threshold when idle, and a high threshold during regular operation.
 
 #+begin_src emacs-lisp
@@ -792,7 +812,7 @@ Emacs, provides details about the current buffer, encompassing aspects
 such as encoding, buffer size, cursor position, major mode, and minor
 mode.
 
-I employ moody[fn:9] to acquire a mode line styled with tabs and ribbons.
+I employ moody[fn:10] to acquire a mode line styled with tabs and ribbons.
 Its merit lies in its minimalistic alterations to the mode line, merely
 adding or substituting a select few elements.
 
@@ -825,7 +845,7 @@ Upon activation of numerous minor modes in a buffer, the Mode Line
 consequently displays an extensive list of minor mode names.  This is
 less than ideal, as overly verbose mode information can result in other
 useful details falling outside the frame's scope.  To address this, I
-employ ~minions~[fn:10] to supplant the minor modes list with a menu button
+employ ~minions~[fn:11] to supplant the minor modes list with a menu button
 that enumerates the enabled minor modes.
 
 #+begin_src emacs-lisp
@@ -862,7 +882,7 @@ echo area.
 Emacs' inherent theme is somewhat lackluster, lacking the polished and
 lustrous appearance that typically appeals to novices, often resulting
 in a superficial and unfavorable initial impression of the
-system. Subsequently, I use Modus Themes[fn:11] that enhances Emacs'
+system. Subsequently, I use Modus Themes[fn:12] that enhances Emacs'
 aesthetic appeal, rendering it more user-friendly.
 
 #+begin_src emacs-lisp
@@ -1121,7 +1141,7 @@ of Emacs for various tasks, the number of windows opened within a single
 Frame frequently exceeds two.  This necessitates repeated pressing of
 {{{kbd(C-x o)}}} to cycle through the windows, an operation that can be
 mentally and physically exhausting.  To alleviate this, I employ
-~switch-window~[fn:12] as a remedy.
+~switch-window~[fn:13] as a remedy.
 
 #+begin_src emacs-lisp
   (use-package switch-window
@@ -1236,7 +1256,7 @@ Given the substantial differences in the scenarios for these two types
 of completion, I refrain from employing a uniform completion interaction
 method for both.
 
-My choice is to provided input completion support with ~vertico~ [fn:13],
+My choice is to provided input completion support with ~vertico~ [fn:14],
 which is a performant, minimalistic vertical completion UI for Emacs.
 It reuses built-in facilities for full compatibility with Emacs'
 completion commands and tables.
@@ -1333,7 +1353,7 @@ these inputs:
 Here, _ denotes the cursor's position.
 
 While the default is adequate, I prefer to be permitted to complete the
-input using spaces as separators.  Consequently, I use orderless[fn:14],
+input using spaces as separators.  Consequently, I use orderless[fn:15],
 which offers a completion style named orderless that segments the
 pattern into space-separated components and matches them.
 
@@ -1355,7 +1375,7 @@ contains a wildcard.
 
 Marginalia are marks or annotations placed at the margin of the page of
 a book or in this case helpful colorful annotations placed at the margin
-of the minibuffer for your completion candidates.[fn:15]
+of the minibuffer for your completion candidates.[fn:16]
 
 I use it to glance at docstring, the values of variables, and even file
 permissions.
@@ -1389,7 +1409,7 @@ Minibuffer.
 
 ** Actions
 
-I use Embark[fn:16] to summon additional shortcut actions at the current
+I use Embark[fn:17] to summon additional shortcut actions at the current
 location, intelligently offering available operations based on the
 current buffer or minibuffer.
 
@@ -1421,7 +1441,7 @@ current buffer or minibuffer.
 By rebinding the ~prefix-help-command~, I utilize Embark to provide a
 superior key helper.  It offers a completion-based interface for finding
 available keybingdings, which is more user-friendly compared to
-~which-key~[fn:17].
+~which-key~[fn:18].
 
 ** Bookmark
 
@@ -1614,7 +1634,7 @@ As one of the two completion methods in Emacs, I use text completion to
 further accomplish text filling tasks.  It effectively assists me in
 completing longer texts with fewer inputs by selecting candidates.
 
-I opt for the tried-and-tested ~company-mode~[fn:18] as the primary text
+I opt for the tried-and-tested ~company-mode~[fn:19] as the primary text
 completion minor mode, expanding the completion capabilities at
 different times through more backend support provided by its community.
 In fact, I typically only use text completion to obtain automatic
@@ -1802,7 +1822,7 @@ The EditorConfig project consists of a file format for defining coding
 styles and a collection of text editor plugins that enable editors to
 read the file format and adhere to defined styles.  EditorConfig files
 are easily readable and they work nicely with version control
-systems.[fn:19]
+systems.[fn:20]
 
 The versatility of the Editor is exceptional, hence I have also enabled
 Emacs to support it.
@@ -1838,7 +1858,7 @@ stress associated with these activities.
 
 When working in any folder that uses a version control system, whether
 browsing or editing files, I would like to highlight all changes.  I
-obtain this feature through ~diff-hl~[fn:20].
+obtain this feature through ~diff-hl~[fn:21].
 
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -1876,7 +1896,7 @@ navigation and revert commands still work. I turning
 Git is currently the most popular distributed version control system in
 the world, and naturally, I cannot afford to be the exception in not
 using it.  Emacs, on the other hand, is the optimal client for Git,
-specifically, Emacs equipped with Magit[fn:21].  I am acquainted with
+specifically, Emacs equipped with Magit[fn:22].  I am acquainted with
 numerous users who have newly joined the Emacs community, their
 migration from other editors to Emacs is primarily motivated by the
 desire to use magit.  Of course, I too wish to use the best resources,
@@ -1923,7 +1943,7 @@ functions in the buffer after its state has changed.
 
 Nix is the tool I use to manage dependencies in the most of my
 programming projects, specifically, which use Nix Flake.  I am currently
-experimenting with Nix3.el[fn:22], an Emacs Nix Interface akin to Magit,
+experimenting with Nix3.el[fn:23], an Emacs Nix Interface akin to Magit,
 which I employ to manage the inputs and outputs of Nix Flake projects,
 as well as interactive operations that I prefer not to execute outside
 of Emacs.
@@ -2020,7 +2040,53 @@ access credentials stored outside of Emacs.
     :commands pass)
 #+end_src
 
-* E-Mail management
+* Reading
+
+Reading has occupied a significant portion of my life, so how should I
+read in Emacs? News, emails, books, and even the entire world.
+
+** Read NEWS using ~gnus~
+
+I use ~gnus~ to peruse the majority of information originating from
+the external world, such as news disseminated via NNTP Server, as well
+as emails intended for reading (in contrast to engaging in conversation
+with individuals).
+
+#+begin_src emacs-lisp
+  (use-package gnus
+    :init
+    (setq gnus-directory (my-data-expand "news"))
+    :config
+    (setq gnus-init-file (my-config-expand "gnus.el")
+          gnus-registry-cache-file (my-cache-expand "gnus.registry.eieio")
+          gnus-select-method '(nnnil "")
+          gnus-startup-file (my-state-expand "gnus.newsrc"))
+
+    (-snocq gnus-secondary-select-methods '(nntp "news.gmane.io")))
+
+  (use-package gnus-cloud
+    :config
+    (setq gnus-cloud-synced-files `(,my-authinfo-gpg-file
+                                    ,gnus-init-file
+                                    (:directory ,gnus-directory
+                                     :match ".*.SCORE\\'"))))
+#+end_src
+
+~gnus~ is inherently slow (in 2024), I expedite it simply by enabling
+asynchronous operations and caching.
+
+#+begin_src emacs-lisp
+  (use-package gnus
+    :config
+    (setq  gnus-asynchronous t
+           gnus-cache-enter-articles '(ticked dormant unread)
+           gnus-cache-remove-articles '(read)
+           gnus-cacheable-groups "^\\(nntp\\|nnimap\\)"
+           gnus-use-cache t
+           gnus-use-header-prefetch t))
+#+end_src
+
+** Reading E-Mail using ~gnus~ and ~mu4e~
 
 I employ Emacs for the transmission and reception of my emails, which
 facilitates the direct capture of emails as tasks within Emacs.  I
@@ -2053,40 +2119,42 @@ purposes.
   (use-package nnmail
     :config
     (setq nnmail-message-id-cache-file (my-cache-expand "nnmail-cache")))
-
-  (use-package gnus
-    :init
-    (setq gnus-directory (my-data-expand "news"))
-    :config
-    (setq gnus-init-file (my-config-expand "gnus.el")
-          gnus-registry-cache-file (my-cache-expand "gnus.registry.eieio")
-          gnus-startup-file (my-state-expand "gnus.newsrc")))
-
-  (use-package gnus-cloud
-    :config
-    (setq gnus-cloud-synced-files `(,my-authinfo-gpg-file
-                                    ,gnus-init-file
-                                    (:directory ,gnus-directory
-                                     :match ".*.SCORE\\'"))))
 #+end_src
 
-* Reading
+I am in the process of configuring my email account via home-manager,
+and it look like the follow example.
 
-Reading has occupied a significant portion of my life, so how should I
-read in Emacs? News, emails, books, and even the entire world.
+#+begin_src emacs-lisp :export none :tangle no
+  (use-package smtpmail
+    :config
+    (setq
+     send-mail-function 'smtpmail-send-it
+     smtpmail-smtp-server "smtp.example.org"
+     smtpmail-smtp-service 465
+     smtpmail-smtp-user "foo.bar@example.org"
+     smtpmail-stream-type 'ssl
+     smtpmail-local-domain "localdmain"))
 
-** Read NEWS using ~gnus~
+  (use-package gnus
+    :config
+    (push '(nnimap "example.org"
+                   (nnimap-address "imap.example.org")
+                   (nnimap-server-port 993)
+                   (nnimap-user "foo.bar@example.org")
+                   (nnimap-stream 'ssl))
+          gnus-secondary-select-methods))
+#+end_src
 
-I use ~gnus~ to peruse the majority of information originating from
-the external world, such as news disseminated via NNTP Server, as well
-as emails intended for reading (in contrast to engaging in conversation
-with individuals).
+When I using ~mu4e~, its default completion interface is ~ido~, which is
+not sufficiently user-friendly.  I uniformly employ ~vertico~ completing
+interface to provide completing function.
 
 #+begin_src emacs-lisp
-  (use-package gnus
+  (use-package mu4e
     :config
-    (setq gnus-select-method '(nntp "news.gmane.io")))
+    (setq mu4e-completing-read-function #'completing-read))
 #+end_src
+
 
 * Writing
 
@@ -2121,7 +2189,7 @@ editing line to be highlighted.
     (text-mode-hook . hl-line-mode))
 #+end_src
 
-Emacs supports a variety of line-folding methods[fn:23], including:
+Emacs supports a variety of line-folding methods[fn:24], including:
 
 - *Hard Wrap* ：Modes such as AutoFillMode insert a line ending after
   the last word that occurs before the value of option ~fill-column~ (a
@@ -2185,7 +2253,7 @@ descriptive links, etc.  However, beyond the content of the paragraphs,
 I desire some replacements for aesthetic design considerations, such as
 the heading star can use more visually pleasing symbols, tags or
 keywords can use special icons, etc.  Therefore, I use
-~org-modern~[fn:24] to enhance the appearance of Org Mode headings by
+~org-modern~[fn:25] to enhance the appearance of Org Mode headings by
 replacing the asterisk symbols with more appealing circles, and it also
 enhances the looks of plain lists, todo items, and tables.
 
@@ -2240,7 +2308,7 @@ the presence of a sidebar, listing all the headings within the Org file,
 essentially an outline preview.  This is one of the most coveted
 features for those using Org Mode for writing, as it facilitates
 effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:25] to achieve this.
+extensive works.  I use ~org-sidebar-tree~[fn:26] to achieve this.
 
 #+begin_src emacs-lisp
   (use-package org-side-tree
@@ -2331,7 +2399,7 @@ behavior in the necessary documents through the BIND keyword.
 When I insert characters of multiple languages into the tables in Org,
 they are predominantly visually unaligned, specifically when inserting
 both Latin and CJK characters.  I achieve superior visual alignment on
-GUI Emacs for Org Mode through valign[fn:26].
+GUI Emacs for Org Mode through valign[fn:27].
 
 #+begin_src emacs-lisp
   (use-package valign
@@ -2343,9 +2411,30 @@ GUI Emacs for Org Mode through valign[fn:26].
     (org-mode-hook . valign-mode))
 #+end_src
 
+*** Electric pair
+
+When I use Org Mode, I aspire to automatically insert a corresponding
+markup symbol upon typing one.
+
+#+begin_src emacs-lisp
+  (use-package elec-pair
+    :after org
+    :config
+    (defun my--electric-pairs-for-org-mode (&rest _)
+      "Update `electric-pair-pairs' when `org-mode'."
+      (when (bound-and-true-p electric-pair-mode)
+        (-snocq-local electric-pair-pairs
+                      (cons ?= ?=)
+                      (cons ?~ ?~)
+                      (cons ?/ ?/)
+                      (cons ?* ?*))))
+
+    (add-hook 'org-mode-hook #'my--electric-pairs-for-org-mode))
+#+end_src
+
 ** Writing with Markdown
 
-Markdown[fn:27], perhaps the most prevalent text markup language of the first
+Markdown[fn:28], perhaps the most prevalent text markup language of the first
 half of the 21st century, is utilized by virtually all open-source
 developers. I, unable to escape the trend, occasionally find myself
 editing these documents.
@@ -2414,7 +2503,7 @@ similarly trigger an alteration in indentation.
     (prog-mode-hook . electric-indent-local-mode))
 #+end_src
 
-I use smartparens[fn:28] as a substitute for the default Electric Pair
+I use smartparens[fn:29] as a substitute for the default Electric Pair
 mode, employing it to maintain parentheses balance throughout the
 development process in most programming languages.
 
@@ -2458,7 +2547,7 @@ employ the Hide Show Mode that comes with Emacs.
     (prog-mode-hook . hs-minor-mode))
 #+end_src
 
-I use Tree-sitter[fn:29] to augment my programming experience, acquiring
+I use Tree-sitter[fn:30] to augment my programming experience, acquiring
 enhanced display, indentation, and structured editing through syntax
 trees.  It is a small, fast C library that parses source code, creating
 a parse tree.  And its integration of Emacs is built in after 29, so
@@ -2467,13 +2556,8 @@ particularly when programming.
 
 Another crucial aspect during programming is the utilization of a
 formatter for automatic code formatting, contributing to the robustness,
-correctness, and aesthetics of the code. I opt for ~reformatter~[fn:30],
+correctness, and aesthetics of the code.  I opt for ~reformatter~,
 which permits me to format the current buffer and upon saving.
-
-#+begin_src emacs-lisp
-  (use-package reformatter
-    :ensure reformatter)
-#+end_src
 
 ** Lisp
 
@@ -2499,7 +2583,7 @@ popularity, and I have opted to select it.
     (defun my--parinfer-rust-mode-inhibit-electric-pair-mode (&rest _)
       "Disable `electric-pair-mode' when use `parinfer-rust-mode'."
       (setq-local my--electric-pair-mode-state electric-pair-mode)
-      (if (bound-and-true-p parinfer-rust-mode) 
+      (if (bound-and-true-p parinfer-rust-mode)
           (electric-pair-local-mode -1)
         (when my--electric-pair-mode-state
           (electric-pair-local-mode +1))))
@@ -2543,14 +2627,22 @@ necessitates installation from ELPA, followed by automatic activation
 predicated on the extension name.
 
 #+begin_src emacs-lisp
+  (reformatter-define my-nix-format :program "nixpkgs-fmt")
+
   (use-package nix-ts-mode
     :ensure nix-ts-mode
     :config
-    (reformatter-define my-nix-format :program "nixpkgs-fmt")
-    (add-hook 'nix-ts-mode-hook #'my-nix-format-on-save-mode)
+    (add-hook 'nix-ts-mode-hook #'my-nix-format-on-save-mode))
+
+  (use-package nix-mode
+    :ensure nix-mode
+    :config
+    (add-hook 'nix-mode-hook #'my-nix-format-on-save-mode)
     :mode
-    ("\\.nix\\'" . nix-ts-mode))
+    ("\\.nix\\'" . nix-mode))
 #+end_src
+
+As you see, I employ ~nixpkgs-fmt~ as my Nix file formater.
 
 ** YAML
 
@@ -2558,16 +2650,22 @@ YAML[fn:31] is an exceedingly prevalent configuration language. Despite my
 personal aversion towards it, I have to incorporate its support.
 
 #+begin_src emacs-lisp
+  (reformatter-define my-yaml-format :program "nixpkgs-fmt")
+
   (use-package yaml-ts-mode
     :ensure yaml-mode
     :config
-    (keymap-set yaml-mode-map "C-m" 'newline-and-indent)
     (keymap-set yaml-ts-mode-map "C-m" 'newline-and-indent)
-    (reformatter-define my-yaml-format :program "nixpkgs-fmt")
     (add-hook 'yaml-ts-mode-hook #'my-yaml-format-on-save-mode)
     :mode
     ("\\.yaml\\'" . yaml-ts-mode)
     ("\\.yml\\'" . yaml-ts-mode))
+
+  (use-package yaml-mode
+    :ensure yaml-mode
+    :config
+    (keymap-set yaml-mode-map "C-m" 'newline-and-indent)
+    (add-hook 'yaml-mode-hook #'my-yaml-format-on-save-mode))
 #+end_src
 
 Unlike ~python-mode~, this mode follows the Emacs convention of not
@@ -2651,53 +2749,53 @@ inbox.
 
 [fn:6] s.el, https://github.com/magnars/s.el
 
-[fn:7] Transient, https://github.com/magit/transient
+[fn:7] reformatter, https://github.com/purcell/emacs-reformatter
 
-[fn:8] GCMH Mode, https://gitlab.com/koral/gcmh
+[fn:8] Transient, https://github.com/magit/transient
 
-[fn:9] Moody Mode Line, https://github.com/tarsius/moody
+[fn:9] GCMH Mode, https://gitlab.com/koral/gcmh
 
-[fn:10] Minions, https://github.com/tarsius/minions
+[fn:10] Moody Mode Line, https://github.com/tarsius/moody
 
-[fn:11] Modus Themes, https://protesilaos.com/emacs/modus-themes
+[fn:11] Minions, https://github.com/tarsius/minions
 
-[fn:12] Switch Window, https://github.com/dimitri/switch-window
+[fn:12] Modus Themes, https://protesilaos.com/emacs/modus-themes
 
-[fn:13] Vertico, https://github.com/minad/vertico
+[fn:13] Switch Window, https://github.com/dimitri/switch-window
 
-[fn:14] Orderless, https://github.com/oantolin/orderless
+[fn:14] Vertico, https://github.com/minad/vertico
 
-[fn:15] Marginalia, https://github.com/minad/marginalia
+[fn:15] Orderless, https://github.com/oantolin/orderless
 
-[fn:16] Embark, https://github.com/oantolin/embark
+[fn:16] Marginalia, https://github.com/minad/marginalia
 
-[fn:17] which-key, https://github.com/justbur/emacs-which-key
+[fn:17] Embark, https://github.com/oantolin/embark
 
-[fn:18] Company Anything, http://company-mode.github.io/
+[fn:18] which-key, https://github.com/justbur/emacs-which-key
 
-[fn:19] EditorConfig, https://editorconfig.org/
+[fn:19] Company Anything, http://company-mode.github.io/
 
-[fn:20] diff-hl, https://github.com/dgutov/diff-hl
+[fn:20] EditorConfig, https://editorconfig.org/
 
-[fn:21] Magit, https://magit.vc
+[fn:21] diff-hl, https://github.com/dgutov/diff-hl
 
-[fn:22] Nix3.el, https://github.com/emacs-twist/nix3.el
+[fn:22] Magit, https://magit.vc
 
-[fn:23] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
+[fn:23] Nix3.el, https://github.com/emacs-twist/nix3.el
 
-[fn:24] Modern Org Style, https://github.com/minad/org-modern
+[fn:24] Line Wrap, https://www.emacswiki.org/emacs/LineWrap
 
-[fn:25] Org Side Tree, https://github.com/localauthor/org-side-tree
+[fn:25] Modern Org Style, https://github.com/minad/org-modern
 
-[fn:26] Valign.el, https://github.com/casouri/valign
+[fn:26] Org Side Tree, https://github.com/localauthor/org-side-tree
 
-[fn:27] Markdown, https://daringfireball.net/projects/markdown/
+[fn:27] Valign.el, https://github.com/casouri/valign
 
-[fn:28] smartparens, https://github.com/Fuco1/smartparens
+[fn:28] Markdown, https://daringfireball.net/projects/markdown/
 
-[fn:29] tree-sitter, https://tree-sitter.github.io/tree-sitter/
+[fn:29] smartparens, https://github.com/Fuco1/smartparens
 
-[fn:30] reformatter, https://github.com/purcell/emacs-reformatter
+[fn:30] tree-sitter, https://tree-sitter.github.io/tree-sitter/
 
 [fn:31] YAML, https://yaml.org/
 

@@ -140,6 +140,12 @@
       repo = "mwim.el";
       type = "github";
     };
+    nix-mode = {
+      flake = false;
+      owner = "NixOS";
+      repo = "nix-mode";
+      type = "github";
+    };
     nix-ts-mode = {
       flake = false;
       owner = "remi-gelinas";

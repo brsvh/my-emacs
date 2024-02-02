@@ -368,6 +368,22 @@
         "type": "github"
       }
     },
+    "nix-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1682109415,
+        "narHash": "sha256-W/bxCAn4cvzKGbhILxtTiWJ5Wln2w6g4TPgk+ziCXsQ=",
+        "owner": "NixOS",
+        "repo": "nix-mode",
+        "rev": "719feb7868fb567ecfe5578f6119892c771ac5e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nix-mode",
+        "type": "github"
+      }
+    },
     "nix-ts-mode": {
       "flake": false,
       "locked": {
@@ -619,6 +635,7 @@
         "moody": "moody",
         "mu4e": "mu4e",
         "mwim": "mwim",
+        "nix-mode": "nix-mode",
         "nix-ts-mode": "nix-ts-mode",
         "nix3": "nix3",
         "on": "on",
