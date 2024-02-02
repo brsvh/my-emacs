@@ -188,6 +188,12 @@
       repo = "org-side-tree";
       type = "github";
     };
+    org-visual-outline = {
+      flake = false;
+      owner = "legalnonsense";
+      repo = "org-visual-outline";
+      type = "github";
+    };
     parinfer-rust-mode = {
       flake = false;
       owner = "justinbarclay";

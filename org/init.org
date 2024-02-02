@@ -122,7 +122,6 @@ All the customizable options I declare will in the ~my~ group.
 
 All the hooks I declare will in the ~my-hooks~ group.
 
-
 ** File conventions
 
 The default pathways used for the storage of configuration files and
@@ -887,31 +886,32 @@ aesthetic appeal, rendering it more user-friendly.
 
 #+begin_src emacs-lisp
   (use-package modus-themes
-    :ensure modus-themes
-    :preface
-    (defun my-theme-init ()
-      "Initialize theme."
-      (if (display-graphic-p)
-          (load-theme 'modus-operandi-tinted :no-confirm)
-        (load-theme 'modus-vivendi-tinted :no-confirm)))
-    :config
-    (setq modus-themes-custom-auto-reload t
-          modus-themes-bold-constructs t
-          modus-themes-italic-constructs t
-          modus-themes-mixed-fonts t
-          modus-themes-prompts '(bold)
-          modus-themes-completions '((matches . (extrabold))
-                                     (selection . (semibold
-                                                   fitalic
-                                                   text-also)))
-          modus-themes-org-blocks 'tinted-background
-          modus-themes-headings '((1 . (1.30 extrabold))
-                                  (2 . (1.20 heavy))
-                                  (3 . (1.10 bold))
-                                  (t . (1.05 semibold))))
-    :hook
-    (my-frame-init-hook . my-theme-init)
-    (my-noframe-init-hook . my-theme-init))
+      :ensure modus-themes
+      :preface
+      (defun my-theme-init ()
+        "Initialize theme."
+        (if (display-graphic-p)
+            (load-theme 'modus-operandi-tinted :no-confirm)
+          (load-theme 'modus-vivendi-tinted :no-confirm)))
+      :config
+      (setq modus-themes-custom-auto-reload t
+            modus-themes-bold-constructs t
+            modus-themes-italic-constructs t
+            modus-themes-mixed-fonts t
+            modus-themes-prompts '(bold)
+            modus-themes-completions '((matches . (extrabold))
+                                       (selection . (semibold
+                                                     fitalic
+                                                     text-also)))
+            modus-themes-org-blocks 'tinted-background
+            modus-themes-headings '((0 . (1.40 ultrabold))
+                                    (1 . (1.30 extrabold))
+                                    (2 . (1.20 heavy))
+                                    (3 . (1.10 bold))
+                                    (t . (1.05 semibold))))
+      :hook
+      (my-frame-init-hook . my-theme-init)
+      (my-noframe-init-hook . my-theme-init))
 #+end_src
 
 As you may have noticed, I have used a rudimentary configuration of
@@ -2155,7 +2155,6 @@ interface to provide completing function.
     (setq mu4e-completing-read-function #'completing-read))
 #+end_src
 
-
 * Writing
 
 Emacs is an indispensable companion for authors, the abundant extensions
@@ -2275,7 +2274,8 @@ enhances the looks of plain lists, todo items, and tables.
     :config
     (setq  org-modern-table nil)
     :hook
-    (org-mode-hook . org-modern-mode))
+    (org-mode-hook . org-modern-mode)
+    (org-agenda-finalize-hook . org-modern-mode))
 #+end_src
 
 You may have noticed that I have activated an special option
@@ -2299,28 +2299,6 @@ distinguish between heading levels.
   (use-package org-modern
     :config
     (setq org-modern-star '( "●" "◉" "◎" "○" "◌")))
-#+end_src
-
-*** Displaying Outline on the Sidebar
-
-When I am composing or perusing an exceedingly lengthy org, I anticipate
-the presence of a sidebar, listing all the headings within the Org file,
-essentially an outline preview.  This is one of the most coveted
-features for those using Org Mode for writing, as it facilitates
-effortless navigation between chapters and scenes in novels or other
-extensive works.  I use ~org-sidebar-tree~[fn:26] to achieve this.
-
-#+begin_src emacs-lisp
-  (use-package org-side-tree
-    :ensure org-side-tree
-    :after org
-    :commands
-    (org-side-tree)
-    :keymap-set
-    (:org-mode-map
-     ("C-c m o" . org-side-tree))
-    :hook
-    (org-side-tree-mode-hook . org-indent-mode))
 #+end_src
 
 *** Selection
@@ -2410,6 +2388,49 @@ GUI Emacs for Org Mode through valign[fn:27].
     :hook
     (org-mode-hook . valign-mode))
 #+end_src
+
+*** Visual indent
+
+When using the automatic indentation feature of Org Mode, due to the
+extensive length of the text being edited, it is hard to discern the
+current indentation level at a glance.  However, by employing visible
+indentation lines, one can swiftly comprehend the current level.
+
+#+begin_src emacs-lisp
+  (use-package org-visual-indent
+    :ensure org-visual-outline
+    :after org
+    :config
+    (defun my-prefer-to-use-org-visual-indent (&rest _)
+      "Prefer to use `org-visual-indent-mode'."
+      (when org-startup-indented
+        (org-visual-indent-mode)))
+
+    (add-hook 'org-mode-hook #'my-prefer-to-use-org-visual-indent))
+#+end_src
+
+*** Displaying Outline on the Sidebar
+
+When I am composing or perusing an exceedingly lengthy org, I anticipate
+the presence of a sidebar, listing all the headings within the Org file,
+essentially an outline preview.  This is one of the most coveted
+features for those using Org Mode for writing, as it facilitates
+effortless navigation between chapters and scenes in novels or other
+extensive works.  I use ~org-sidebar-tree~[fn:26] to achieve this.
+
+#+begin_src emacs-lisp
+  (use-package org-side-tree
+    :ensure org-side-tree
+    :after org
+    :commands
+    (org-side-tree)
+    :keymap-set
+    (:org-mode-map
+     ("C-c m o" . org-side-tree))
+    :hook
+    (org-side-tree-mode-hook . org-visual-indent-mode))
+#+end_src
+
 
 *** Electric pair
 

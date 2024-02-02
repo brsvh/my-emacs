@@ -497,6 +497,22 @@
         "type": "github"
       }
     },
+    "org-visual-outline": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1665678496,
+        "narHash": "sha256-/jQPTF3Y37N5V0Q8Qq/vzXEWHMIpPZMK/pOTyWfNdac=",
+        "owner": "legalnonsense",
+        "repo": "org-visual-outline",
+        "rev": "86371db5ae1a326b319b2b4967e921d60870aa21",
+        "type": "github"
+      },
+      "original": {
+        "owner": "legalnonsense",
+        "repo": "org-visual-outline",
+        "type": "github"
+      }
+    },
     "parinfer-rust-mode": {
       "flake": false,
       "locked": {
@@ -643,6 +659,7 @@
         "org": "org",
         "org-modern": "org-modern",
         "org-side-tree": "org-side-tree",
+        "org-visual-outline": "org-visual-outline",
         "parinfer-rust-mode": "parinfer-rust-mode",
         "pass": "pass",
         "password-store": "password-store",

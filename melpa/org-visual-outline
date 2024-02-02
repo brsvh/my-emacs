@@ -1,0 +1,1 @@
+(org-visual-outline :fetcher github :repo "legalnonsense/org-visual-outline" :files ("*.el"))
