@@ -420,6 +420,11 @@
                   }
                   "emacs"
                   env;
+
+              dependencies = pkgs.symlinkJoin {
+                name = "dependencies";
+                paths = import ./nix/dependencies.nix final;
+              };
             in
             {
               apps = brsvh-emacs.makeApps { lockDirName = "elpa"; };
@@ -464,7 +469,10 @@
                       }
                     ];
 
-                  packages = import ./nix/dependencies.nix final;
+                  packages =
+                    [
+                      self'.packages.dependencies
+                    ];
                 };
               };
 
@@ -493,6 +501,7 @@
                   brsvh-emacs
                   brsvh-emacs-nogui
                   brsvh-emacs-pgtk
+                  dependencies
                   early-init-file
                   gnus-init-file;
 
