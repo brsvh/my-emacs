@@ -2062,9 +2062,11 @@ with individuals).
           gnus-select-method '(nnnil "")
           gnus-startup-file (my-state-expand "gnus.newsrc"))
 
-    (-snocq gnus-secondary-select-methods '(nntp "news.gmane.io")))
+    (-snocq gnus-secondary-select-methods
+            '(nntp "gmane" (nntp-address "news.gmane.io"))))
 
   (use-package gnus-cloud
+    :after gnus
     :config
     (setq gnus-cloud-synced-files `(,my-authinfo-gpg-file
                                     ,gnus-init-file
@@ -2072,8 +2074,8 @@ with individuals).
                                      :match ".*.SCORE\\'"))))
 #+end_src
 
-~gnus~ is inherently slow (in 2024), I expedite it simply by enabling
-asynchronous operations and caching.
+~gnus~ is inherently slow, I expedite it simply by enabling asynchronous
+operations and caching.
 
 #+begin_src emacs-lisp
   (use-package gnus
@@ -2086,13 +2088,54 @@ asynchronous operations and caching.
            gnus-use-header-prefetch t))
 #+end_src
 
-** Reading E-Mail using ~gnus~ and ~mu4e~
+Furthermore, personalize the appearance of the ~gnus~ group and news.
+
+#+begin_src emacs-lisp
+  (use-package gnus-group
+    :after gnus
+    :config
+    (setq gnus-group-line-format "%M%S%p%P%5y:%B %G\n")
+    :hook
+    (gnus-group-mode-hook . gnus-topic-mode))
+
+  (use-package gnus-sum
+    :after gnus
+    :config
+    (setq gnus-sum-thread-tree-indent          "  "
+          gnus-sum-thread-tree-root            "● "
+          gnus-sum-thread-tree-false-root      "◯ "
+          gnus-sum-thread-tree-single-indent   "◎ "
+          gnus-sum-thread-tree-vertical        "│"
+          gnus-sum-thread-tree-leaf-with-other "├─► "
+          gnus-sum-thread-tree-single-leaf     "╰─► ")
+    (setq gnus-summary-line-format (concat "%0{%U%R%z%}"
+                                           "%1{%o%}"
+                                           "  "
+                                           "%4{%-20,20f%}"
+                                           "  "
+                                           "%3{│%}"
+                                           " "
+                                           "%1{%B%}"
+                                           "%s\n")
+          gnus-summary-display-arrow t))
+#+end_src
+
+When I have finished reading all the news, and there are no fresh
+articles on the NNTP server, gnus buffer appears blank.  This induces a
+modicum of unease in me, hence I always ensure their visibility.
+
+#+begin_src emacs-lisp
+  (use-package gnus-group
+    :config
+    (setq gnus-permanently-visible-groups "^nntp"))
+#+end_src
+
+
+** Reading E-Mail using and ~mu4e~
 
 I employ Emacs for the transmission and reception of my emails, which
 facilitates the direct capture of emails as tasks within Emacs.  I
-concurrently use both ~mu4e~ and ~gnus~ for email management, with
-~gnus~ serving as the primary method, and mu4e employed for backup
-purposes.
+concurrently use ~mu4e~ for email management.
 
 #+begin_src emacs-lisp
   (use-package message
@@ -2124,7 +2167,7 @@ purposes.
 I am in the process of configuring my email account via home-manager,
 and it look like the follow example.
 
-#+begin_src emacs-lisp :export none :tangle no
+#+begin_src emacs-lisp :tangle no
   (use-package smtpmail
     :config
     (setq
@@ -2134,15 +2177,6 @@ and it look like the follow example.
      smtpmail-smtp-user "foo.bar@example.org"
      smtpmail-stream-type 'ssl
      smtpmail-local-domain "localdmain"))
-
-  (use-package gnus
-    :config
-    (push '(nnimap "example.org"
-                   (nnimap-address "imap.example.org")
-                   (nnimap-server-port 993)
-                   (nnimap-user "foo.bar@example.org")
-                   (nnimap-stream 'ssl))
-          gnus-secondary-select-methods))
 #+end_src
 
 When I using ~mu4e~, its default completion interface is ~ido~, which is
@@ -2153,6 +2187,53 @@ interface to provide completing function.
   (use-package mu4e
     :config
     (setq mu4e-completing-read-function #'completing-read))
+#+end_src
+
+*** Fancy icons of ~mu4e~
+
+I want to ~mu4e~ displaying more aesthetically pleasing icons when
+initiate it within the GUI Emacs.
+
+#+begin_src emacs-lisp
+  (use-package mu4e-headers
+    :after mu4e
+    :config
+    (when (display-graphic-p)
+      (setq mu4e-headers-attach-mark                      '("a"  . "+")
+            mu4e-headers-attach-mark                      '("a" . "📎 ")
+            mu4e-headers-default-prefix                   '("|"  . "|")
+            mu4e-headers-draft-mark                       '("D" . "🚧 ")
+            mu4e-headers-duplicate-prefix                 '("="  . "=")
+            mu4e-headers-empty-parent-prefix              '("-"  . "-")
+            mu4e-headers-encrypted-mark                   '("x" . "🔑 ")
+            mu4e-headers-first-child-prefix               '("\\" . "\\")
+            mu4e-headers-flagged-mark                     '("F"  . "!")
+            mu4e-headers-flagged-mark                     '("F" . "🚩 ")
+            mu4e-headers-from-or-to-prefix                '("" . "")
+            mu4e-headers-full-label                       '("F" . "∀")
+            mu4e-headers-has-child-prefix                 '("+"  . "+")
+            mu4e-headers-list-mark                        '("s" . "")
+            mu4e-headers-new-mark                         '("N"  . "*")
+            mu4e-headers-new-mark                         '("N" . "📩 ")
+            mu4e-headers-passed-mark                      '("P"  . "»")
+            mu4e-headers-passed-mark                      '("P" . "↪ ")
+            mu4e-headers-personal-mark                    '("p" . "")
+            mu4e-headers-related-label                    '("R" . "")
+            mu4e-headers-replied-mark                     '("R"  . "«")
+            mu4e-headers-replied-mark                     '("R" . "↩ ")
+            mu4e-headers-seen-mark                        '("S"  . "")
+            mu4e-headers-seen-mark                        '("S" . "📩 ")
+            mu4e-headers-signed-mark                      '("s" . "")
+            mu4e-headers-thread-child-prefix              '("├>" . "↳ ")
+            mu4e-headers-thread-connection-prefix         '("│" . " ")
+            mu4e-headers-thread-last-child-prefix         '("└>" . "↳ ")
+            mu4e-headers-thread-orphan-prefix             '("┬>" . "↳ ")
+            mu4e-headers-thread-single-orphan-prefix      '("─>" . "↦ ")
+            mu4e-headers-threaded-label                   '("T" . "")
+            mu4e-headers-trashed-mark                     '("T"  . "")
+            mu4e-headers-trashed-mark                     '("T" . "🗑️")
+            mu4e-headers-unread-mark                      '("u"  . "")
+            mu4e-headers-unread-mark                      '("u" . "📩 "))))
 #+end_src
 
 * Writing
