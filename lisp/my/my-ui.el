@@ -69,6 +69,7 @@
   (setq history-delete-duplicates t))
 
 (use-package scroll-bar
+  :when (display-graphic-p)
   :init
   (scroll-bar-mode -1))
 
@@ -81,7 +82,7 @@
         initial-major-mode 'fundamental-mode))
 
 (use-package window
-  :config  
+  :config
   (-snocq display-buffer-alist
           '("\\*Backtrace\\*"
             (display-buffer-reuse-window display-buffer-below-selected)
@@ -123,7 +124,7 @@
 
   (setq modus-themes-bold-constructs t
         modus-themes-italic-constructs t)
-  
+
   (setq modus-themes-mixed-fonts t)
 
   (setq modus-themes-prompts '(bold))
@@ -132,7 +133,7 @@
                                    (selection . (semibold
                                                  fitalic
                                                  text-also))))
-  
+
   (setq modus-themes-org-blocks 'tinted-background)
 
   (setq modus-themes-headings '((0 . (1.40 ultrabold))
@@ -327,7 +328,7 @@
    ("RET" . activities-switch)
    ("b" . activities-switch-buffer)
    ("g" . activities-revert)
-   ("l" . activities-list))   
+   ("l" . activities-list))
   :hook
   (on-init-ui-hook . activities-mode)
   (on-init-ui-hook . activities-tabs-mode))
