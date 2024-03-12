@@ -22,6 +22,8 @@
 with builtins;
 with lib;
 let
+  dependencies = import ./dependencies.nix pkgs;
+
   localFile = pkgs.writeText "my-emacs-local-file" ''
             ;;; local.el --- Local File -*- lexical-binding: t; -*-
 
@@ -115,6 +117,14 @@ in
       example = ".emacs.d";
     };
 
+    extraPackages = mkOption {
+      type = types.listOf types.package;
+      default = with pkgs; [ imagemagick ];
+      description = ''
+        Extra Packages will be add to home environment.
+      '';
+    };
+
     localConfig = mkOption {
       type = types.str;
       default = "";
@@ -193,14 +203,7 @@ in
           ]
         );
 
-        packages = with pkgs;
-          [
-            imagemagick
-            multimarkdown
-            nixpkgs-fmt
-            parinfer-rust
-            yamlfmt
-          ];
+        packages = dependencies ++ config.programs.my-emacs.extraPackages;
       };
 
       programs = {

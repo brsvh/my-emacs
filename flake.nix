@@ -199,9 +199,17 @@
                   inherit (final)
                     emacs-git
                     emacs-git-nox
-                    emacs-pgtk;
+                    emacs-pgtk
+                    symlinkJoin;
                 in
                 {
+                  dependencies = symlinkJoin rec {
+                    name = "${pname}-${version}";
+                    paths = import ./nix/dependencies.nix pkgs;
+                    pname = "my-emacs-dependencies";
+                    version = "unstable";
+                  };
+
                   nogui = emacs-git-nox;
                   x11 = emacs-git;
                   pgtk = emacs-pgtk;
