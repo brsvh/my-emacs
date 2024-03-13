@@ -85,6 +85,9 @@
   :config
   (-snocq display-buffer-alist
           '("\\*Backtrace\\*"
+            (display-buffer-reuse-window display-buffer-below-selected
+             (window-height . 0.4)))
+          '("\\*compilation\\*"
             (display-buffer-reuse-window display-buffer-below-selected)
             (window-height . 0.4))
           '("\\*Compile-Log\\*"

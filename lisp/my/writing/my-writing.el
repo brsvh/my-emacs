@@ -57,6 +57,24 @@
   :config
   (setq valign-fancy-bar t))
 
+(use-package pdf-tools
+  :ensure pdf-tools
+  :pin nongnu
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (define-advice pdf-view-mode
+    (:around (func &rest args) ensure-epdfinfo)
+    "Ensure epdfinfo is build after the first PDF file."
+    (if (and (require 'pdf-info nil t)
+          (or (pdf-info-running-p)
+           (ignore-errors (pdf-info-check-epdfinfo) t)))
+      (apply func args)
+      (fundamental-mode)
+      (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
+
+  (pdf-tools-install-noverify))
+
 (use-my writing-markdown)
 
 (use-my writing-org)
