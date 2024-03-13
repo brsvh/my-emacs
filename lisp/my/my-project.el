@@ -66,6 +66,10 @@
 
   (add-hook 'diff-hl-mode-hook #'my--inhibit-diff-hl-margin-mode))
 
+
+
+;; VCS (Git):
+
 (use-package magit
   :ensure magit
   :pin nongnu
@@ -78,6 +82,26 @@
   :hook
   (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
   (magit-post-refresh-hook . diff-hl-magit-post-refresh))
+
+(use-package git-modes
+  :ensure git-modes
+  :pin gnu)
+
+(use-package gitattributes-mode
+  :ensure git-modes
+  :pin gnu)
+
+(use-package gitconfig-mode
+  :ensure git-modes
+  :pin gnu)
+
+(use-package gitignore-mode
+  :ensure git-modes
+  :pin gnu)
+
+
+
+;; Nix project:
 
 (use-package nix3
   :vc (:url "https://github.com/emacs-twist/nix3.el")
