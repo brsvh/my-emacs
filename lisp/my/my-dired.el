@@ -1,4 +1,4 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-dired.el --- Customize `dired' for My Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -29,43 +29,21 @@
 
 ;;; Code:
 
-(require 'my-prelude)
+(use-my lib)
 
-(use-my core)
-
-(use-my mule)
-
-(use-my security)
-
-
-
-(use-my editor)
-
-(use-my project)
-
-(use-my org)
-
-(use-my ui)
-
-(use-my lib
+(use-package dirvish
+  :vc (:url "https://github.com/alexluigit/dirvish.git")
+  :init
+  (eval-after-load 'dired
+    (dirvish-override-dired-mode))
   :config
-  (my-load-local-file))
+  (setq dirvish-cache-dir (my-cache-path* "dirvish/")
+        dirvish-hide-details nil
+        dirvish-attributes '(git-msg)))
 
-
+(use-package dirvish-vc
+  :vc (:url "https://github.com/alexluigit/dirvish.git"
+       :lisp-dir "extensions/"))
 
-(use-my gtd)
-
-(use-my programming)
-
-(use-my writing)
-
-
-
-(use-my dired)
-
-
-
-(use-my postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-dired)
+;;; my-dired.el ends here
