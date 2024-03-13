@@ -35,8 +35,8 @@
   :ensure org
   :pin gnu
   :config
-  (setq org-directory (my-path* "~/org"))  
-  
+  (setq org-directory (my-path* "~/org"))
+
   (setq org-auto-align-tags nil
         org-hide-emphasis-markers nil
         org-pretty-entities t
@@ -46,11 +46,14 @@
 
   (setq org-export-allow-bind-keywords t)
 
-  (-snocq display-buffer-alist
+  (-snocq shackle-rules
           '("\\*Org Select\\*"
-            (display-buffer-reuse-window
-             display-buffer-below-selected)
-            (window-parameters (mode-line-format . none)))))
+             :select t
+             :align below
+             :size 0.4
+             :other t
+             :popup t
+             :regexp t)))
 
 (use-package org-clock
   :ensure org

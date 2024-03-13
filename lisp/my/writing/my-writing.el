@@ -57,7 +57,7 @@
   :config
   (setq valign-fancy-bar t))
 
-(use-package pdf-tools
+(use-package pdf-view
   :ensure pdf-tools
   :pin nongnu
   :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -73,7 +73,18 @@
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (pdf-tools-install-noverify))
+  (pdf-tools-install-noverify)
+
+  (-snocq shackle-rules          
+          '("^\\*Outline*" :select nil :align right :size 0.4 :regexp t)))
+
+(use-package pdf-annot
+  :ensure pdf-tools
+  :pin nongnu
+  :config
+  (-snocq shackle-rules
+          '("\\(?:^\\*Contents\\|'s annots\\*$\\)" :select t :align below :size 0.4 :other t :popup t :regexp t)
+          '("^\\*Edit Annotation "                 :select t :inhibit-window-quit t :regexp t)))
 
 (use-my writing-markdown)
 

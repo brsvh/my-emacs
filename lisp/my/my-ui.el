@@ -41,6 +41,12 @@
 (use-package nerd-icons
   :vc (:url "https://github.com/rainstormstudio/nerd-icons.el.git"))
 
+(use-package shackle
+  :vc (:url "https://depp.brause.cc/shackle.git")
+  :demand t
+  :hook
+  (on-init-ui-hook . shackle-mode))
+
 
 
 ;; Builtin interface:
@@ -83,22 +89,11 @@
 
 (use-package window
   :config
-  (-snocq display-buffer-alist
-          '("\\*Backtrace\\*"
-            (display-buffer-reuse-window display-buffer-below-selected
-             (window-height . 0.4)))
-          '("\\*compilation\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))
-          '("\\*Compile-Log\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))
-          '("\\*Help\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))
-          '("\\*Warnings\\*"
-            (display-buffer-reuse-window display-buffer-below-selected)
-            (window-height . 0.4))))
+  (-snocq shackle-rules
+          '(compilation-mode  :select nil :align below :size 0.4 :other nil :popup nil)
+          '("\\*Backtrace\\*" :select t   :align below :size 0.4 :other t   :popup t :regexp t)
+          '("\\*Help\\*"      :select t   :align below :size 0.4 :other t   :popup t :regexp t)
+          '("\\*Warnings\\*"  :select t   :align below :size 0.4 :other t   :popup t :regexp t)))
 
 (use-package switch-window
   :vc (:url "https://github.com/dimitri/switch-window.git")
@@ -298,11 +293,14 @@
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
-  (-snocq display-buffer-alist
+  (-snocq shackle-rules
           '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-            (display-buffer-reuse-window
-             display-buffer-below-selected)
-            (window-height . 0.4)))
+             :select t
+             :align below
+             :size 0.4
+             :other t
+             :popup t
+             :regexp t))
 
   (setq embark-verbose-indicator-display-action
         '(display-buffer-reuse-window display-buffer-below-selected)))
