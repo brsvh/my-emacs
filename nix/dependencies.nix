@@ -14,6 +14,7 @@ with pkgs;
   parinfer-rust
   pkg-config
   poppler
+  texlab
   unzip
   yamlfmt
   zlib

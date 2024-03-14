@@ -52,6 +52,11 @@
   (outline-mode-hook . electric-pair-local-mode)
   (text-mode-hook . electric-pair-local-mode))
 
+(use-package pangu-spacing
+  :vc (:url "https://github.com/coldnew/pangu-spacing.git")
+  :config
+  (setq pangu-spacing-real-insert-separtor t))
+
 (use-package valign
   :vc (:url "https://github.com/casouri/valign.git")
   :config
@@ -75,7 +80,7 @@
 
   (pdf-tools-install-noverify)
 
-  (-snocq shackle-rules          
+  (-snocq shackle-rules
           '("^\\*Outline*" :select nil :align right :size 0.4 :regexp t)))
 
 (use-package pdf-annot
@@ -89,6 +94,8 @@
 (use-my writing-markdown)
 
 (use-my writing-org)
+
+(use-my writing-tex)
 
 (provide 'my-writing)
 ;;; my-writing.el ends here
