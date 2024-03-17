@@ -25,76 +25,76 @@ let
   dependencies = import ./dependencies.nix pkgs;
 
   localFile = pkgs.writeText "my-emacs-local-file" ''
-            ;;; local.el --- Local File -*- lexical-binding: t; -*-
+    ;;; local.el --- Local File -*- lexical-binding: t; -*-
 
-            ;; Copyright (C) 2022-2024 Burgess Chang
+    ;; Copyright (C) 2022-2024 Burgess Chang
 
-            ;; Author: Burgess Chang <bsc@brsvh.org>
-            ;; Keywords: local
-            ;; Package-Requires: ((emacs "29.1"))
-            ;; URL: https://github.com/brsvh/my-emacs
-            ;; Version: 0.1.0
+    ;; Author: Burgess Chang <bsc@brsvh.org>
+    ;; Keywords: local
+    ;; Package-Requires: ((emacs "29.1"))
+    ;; URL: https://github.com/brsvh/my-emacs
+    ;; Version: 0.1.0
 
-            ;; This file is part of my-emacs.
+    ;; This file is part of my-emacs.
 
-            ;; my-emacs is free software: you can redistribute it and/or modify it
-            ;; under the terms of the GNU General Public License as published by the
-            ;; Free Software Foundation, either version 3 of the License, or (at
-            ;; your option) any later version.
+    ;; my-emacs is free software: you can redistribute it and/or modify it
+    ;; under the terms of the GNU General Public License as published by the
+    ;; Free Software Foundation, either version 3 of the License, or (at
+    ;; your option) any later version.
 
-            ;; my-emacs is distributed in the hope that it will be useful, but
-            ;; WITHOUT ANY WARRANTY; without even the implied warranty of
-            ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-            ;; General Public License for more details.
+    ;; my-emacs is distributed in the hope that it will be useful, but
+    ;; WITHOUT ANY WARRANTY; without even the implied warranty of
+    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    ;; General Public License for more details.
 
-            ;; You should have received a copy of the GNU General Public License
-            ;; along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
+    ;; You should have received a copy of the GNU General Public License
+    ;; along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
 
-            ;;; Commentary:
+    ;;; Commentary:
 
-            ;; This file is loaded file after My Emacs is initialized.
+    ;; This file is loaded file after My Emacs is initialized.
 
-            ;;; Code:
+    ;;; Code:
 
-            (use-package emacs
-              :no-require t
-              :init
-              (-snocq treesit-extra-load-path "${
-                pkgs.linkFarm "treesit-grammars"
-                  (
-                    map
-                      (
-                        drv: {
-                          name = "lib${
-                            removeSuffix "-grammar" (getName drv)
-                          }${
-                            pkgs.stdenv.targetPlatform.extensions.sharedLibrary
-                          }";
-                          path = "${drv}/parser";
-                        }
-                      )
-                      (
-                        pipe
-                          pkgs.tree-sitter-grammars
-                          [
-                            (filterAttrs (name: _: name != "recurseForDerivations"))
-                            attrValues
-                          ]
-                      )
-                  )
-              }"))
+    (use-package emacs
+      :no-require t
+      :init
+      (-snocq treesit-extra-load-path "${
+        pkgs.linkFarm "treesit-grammars"
+          (
+            map
+              (
+                drv: {
+                  name = "lib${
+                    removeSuffix "-grammar" (getName drv)
+                  }${
+                    pkgs.stdenv.targetPlatform.extensions.sharedLibrary
+                  }";
+                  path = "${drv}/parser";
+                }
+              )
+              (
+                pipe
+                  pkgs.tree-sitter-grammars
+                  [
+                    (filterAttrs (name: _: name != "recurseForDerivations"))
+                    attrValues
+                  ]
+              )
+          )
+      }"))
 
-            (use-package parinfer-rust-mode
-              :no-require t
-              :init
-              (setq parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/"
-                    parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
-                    parinfer-rust-auto-download nil)
-    	        (require 'parinfer-rust parinfer-rust-library 'noerror))
+    (use-package parinfer-rust-mode
+      :no-require t
+      :init
+      (setq parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/"
+            parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
+            parinfer-rust-auto-download nil)
+    	(require 'parinfer-rust parinfer-rust-library 'noerror))
 
-            ${config.programs.my-emacs.localConfig}
+    ${config.programs.my-emacs.localConfig}
 
-            ;;; local.el ends here
+    ;;; local.el ends here
   '';
 in
 {
