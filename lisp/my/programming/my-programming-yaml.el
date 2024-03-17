@@ -31,13 +31,14 @@
 
 (reformatter-define my-yaml-format :program "yamlfmt")
 
-(use-package yaml-ts-mode
+(use-package yaml-mode
+  :ensure yaml-mode
   :config
-  (keymap-set yaml-ts-mode-map "C-m" 'newline-and-indent)
-  (add-hook 'yaml-ts-mode-hook #'my-yaml-format-on-save-mode)
+  (keymap-set yaml-mode-map "C-m" 'newline-and-indent)
+  (add-hook 'yaml-mode-hook #'my-yaml-format-on-save-mode)
   :mode
-  ("\\.yaml\\'" . yaml-ts-mode)
-  ("\\.yml\\'" . yaml-ts-mode))
+  ("\\.yaml\\'" . yaml-mode)
+  ("\\.yml\\'" . yaml-mode))
 
 (provide 'my-programming-yaml)
 ;;; my-programming-yaml.el ends here

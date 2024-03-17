@@ -347,6 +347,13 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   (unless (server-running-p) (server-start)))
 
 ;;;###autoload
+(defun my/toggle-final-newline ()
+  "Toggle `require-final-newline'."
+  (interactive)
+  (set (make-local-variable 'require-final-newline)
+       (not require-final-newline)))
+
+;;;###autoload
 (progn
   (add-hook 'after-make-frame-functions #'my-gui-init-actions -100)
   (add-hook 'tty-setup-hook #'my-nogui-init-actions -100)
