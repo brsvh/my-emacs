@@ -47,6 +47,9 @@
   :hook
   (on-init-ui-hook . shackle-mode))
 
+(use-package shackle+
+  :demand t)
+
 
 
 ;; Builtin interface:

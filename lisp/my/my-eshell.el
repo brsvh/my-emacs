@@ -1,9 +1,9 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-eshell.el --- Org support of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
 ;; Author: Burgess Chang <bsc@brsvh.org>
-;; Keywords: local
+;; Keywords: extensions
 ;; Package-Requires: ((emacs "29.1"))
 ;; URL: https://github.com/brsvh/my-emacs
 ;; Version: 0.1.50
@@ -29,45 +29,17 @@
 
 ;;; Code:
 
-(require 'my-prelude)
+(use-my lib)
 
-(use-my core)
-
-(use-my mule)
-
-(use-my security)
-
-
-
-(use-my editor)
-
-(use-my project)
-
-(use-my org)
-
-(use-my ui)
-
-(use-my lib
+(use-package eshell-toggle
+  :vc (:url "https://github.com/brsvh/eshell-toggle.git")
+  :demand t
+  :keymap-set
+  ("C-`" . eshell-toggle)
   :config
-  (my-load-local-file))
+  (setq eshell-toggle-size-fraction 3)
 
-
+  (setq eshell-toggle-check-project-method 'project))
 
-(use-my gtd)
-
-(use-my programming)
-
-(use-my writing)
-
-
-
-(use-my dired)
-
-(use-my eshell)
-
-
-
-(use-my postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-eshell)
+;;; my-eshell.el ends here
