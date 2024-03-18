@@ -170,15 +170,17 @@
 (defun my--reset-modus-themes-line-number-face-when-highlight ()
   "Use the more subtle line number background color."
   (when (my--modus-themes-enale-p)
-    (let* ((cline 'line-number-current-line)
-           (hline 'hl-line)
-           (oline 'line-number)
-           (origin-bg (face-attribute oline :background))
-           (proper-bg (face-attribute hline :background)))
-      (if hl-line-mode
-          (setq proper-bg (face-attribute hline :background))
-        (setq proper-bg origin-bg))
-      (set-face-attribute cline nil :background proper-bg))))
+    (if (bound-and-true-p hl-line-mode)
+      (let* ((cline 'line-number-current-line)
+             (hline 'hl-line)
+             (oline 'line-number)
+             (origin-bg (face-attribute oline :background))
+             (proper-bg (face-attribute hline :background)))
+       (if hl-line-mode
+           (setq proper-bg (face-attribute hline :background))
+         (setq proper-bg origin-bg))
+       (set-face-attribute cline nil :background proper-bg))
+      (my--reset-modus-themes-line-number-face))))
 
 (use-package display-line-numbers
   :hook
