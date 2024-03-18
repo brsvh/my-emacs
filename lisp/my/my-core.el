@@ -58,6 +58,10 @@
   (defvaralias 'ctl-c-n-map 'my-ctl-c-n-map)
   (keymap-set ctl-c-map "n" ctl-c-n-map)
 
+  ;; Project/Projectile operations
+  (defvaralias 'ctl-c-p-map 'my-ctl-c-p-map)
+  (keymap-set ctl-c-map "p" ctl-c-p-map)
+
   ;; VC operations
   (defvaralias 'ctl-c-v-map 'my-ctl-c-v-map)
   (keymap-set ctl-c-map "v" ctl-c-v-map)

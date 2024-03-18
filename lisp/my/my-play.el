@@ -65,6 +65,8 @@
 
 (use-my eshell)
 
+(use-my ibuffer)
+
 
 
 (use-my postlude)

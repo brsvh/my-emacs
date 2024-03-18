@@ -1,4 +1,4 @@
-;;; my-eshell.el --- `eshell' support of My Emacs -*- lexical-binding: t -*-
+;;; my-ibuffer.el --- `ibuffer' support of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -31,15 +31,30 @@
 
 (use-my lib)
 
-(use-package eshell-toggle
-  :vc (:url "https://github.com/brsvh/eshell-toggle.git")
-  :demand t
+(use-package ibuffer
   :keymap-set
-  ("C-`" . eshell-toggle)
+  ("<remap> <list-buffers>" . ibuffer))
+
+(use-package nerd-icons-ibuffer
+  :vc (:url "https://github.com/seagle0128/nerd-icons-ibuffer.git")
   :config
-  (setq eshell-toggle-size-fraction 3)
+  (setq nerd-icons-ibuffer-icon t
+        nerd-icons-ibuffer-color-icon t
+        nerd-icons-ibuffer-icon-size 1.0
+        nerd-icons-ibuffer-human-readable-size t)
+ 
+  :hook
+  (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
 
-  (setq eshell-toggle-check-project-method 'project))
+(use-package ibuffer-project
+  :vc (:url "https://github.com/muffinmad/emacs-ibuffer-project.git")
+  :hook
+  (ibuffer-hook . (lambda ()
+                    (setq ibuffer-filter-groups
+                          (ibuffer-project-generate-filter-groups))
+                    (unless (eq ibuffer-sorting-mode
+                                'project-file-relative)
+                      (ibuffer-do-sort-by-project-file-relative)))))
 
-(provide 'my-eshell)
-;;; my-eshell.el ends here
+(provide 'my-ibuffer)
+;;; my-ibuffer.el ends here

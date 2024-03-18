@@ -44,6 +44,10 @@
 (use-package shackle
   :vc (:url "https://depp.brause.cc/shackle.git")
   :demand t
+  :config
+  (setq shackle-default-size 0.4
+        shackle-default-alignment 'below
+        shackle-default-rule nil)
   :hook
   (on-init-ui-hook . shackle-mode))
 
@@ -75,7 +79,9 @@
 
   (setq enable-recursive-minibuffers t)
 
-  (setq history-delete-duplicates t))
+  (setq history-delete-duplicates t)
+
+  (setq inhibit-compacting-font-caches t))
 
 (use-package scroll-bar
   :when (display-graphic-p)

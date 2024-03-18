@@ -35,6 +35,18 @@
   :config
   (setq project-list-file (my-state-path "projects.el")))
 
+(use-package projectile
+  :ensure projectile
+  :pin nongnu
+  :config
+  (setq ctl-c-p-map (copy-keymap projectile-command-map))
+
+  (setq projectile-cache-file (my-state-path* "projectile/" "cache.el")
+        projectile-known-projects-file (my-state-path* "projectile/"
+                                                       "projects.el"))
+  :hook
+  (on-first-file-hook . projectile-mode))
+
 (use-package diff-hl
   :ensure diff-hl
   :pin gnu
