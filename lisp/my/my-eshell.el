@@ -35,11 +35,15 @@
   :vc (:url "https://github.com/brsvh/eshell-toggle.git")
   :demand t
   :keymap-set
-  ("C-`" . eshell-toggle)
+  (:ctl-c-t-map
+    ("e" . eshell-toggle))
   :config
   (setq eshell-toggle-size-fraction 3)
 
-  (setq eshell-toggle-check-project-method 'project))
+  (setq eshell-toggle-check-project-method 'project)
+
+  (-snocq popper-reference-buffers
+          "\\*et:.*\\*"))
 
 (provide 'my-eshell)
 ;;; my-eshell.el ends here

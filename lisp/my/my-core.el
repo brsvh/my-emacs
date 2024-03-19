@@ -62,6 +62,10 @@
   (defvaralias 'ctl-c-p-map 'my-ctl-c-p-map)
   (keymap-set ctl-c-map "p" ctl-c-p-map)
 
+  ;; Terminal operations
+  (defvaralias 'ctl-c-t-map 'my-ctl-c-t-map)
+  (keymap-set ctl-c-map "t" ctl-c-t-map)
+
   ;; VC operations
   (defvaralias 'ctl-c-v-map 'my-ctl-c-v-map)
   (keymap-set ctl-c-map "v" ctl-c-v-map)

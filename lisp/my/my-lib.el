@@ -239,6 +239,9 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 (defvar my-ctl-c-p-map (make-keymap)
   "Default keymap for C-c p commands.")
 
+(defvar my-ctl-c-t-map (make-keymap)
+  "Default keymap for C-c t commands.")
+
 (defvar my-ctl-c-v-map (make-keymap)
   "Default keymap for C-c v commands.")
 

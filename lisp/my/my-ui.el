@@ -104,6 +104,23 @@
           '("\\*Help\\*"      :select t   :align below :size 0.4 :other t   :popup t :regexp t)
           '("\\*Warnings\\*"  :select t   :align below :size 0.4 :other t   :popup t :regexp t)))
 
+
+(use-package popper
+  :ensure popper
+  :pin gnu
+  :keymap-set
+  ("C-`"   . popper-toggle)
+  ("C-~"   . popper-cycle)
+  ("C-M-`" . popper-toggle-type)
+  :config
+  (-snocq popper-reference-buffers
+          "\\*Backtrace\\*"
+          "\\*Help\\*"
+          "\\*Warnings\\*")
+  :hook
+  (on-first-buffer-hook . popper-mode)
+  (on-first-buffer-hook . popper-echo-mode))
+
 (use-package switch-window
   :vc (:url "https://github.com/dimitri/switch-window.git")
   :keymap-set
