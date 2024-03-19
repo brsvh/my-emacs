@@ -78,7 +78,7 @@
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (pdf-tools-install-noverify)
+  (pdf-tools-install)
 
   (-snocq shackle-rules
           '("^\\*Outline*" :select nil :align right :size 0.4 :regexp t)))
