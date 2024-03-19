@@ -108,6 +108,7 @@
 (use-package popper
   :ensure popper
   :pin gnu
+  :demand t
   :keymap-set
   ("C-`"   . popper-toggle)
   ("C-~"   . popper-cycle)

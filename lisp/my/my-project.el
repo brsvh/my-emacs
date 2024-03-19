@@ -31,6 +31,10 @@
 
 (use-my lib)
 
+(use-package rg
+  :vc (:url "https://github.com/dajva/rg.el.git")
+  :demand t)
+
 (use-package project
   :config
   (setq project-list-file (my-state-path "projects.el")))
@@ -40,6 +44,7 @@
   :pin nongnu
   :config
   (setq ctl-c-p-map (copy-keymap projectile-command-map))
+  (keymap-set ctl-c-map "p" ctl-c-p-map)
 
   (setq projectile-cache-file (my-state-path* "projectile/" "cache.el")
         projectile-known-projects-file (my-state-path* "projectile/"

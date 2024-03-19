@@ -31,6 +31,16 @@
 
 (use-my lib)
 
+(use-package hl-line
+  :after prog-mode
+  :hook
+  (prog-mode-hook . hl-line-mode))
+
+(use-package display-line-numbers
+  :after prog-mode
+  :hook
+  (prog-mode-hook . display-line-numbers-mode))
+
 (use-package electric
   :after prog-mode
   :config
