@@ -56,6 +56,10 @@
   ("<remap> <yank>" . consult-yank-from-kill-ring)
   ("<remap> <yank-pop>" . consult-yank-pop))
 
+(use-package multiple-cursors
+  :ensure multiple-cursors
+  :pin nongnu)
+
 (use-package files
   :config
   (setq auto-save-default t)
