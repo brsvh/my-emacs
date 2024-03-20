@@ -43,7 +43,7 @@
   (setq tabspaces-include-buffers '("*scratch*" "*Messages*"))
 
   (setq tabspaces-session t
-        tabspaces-session-file (my-state-path "tabspaces/sessons.eld"))
+        tabspaces-session-file (my-state-path* "tabspaces/sessons.eld"))
 
   (setq tabspaces-session-auto-restore t)
 

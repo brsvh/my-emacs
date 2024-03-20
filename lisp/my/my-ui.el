@@ -41,19 +41,6 @@
 (use-package nerd-icons
   :vc (:url "https://github.com/rainstormstudio/nerd-icons.el.git"))
 
-(use-package shackle
-  :vc (:url "https://depp.brause.cc/shackle.git")
-  :demand t
-  :config
-  (setq shackle-default-size 0.4
-        shackle-default-alignment 'below
-        shackle-default-rule nil)
-  :hook
-  (on-init-ui-hook . shackle-mode))
-
-(use-package shackle+
-  :demand t)
-
 
 
 ;; Builtin interface:
@@ -96,15 +83,6 @@
         initial-scratch-message nil
         initial-major-mode 'fundamental-mode))
 
-(use-package window
-  :config
-  (-snocq shackle-rules
-          '(compilation-mode  :select nil :align below :size 0.4 :other nil :popup nil)
-          '("\\*Backtrace\\*" :select t   :align below :size 0.4 :other t   :popup t :regexp t)
-          '("\\*Help\\*"      :select t   :align below :size 0.4 :other t   :popup t :regexp t)
-          '("\\*Warnings\\*"  :select t   :align below :size 0.4 :other t   :popup t :regexp t)))
-
-
 (use-package popper
   :ensure popper
   :pin gnu
@@ -112,12 +90,43 @@
   :keymap-set
   ("C-`" . popper-toggle)
   ("C-~" . popper-cycle)
-  ("M-P" . popper-toggle-type)
+  ("M-p" . popper-toggle-type)
   :config
   (-snocq popper-reference-buffers
           "\\*Backtrace\\*"
+          "\\*Compile-Log\\*"
           "\\*Help\\*"
           "\\*Warnings\\*")
+
+  (defun my-popper-fit-window-height (win)
+    "Determine the height of WIN by fitting it to the buffer's content."
+    (fit-window-to-buffer)
+    win
+    (floor (frame-height) 3)
+    (floor (frame-height) 3))
+
+  (setq popper-window-height #'my-popper-fit-window-height)
+
+  (define-advice keyboard-quit (:before (&rest _) close-popper-window)
+    "Close popper window via `C-g'."
+    (when (and (called-interactively-p 'interactive)
+            (not (region-active-p))
+            popper-open-popup-alist)
+      (let ((window (caar popper-open-popup-alist)))
+        (when (window-live-p window)
+          (delete-window window)))))
+
+  (with-eval-after-load 'doom-modeline
+    (setq popper-mode-line
+          '(:eval (let ((face (if (doom-modeline--active)
+                                  'doom-modeline-emphasis
+                                'doom-modeline)))
+                    (if (and (icons-displayable-p)
+                             (bound-and-true-p doom-modeline-icon)
+                             (bound-and-true-p doom-modeline-mode))
+                        (format " %s "
+                                (nerd-icons-octicon "nf-oct-pin" :face face))
+                      (propertize " POP " 'face face))))))
   :hook
   (on-first-buffer-hook . popper-mode)
   (on-first-buffer-hook . popper-echo-mode))
@@ -322,14 +331,8 @@
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
-  (-snocq shackle-rules
-          '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-             :select t
-             :align below
-             :size 0.4
-             :other t
-             :popup t
-             :regexp t))
+  (-snocq popper-reference-buffers
+          "\\`\\*Embark Collect \\(Live\\|Completions\\)\\*")
 
   (setq embark-verbose-indicator-display-action
         '(display-buffer-reuse-window display-buffer-below-selected)))

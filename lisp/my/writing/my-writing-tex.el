@@ -43,9 +43,9 @@
         TeX-save-query nil
         TeX-parse-self t)
   :config
-  (-snocq shackle-rules
-          '("^\\*TeX \\(?:Help\\|errors\\)" :select t   :align below :size 0.3  :other t :popup t :regexp t)
-          '(" output\\*$"                   :select nil :align below :size 0.15 :other t :popup t :regexp t))
+  (-snocq popper-reference-buffers
+          "^\\*TeX \\(?:Help\\|errors\\)"
+          " output\\*$")
 
   (setq TeX-master t)
 

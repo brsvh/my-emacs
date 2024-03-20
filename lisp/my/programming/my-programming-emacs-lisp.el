@@ -39,10 +39,7 @@
     ("C-c C-v" . pp-macroexpand-last-sexp))
   :config
   (-snocq popper-reference-buffers
-    "\\*Pp Macroexpand Output\\*")
-
-  (-snocq shackle-rules
-          '("\\*Pp Macroexpand Output\\*" :select nil :align below :size 0.4 :other t :popup t :regexp t)))
+          "\\*Pp Macroexpand Output\\*"))
 
 (provide 'my-programming-emacs-lisp)
 ;;; my-programming-emacs-lisp.el ends here

@@ -46,14 +46,11 @@
 
   (setq org-export-allow-bind-keywords t)
 
-  (-snocq shackle-rules
+  (-snocq display-buffer-alist
           '("\\*Org Select\\*"
-             :select t
-             :align below
-             :size 0.4
-             :other t
-             :popup t
-             :regexp t)))
+            (display-buffer-reuse-window
+             display-buffer-below-selected)
+            (window-parameters (mode-line-format . none)))))
 
 (use-package org-clock
   :ensure org

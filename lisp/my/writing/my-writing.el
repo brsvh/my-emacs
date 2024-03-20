@@ -80,16 +80,15 @@
 
   (pdf-tools-install)
 
-  (-snocq shackle-rules
-          '("^\\*Outline*" :select nil :align right :size 0.4 :regexp t)))
+  (-snocq popper-reference-buffers "^\\*Outline*"))
 
 (use-package pdf-annot
   :ensure pdf-tools
   :pin nongnu
   :config
-  (-snocq shackle-rules
-          '("\\(?:^\\*Contents\\|'s annots\\*$\\)" :select t :align below :size 0.4 :other t :popup t :regexp t)
-          '("^\\*Edit Annotation "                 :select t :inhibit-window-quit t :regexp t)))
+  (-snocq popper-reference-buffers
+          "\\(?:^\\*Contents\\|'s annots\\*$\\)"
+          "^\\*Edit Annotation "))
 
 (use-my writing-markdown)
 
