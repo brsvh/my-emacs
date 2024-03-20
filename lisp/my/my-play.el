@@ -47,6 +47,8 @@
 
 (use-my ui)
 
+(use-my workspace)
+
 (use-my lib
   :config
   (my-load-local-file))
