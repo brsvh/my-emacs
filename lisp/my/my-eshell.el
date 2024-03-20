@@ -31,6 +31,12 @@
 
 (use-my lib)
 
+(use-package eshell
+  :preface
+  (-snocq popper-reference-buffers
+          "^\\*eshell.*\\*$"
+          'eshell-mode))
+
 (use-package eshell-toggle
   :vc (:url "https://github.com/brsvh/eshell-toggle.git")
   :demand t

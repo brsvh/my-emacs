@@ -110,9 +110,9 @@
   :pin gnu
   :demand t
   :keymap-set
-  ("C-`"   . popper-toggle)
-  ("C-~"   . popper-cycle)
-  ("C-M-`" . popper-toggle-type)
+  ("C-`" . popper-toggle)
+  ("C-~" . popper-cycle)
+  ("M-P" . popper-toggle-type)
   :config
   (-snocq popper-reference-buffers
           "\\*Backtrace\\*"
