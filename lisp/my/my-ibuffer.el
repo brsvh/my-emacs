@@ -33,7 +33,11 @@
 
 (use-package ibuffer
   :keymap-set
-  ("<remap> <list-buffers>" . ibuffer))
+  ("<remap> <list-buffers>" . ibuffer)
+  :config
+  (with-eval-after-load 'winner
+    (-snocq winner-boring-buffers
+            "*Ibuffer*")))
 
 (use-package nerd-icons-ibuffer
   :vc (:url "https://github.com/seagle0128/nerd-icons-ibuffer.git")
@@ -42,7 +46,7 @@
         nerd-icons-ibuffer-color-icon t
         nerd-icons-ibuffer-icon-size 1.0
         nerd-icons-ibuffer-human-readable-size t)
- 
+
   :hook
   (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
 

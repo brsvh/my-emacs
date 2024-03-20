@@ -81,7 +81,21 @@
   (setq inhibit-startup-screen t
         inhibit-startup-echo-area-message t
         initial-scratch-message nil
-        initial-major-mode 'fundamental-mode))
+    initial-major-mode 'fundamental-mode))
+
+(use-package winner
+  :keymap-set
+  (:ctl-c-map
+   ("<left>" . winner-undo)
+   ("<right>" . winner-undo))
+  :config
+  (-snocq winner-boring-buffers
+          "*Backtrace*"
+          "*Compile-Log*"
+          "*Help*"
+          "*Warnings*")
+  :hook
+  (on-init-ui-hook . winner-mode))
 
 (use-package popper
   :ensure popper
@@ -333,6 +347,11 @@
   :config
   (-snocq popper-reference-buffers
           "\\`\\*Embark Collect \\(Live\\|Completions\\)\\*")
+
+  (with-eval-after-load 'winner
+    (-snocq winner-boring-buffers
+            "*Embark Collect Live*"
+            "*Embark Collect Compiletions*"))
 
   (setq embark-verbose-indicator-display-action
         '(display-buffer-reuse-window display-buffer-below-selected)))
