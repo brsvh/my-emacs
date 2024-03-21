@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(use-my lib)
+(require 'my-core)
 
 (use-package mwim
   :vc (:url "https://github.com/alezost/mwim.el.git")

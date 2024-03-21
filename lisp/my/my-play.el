@@ -29,9 +29,7 @@
 
 ;;; Code:
 
-(require 'my-prelude)
-
-(use-my core)
+(require 'my-core)
 
 (use-my mule)
 

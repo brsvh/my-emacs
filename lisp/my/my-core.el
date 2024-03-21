@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'my-prelude)
+
 (use-my lib
   :config
   (defvaralias 'ctl-c-map 'my-ctl-c-map)

@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(use-my lib)
+(require 'my-core)
 
 (provide 'my-postlude)
 ;;; my-postlude.el ends here
