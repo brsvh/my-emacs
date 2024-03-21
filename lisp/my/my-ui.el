@@ -114,10 +114,10 @@
 
   (defun my-popper-fit-window-height (win)
     "Determine the height of WIN by fitting it to the buffer's content."
-    (fit-window-to-buffer)
-    win
-    (floor (frame-height) 3)
-    (floor (frame-height) 3))
+    (fit-window-to-buffer
+      win
+     (floor (frame-height) 3)
+     (floor (frame-height) 3)))
 
   (setq popper-window-height #'my-popper-fit-window-height)
 

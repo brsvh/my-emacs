@@ -47,24 +47,23 @@
 
   (setq tabspaces-session-auto-restore t)
 
-  (with-eval-after-load 'consult
-    (consult-customize consult--source-buffer :hidden t :default nil)
+  (consult-customize consult--source-buffer :hidden t :default nil)
 
-    (defvar consult--source-workspace
-      (list :name     "Workspace Buffer"
-            :narrow   ?w
-            :history  'buffer-name-history
-            :category 'buffer
-            :state    #'consult--buffer-state
-            :default  t
-            :items    (lambda ()
-                        (consult--buffer-query
-                         :predicate #'tabspaces--local-buffer-p
-                         :sort 'visibility
-                         :as #'buffer-name)))
-      "Set workspace buffer list for consult-buffer.")
+  (defvar consult--source-workspace
+    (list :name     "Workspace Buffer"
+          :narrow   ?w
+          :history  'buffer-name-history
+          :category 'buffer
+          :state    #'consult--buffer-state
+          :default  t
+          :items    (lambda ()
+                      (consult--buffer-query
+                       :predicate #'tabspaces--local-buffer-p
+                       :sort 'visibility
+                       :as #'buffer-name)))
+    "Set workspace buffer list for consult-buffer.")
 
-    (add-to-list 'consult-buffer-sources 'consult--source-workspace t))
+  (add-to-list 'consult-buffer-sources 'consult--source-workspace t)
   :hook
   (on-init-ui-hook . tabspaces-mode))
 
