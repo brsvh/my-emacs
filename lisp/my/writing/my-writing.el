@@ -64,7 +64,6 @@
 
 (use-package pdf-view
   :ensure pdf-tools
-  :pin nongnu
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :config
@@ -84,7 +83,6 @@
 
 (use-package pdf-annot
   :ensure pdf-tools
-  :pin nongnu
   :config
   (-snocq popper-reference-buffers
           "\\(?:^\\*Contents\\|'s annots\\*$\\)"

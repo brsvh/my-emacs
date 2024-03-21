@@ -70,7 +70,7 @@
   (require 'use-package-keymap)
 
   (setq use-package-always-defer t)
-  
+
   (setq use-package-hook-name-suffix nil))
 
 (use-package emacs
@@ -91,8 +91,15 @@
 (use-package package
   :init
   (setq package-user-dir my-elpa-directory
-        package-quickstart-file
-        (my-path my-elpa-directory "autoloads.el")))
+        package-quickstart-file (my-path my-elpa-directory "autoloads.el"))
+  :config
+  (add-to-list 'package-archives
+               '("gnu-devel" . "https://elpa.gnu.org/devel/")
+               'append)
+
+  (add-to-list 'package-archives
+               '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/")
+               'append))
 
 (provide 'my-prelude)
 ;;; my-prelude.el ends here

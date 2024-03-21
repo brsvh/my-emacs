@@ -50,7 +50,6 @@
 
 (use-package smartparens-mode
   :ensure smartparens
-  :pin nongnu
   :after prog-mode
   :config
   (require 'smartparens-config)
@@ -65,7 +64,6 @@
 
 (use-package rainbow-delimiters
   :ensure rainbow-delimiters
-  :pin nongnu
   :hook
   (prog-mode-hook . rainbow-delimiters-mode))
 
@@ -76,7 +74,6 @@
 
 (use-package company
   :ensure company
-  :pin gnu
   :config
   (-snocq company-backends '(company-capf :with company-yasnippet))
   :hook
@@ -84,25 +81,21 @@
 
 (use-package yasnippet
   :ensure yasnippet
-  :pin gnu
   :hook
   (prog-mode-hook . yas-minor-mode))
 
 (use-package eglot
   :ensure eglot
-  :pin gnu
   :commands
   (eglot eglot-ensure))
 
 (use-package flymake
   :ensure flymake
-  :pin gnu
   :config
   (keymap-set flymake-mode-map "C-c C-!" 'consult-flymake))
 
 (use-package flymake-popon
   :ensure flymake-popon
-  :pin nongnu
   :hook
   (flymake-mode-hook . flymake-popon-mode))
 

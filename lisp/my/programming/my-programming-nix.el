@@ -38,7 +38,6 @@
 
 (use-package nix-mode
   :ensure nix-mode
-  :pin nongnu
   :config
   (add-hook 'nix-mode-hook #'my-nix-format-on-save-mode)
   :mode

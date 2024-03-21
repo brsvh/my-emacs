@@ -31,7 +31,6 @@
 
 (use-package markdown-mode
   :ensure markdown-mode
-  :pin nongnu
   :mode
   ("\\.markdown\\'" . markdown-mode)
   ("\\.md\\'" . markdown-mode)
@@ -43,8 +42,7 @@
   (setq markdown-command "multimarkdown"))
 
 (use-package edit-indirect
-  :ensure edit-indirect
-  :pin nongnu)
+  :ensure edit-indirect)
 
 (use-package valign
   :after markdown-mode

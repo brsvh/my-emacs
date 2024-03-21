@@ -31,7 +31,6 @@
 
 (use-package tex
   :ensure auctex
-  :pin gnu
   :init
   (setq TeX-auto-local ".auctex-auto"
         TeX-auto-save t
@@ -54,13 +53,11 @@
 
 (use-package latex
   :ensure auctex
-  :pin gnu
   :mode
   ("\\.tex\\'" . LaTeX-mode))
 
 (use-package cdlatex
   :ensure cdlatex
-  :pin nongnu
   :config
   (setq cdlatex-use-dollar-to-ensure-math nil))
 

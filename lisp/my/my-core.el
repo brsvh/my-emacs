@@ -92,7 +92,6 @@
 
 (use-package gcmh
   :ensure gcmh
-  :pin gnu
   :hook
   (my-init-hook . gcmh-mode))
 
@@ -117,12 +116,10 @@
 
 (use-package consult
   :ensure consult
-  :pin gnu
   :demand t)
 
 (use-package dash
   :ensure dash
-  :pin gnu
   :demand t)
 
 (use-package dash+
@@ -142,12 +139,10 @@
 
 (use-package orderless
   :ensure orderless
-  :pin gnu
   :demand t)
 
 (use-package persist
   :ensure persist
-  :pin gnu
   :config
   (setq persist--directory-location (my-state-path "persist")))
 

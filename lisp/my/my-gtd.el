@@ -33,7 +33,6 @@
 
 (use-package org
   :ensure org
-  :pin gnu
   :config
   (-snocq org-agenda-files "inbox.org" "agenda.org"))
 

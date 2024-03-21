@@ -31,16 +31,17 @@
 
 (require 'my-core)
 
+;; Appearance:
+
 (use-package org
   :ensure org
-  :pin gnu
   :config
   (setq org-directory (my-path* "~/org"))
 
   (setq org-auto-align-tags nil
         org-hide-emphasis-markers nil
         org-pretty-entities t
-        org-special-ctrl-a/e t
+       > org-special-ctrl-a/e t
         org-startup-with-inline-images t
         org-tags-column 0)
 
@@ -54,39 +55,33 @@
 
 (use-package org-clock
   :ensure org
-  :pin gnu
   :config
   (setq org-clock-persist-file (my-data-path* "org/"
                                               "clock-presist.el")))
 
 (use-package org-id
   :ensure org
-  :pin gnu
   :config
   (setq org-id-locations-file (my-data-path* "org/" "id-locations.el")))
 
 (use-package org-persist
   :ensure org
-  :pin gnu
   :config
   (setq org-persist-directory (my-data-path* "org/" "persist/")))
 
 (use-package org-registry
   :ensure org-contrib
-  :pin nongnu
   :config
   (setq org-registry-file (my-data-path* "org/"  "registry.el")))
 
 (use-package ox-publish
   :ensure org
-  :pin gnu
   :config
   (setq org-publish-timestamp-directory (my-data-path* "org/"
                                                        "timestamps/")))
 
 (use-package org-modern
   :ensure org-modern
-  :pin gnu
   :after org
   :config
   (setq org-modern-table nil)
@@ -107,6 +102,10 @@
   :hook
   (org-side-tree-mode-hook . org-indent-mode))
 
+
+
+;; Editing:
+
 (use-package elec-pair
   :after org
   :config
@@ -120,6 +119,12 @@
                     (cons ?* ?*))))
 
   (add-hook 'org-mode-hook #'my--electric-pairs-for-org-mode))
+
+
+
+;; Org Roam:
+
+
 
 (provide 'my-org)
 ;;; my-org.el ends here

@@ -99,7 +99,6 @@
 
 (use-package popper
   :ensure popper
-  :pin gnu
   :demand t
   :keymap-set
   ("C-`" . popper-toggle)
@@ -166,7 +165,6 @@
 
 (use-package modus-themes
   :ensure modus-themes
-  :pin gnu
   :config
   (setq modus-themes-custom-auto-reload t)
 
@@ -281,7 +279,6 @@
 
 (use-package vertico
   :ensure vertico
-  :pin gnu
   :config
   (setq vertico-resize t)
 
@@ -291,7 +288,6 @@
 
 (use-package vertico-directory
   :ensure vertico
-  :pin gnu
   :after vertico
   :keymap-set
   (:vertico-map
@@ -301,7 +297,6 @@
 
 (use-package vertico-mouse
   :ensure vertico
-  :pin gnu
   :after vertico
   :hook
   (vertico-mode-hook . vertico-mouse-mode))
@@ -361,7 +356,6 @@
 
 (use-package marginalia
   :ensure marginalia
-  :pin gnu
   :config
   (setq marginalia-align 'right)
   :hook
@@ -379,7 +373,6 @@
 
 (use-package embark
   :ensure embark
-  :pin gnu
   :keymap-set
   (("C-." . embark-act)
    ("C-;" . embark-dwim)
@@ -400,13 +393,11 @@
 
 (use-package embark-consult
   :ensure embark-consult
-  :pin gnu
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package activities
   :ensure activities
-  :pin gnu
   :preface
   (defvar ctl-x-ctl-a-map (make-keymap)
     "Default keymap for C-c commands.")
@@ -455,7 +446,6 @@
 
 (use-package anzu
   :ensure anzu
-  :pin nongnu
   :hook
   (on-first-buffer-hook . global-anzu-mode))
 
@@ -466,7 +456,6 @@
 
 (use-package rainbow-mode
   :ensure rainbow-mode
-  :pin gnu
   :hook
   (find-file-hook . rainbow-mode))
 

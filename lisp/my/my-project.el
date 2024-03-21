@@ -41,7 +41,6 @@
 
 (use-package projectile
   :ensure projectile
-  :pin nongnu
   :config
   (setq ctl-c-p-map (copy-keymap projectile-command-map))
   (keymap-set ctl-c-map "p" ctl-c-p-map)
@@ -54,7 +53,6 @@
 
 (use-package diff-hl
   :ensure diff-hl
-  :pin gnu
   :functions
   (diff-hl-magit-pre-refresh
    diff-hl-magit-post-refresh)
@@ -63,14 +61,12 @@
 
 (use-package diff-hl-flydiff
   :ensure diff-hl
-  :pin gnu
   :after diff-hl
   :hook
   (diff-hl-mode-hook . diff-hl-flydiff-mode))
 
 (use-package diff-hl-margin
   :ensure diff-hl
-  :pin gnu
   :after diff-hl
   :init
   (defun my--inhibit-diff-hl-margin-mode ()
@@ -89,7 +85,6 @@
 
 (use-package magit
   :ensure magit
-  :pin nongnu
   :init
   (setq-default magit-define-global-key-bindings nil)
   :keymap-set
@@ -101,20 +96,16 @@
   (magit-post-refresh-hook . diff-hl-magit-post-refresh))
 
 (use-package git-modes
-  :ensure git-modes
-  :pin gnu)
+  :ensure git-modes)
 
 (use-package gitattributes-mode
-  :ensure git-modes
-  :pin gnu)
+  :ensure git-modes)
 
 (use-package gitconfig-mode
-  :ensure git-modes
-  :pin gnu)
+  :ensure git-modes)
 
 (use-package gitignore-mode
-  :ensure git-modes
-  :pin gnu)
+  :ensure git-modes)
 
 
 

@@ -57,8 +57,7 @@
   ("<remap> <yank-pop>" . consult-yank-pop))
 
 (use-package multiple-cursors
-  :ensure multiple-cursors
-  :pin nongnu)
+  :ensure multiple-cursors)
 
 (use-package files
   :config
@@ -131,19 +130,16 @@
 
 (use-package company
   :ensure company
-  :pin gnu
   :config
   (keymap-set company-active-map "M-/" 'company-complete)
 
   (setq company-tooltip-align-annotations t))
 
 (use-package reformatter
-  :ensure reformatter
-  :pin nongnu)
+  :ensure reformatter)
 
 (use-package yasnippet
   :ensure yasnippet
-  :pin gnu
   :config
   (setq yas-snippet-dirs `(,(my-config-path "etc/" "snippets/")))
 
@@ -155,7 +151,6 @@
 
 (use-package yasnippet-snippets
   :ensure yasnippet-snippets
-  :pin nongnu
   :after yasnippet)
 
 (provide 'my-editor)
