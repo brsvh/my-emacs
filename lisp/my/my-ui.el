@@ -133,9 +133,8 @@
     (setq popper-mode-line
           '(:eval (let ((face (if (doom-modeline--active)
                                   'doom-modeline-emphasis
-                                'doom-modeline)))
-                    (if (and (icons-displayable-p)
-                             (bound-and-true-p doom-modeline-icon)
+                                'doom-modeline-bar)))
+                    (if (and (bound-and-true-p doom-modeline-icon)
                              (bound-and-true-p doom-modeline-mode))
                         (format " %s "
                                 (nerd-icons-octicon "nf-oct-pin" :face face))
@@ -253,6 +252,8 @@
 (use-package doom-modeline
   :vc (:url "https://github.com/seagle0128/doom-modeline.git")
   :config
+  (setq doom-modeline-bar-width 0)
+
   (setq doom-modeline-support-imenu t)
 
   (setq doom-modeline-window-width-limit 80)
