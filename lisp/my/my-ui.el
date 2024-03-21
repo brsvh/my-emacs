@@ -307,15 +307,57 @@
   (vertico-mode-hook . vertico-mouse-mode))
 
 (use-package minibuffer
-  :ensure orderless
-  :pin gnu
   :after vertico
   :config
+  (defun my--orderless-consult-suffix ()
+    "Regexp which matches the end of string with Consult tofu support."
+    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+        (format "[%c-%c]*$"
+                consult--tofu-char
+                (+ consult--tofu-char consult--tofu-range -1))
+      "$"))
+
+  ;; Recognizes the following patterns:
+  ;; * .ext (file extension)
+  ;; * regexp$ (regexp matching at end)
+  (defun my-orderless-consult-dispatch (word _index _total)
+    (cond
+     ;; Ensure that $ works with Consult commands, which add
+     ;; disambiguation suffixes.
+     ((string-suffix-p "$" word)
+      `(orderless-regexp
+        .
+        ,(concat (substring word 0 -1) (my--orderless-consult-suffix))))
+     ;; File extensions
+     ((and (or minibuffer-completing-file-name
+               (derived-mode-p 'eshell-mode))
+           (string-match-p "\\`\\.." word)
+       `(orderless-regexp . ,(concat "\\."
+                                     (substring word 1)
+                                     (my--orderless-consult-suffix)))))))
+
+  (orderless-define-completion-style my-orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp)))
+
   (setq completion-in-region-function #'consult-completion-in-region)
 
-  (setq completion-styles '(substring orderless basic partial-completion)
-        completion-category-overrides
-        '((file (styles basic partial-completion)))))
+  (setq completion-styles
+        '(substring orderless basic partial-completion))
+
+  (setq completion-category-overrides
+        '((file (styles basic partial-completion))
+          (command (styles my-orderless-with-initialism))
+          (variable (styles my-orderless-with-initialism))
+          (symbol (styles my-orderless-with-initialism))))
+
+  (setq orderless-component-separator
+        #'orderless-escapable-split-on-space)
+
+  (setq orderless-style-dispatchers
+        '(my-orderless-consult-dispatch
+          orderless-affix-dispatch)))
 
 (use-package marginalia
   :ensure marginalia

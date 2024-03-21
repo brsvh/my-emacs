@@ -138,6 +138,11 @@
   :vc (:url "https://gitlab.com/ajgrf/on.el.git")
   :demand t)
 
+(use-package orderless
+  :ensure orderless
+  :pin gnu
+  :demand t)
+
 (use-package persist
   :ensure persist
   :pin gnu
