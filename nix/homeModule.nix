@@ -162,6 +162,12 @@ in
         file = listToAttrs (
           [
             {
+              name = "${config.programs.my-emacs.directory}/.dir-locals.el";
+              value = {
+                source = ../.dir-locals.el;
+              };
+            }
+            {
               name = "${config.programs.my-emacs.directory}/early-init.el";
               value = {
                 source = ../lisp/early-init.el;
