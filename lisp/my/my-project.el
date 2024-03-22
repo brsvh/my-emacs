@@ -43,6 +43,10 @@
   :config
   (-snocq popper-reference-buffers "^.*\/\\*vc-dir\\*$"))
 
+(use-package vc-git
+  :config
+  (-snocq popper-reference-buffers "^\\*vc-git \: .*\\*$"))
+
 (use-package projectile
   :ensure projectile
   :config

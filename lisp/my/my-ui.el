@@ -101,6 +101,7 @@
   (-snocq winner-boring-buffers
           "*Backtrace*"
           "*Compile-Log*"
+          "*Error*"
           "*Help*"
           "*Warnings*")
   :hook
@@ -117,6 +118,7 @@
   (-snocq popper-reference-buffers
           "\\*Backtrace\\*"
           "\\*Compile-Log\\*"
+          "\\*Error\\*"
           "\\*Help\\*"
           "\\*Warnings\\*")
 
@@ -167,7 +169,7 @@
   (setq tab-bar-show 1
         tab-bar-new-tab-choice "*scratch*")
   :hook
-  (my-init-hook . tab-bar-mode))
+  (on-init-ui-hook . tab-bar-mode))
 
 
 
@@ -314,7 +316,6 @@
   (vertico-mode-hook . vertico-mouse-mode))
 
 (use-package minibuffer
-  :after vertico
   :config
   (defun my--orderless-consult-suffix ()
     "Regexp which matches the end of string with Consult tofu support."
