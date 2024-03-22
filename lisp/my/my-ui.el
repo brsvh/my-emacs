@@ -81,7 +81,13 @@
   (setq inhibit-startup-screen t
         inhibit-startup-echo-area-message t
         initial-scratch-message nil
-    initial-major-mode 'fundamental-mode))
+        initial-major-mode 'fundamental-mode))
+
+(use-package window
+  :keymap-set
+  ("<remap> <switch-to-buffer>" . consult-buffer)
+  ("<remap> <switch-to-buffer-other-window>" . consult-buffer-other-window)
+  ("<remap> <switch-to-buffer-other-frame>" . consult-buffer-other-frame))
 
 (use-package winner
   :keymap-set
@@ -152,6 +158,8 @@
   ("<remap> <split-window-right>" . switch-window-then-split-right))
 
 (use-package tab-bar
+  :keymap-set
+  ("<remap> <switch-to-buffer-other-tab>" . consult-buffer-other-tab)
   :config
   (setq tab-bar-show 1
         tab-bar-new-tab-choice "*scratch*")

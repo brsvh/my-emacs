@@ -34,7 +34,7 @@
 (use-package tabspaces
   :vc (:url "https://github.com/mclear-tools/tabspaces.git")
   :config
-  (setq tabspaces-use-filtered-buffers-as-default t)
+  (setq tabspaces-use-filtered-buffers-as-default nil)
 
   (setq tabspaces-default-tab "Default")
 
@@ -46,8 +46,6 @@
         tabspaces-session-file (my-state-path* "tabspaces/sessons.eld"))
 
   (setq tabspaces-session-auto-restore t)
-
-  (consult-customize consult--source-buffer :hidden t :default nil)
 
   (defvar consult--source-workspace
     (list :name     "Workspace Buffer"
@@ -63,9 +61,27 @@
                        :as #'buffer-name)))
     "Set workspace buffer list for consult-buffer.")
 
-  (add-to-list 'consult-buffer-sources 'consult--source-workspace t)
-  :hook
-  (on-init-ui-hook . tabspaces-mode))
+  (defun my--consult-tabspaces ()
+    "Deactivate isolated buffers when not using tabspaces."
+    (require 'consult)
+    (cond (tabspaces-mode
+           (consult-customize consult--source-buffer
+                              :hidden t
+                              :default nil)
+           (add-to-list 'consult-buffer-sources
+                        'consult--source-workspace))
+          (t
+           (consult-customize consult--source-buffer
+                              :hidden nil
+                              :default t)
+           (setq consult-buffer-sources
+                 (remove #'consult--source-workspace
+                         consult-buffer-sources)))))
+
+  (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces)
+
+ :hook
+ (on-init-ui-hook . tabspaces-mode))
 
 (provide 'my-workspace)
 ;;; my-workspace.el ends here
