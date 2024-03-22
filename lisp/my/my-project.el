@@ -39,6 +39,10 @@
   :config
   (setq project-list-file (my-state-path "projects.el")))
 
+(use-package vc-dir
+  :config
+  (-snocq popper-reference-buffers "^.*\/\\*vc-dir\\*$"))
+
 (use-package projectile
   :ensure projectile
   :config
