@@ -75,6 +75,7 @@
 
 (use-package dired-git-info
   :ensure dired-git-info
+  :after dired
   :keymap-set
   (:dired-mode-map
    (")" . dired-git-info-mode)))
