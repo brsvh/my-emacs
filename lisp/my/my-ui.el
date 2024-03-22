@@ -39,7 +39,8 @@
   (on-init-ui-hook . my-theme-setup))
 
 (use-package nerd-icons
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el.git"))
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el.git")
+  :demand t)
 
 
 
@@ -68,7 +69,9 @@
 
   (setq history-delete-duplicates t)
 
-  (setq inhibit-compacting-font-caches t))
+  (setq inhibit-compacting-font-caches t)
+
+  (setq delete-by-moving-to-trash t))
 
 (use-package scroll-bar
   :when (display-graphic-p)

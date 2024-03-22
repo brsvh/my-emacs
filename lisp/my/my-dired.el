@@ -31,19 +31,59 @@
 
 (require 'my-core)
 
-(use-package dirvish
-  :vc (:url "https://github.com/alexluigit/dirvish.git")
-  :init
-  (eval-after-load 'dired
-    (dirvish-override-dired-mode))
+(use-package dired
   :config
-  (setq dirvish-cache-dir (my-cache-path* "dirvish/")
-        dirvish-hide-details nil
-        dirvish-attributes '(git-msg)))
+  (setq dired-dwim-target t)
 
-(use-package dirvish-vc
-  :vc (:url "https://github.com/alexluigit/dirvish.git"
-       :lisp-dir "extensions/"))
+  (setq dired-recursive-deletes 'always
+        dired-recursive-copies 'always)
+
+  (setq dired-listing-switches
+        (concat "-l "
+                "--almost-all "
+                "--human-readable "
+                "--group-directories-first "
+                "--no-group")))
+
+(use-package dired-aux
+  :after dired
+  :demand t)
+
+(use-package dired-x
+  :after dired
+  :config
+  (let ((call (cond ((my-os-is linux) "xdg-open")
+                    (t ""))))
+    (setq dired-guess-shell-alist-user
+          `(("\\.\\(?:djvu\\|eps\\)\\'" ,call)
+            ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" ,call)
+            ("\\.\\(?:mp3\\|flac\\)\\'" ,call)
+            ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,call)
+            ("\\.\\(?:xcf\\)\\'" ,call)
+            ("\\.csv\\'" ,call)
+            ("\\.docx\\'" ,call)
+            ("\\.html?\\'" ,call)
+            ("\\.md\\'" ,call)
+            ("\\.tex\\'" ,call)
+            ("\\.pdf\\'" ,call))))
+  :demand t)
+
+(use-package diredfl
+  :vc (:url "https://github.com/purcell/diredfl.git")
+  :hook
+  (dired-mode-hook . diredfl-mode))
+
+(use-package dired-git-info
+  :ensure dired-git-info
+  :keymap-set
+  (:dired-mode-map
+   (")" . dired-git-info-mode)))
+
+(use-package nerd-icons-dired
+  :when (display-graphic-p)
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons-dired.git")
+  :hook
+  (dired-mode-hook . nerd-icons-dired-mode))
 
 (provide 'my-dired)
 ;;; my-dired.el ends here

@@ -133,6 +133,9 @@
   :vc (:url "https://github.com/rejeep/f.el.git")
   :demand t)
 
+(use-package gnu-elpa-keyring-update
+  :ensure gnu-elpa-keyring-update)
+
 (use-package on
   :vc (:url "https://gitlab.com/ajgrf/on.el.git")
   :demand t)
