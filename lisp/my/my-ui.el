@@ -409,28 +409,6 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package activities
-  :ensure activities
-  :preface
-  (defvar ctl-x-ctl-a-map (make-keymap)
-    "Default keymap for C-c commands.")
-
-  (keymap-set ctl-x-map "C-a" ctl-x-ctl-a-map)
-  :keymap-set
-  (:ctl-x-ctl-a-map
-   ("C-a" . activities-resume)
-   ("C-d" . activities-discard)
-   ("C-k" . activities-kill)
-   ("C-n" . activities-new)
-   ("C-s" . activities-suspend)
-   ("RET" . activities-switch)
-   ("b" . activities-switch-buffer)
-   ("g" . activities-revert)
-   ("l" . activities-list))
-  :hook
-  (on-init-ui-hook . activities-mode)
-  (on-init-ui-hook . activities-tabs-mode))
-
 (use-package frameshot
   :vc (:url "https://github.com/tarsius/frameshot.git")
   :keymap-set

@@ -31,6 +31,32 @@
 
 (use-my lib)
 
+(use-package activities
+  :ensure activities
+  :preface
+  (defvar ctl-x-ctl-a-map (make-keymap)
+    "Default keymap for C-c commands.")
+
+  (keymap-set ctl-x-map "C-a" ctl-x-ctl-a-map)
+  :keymap-set
+  (:ctl-x-ctl-a-map
+   ("C-a" . activities-resume)
+   ("C-d" . activities-discard)
+   ("C-k" . activities-kill)
+   ("C-n" . activities-new)
+   ("C-s" . activities-suspend)
+   ("RET" . activities-switch)
+   ("b" . activities-switch-buffer)
+   ("g" . activities-revert)
+   ("l" . activities-list))
+  :config
+  (-snocq popper-reference-buffers
+          "\\*Activities\\*")
+
+  (with-eval-after-load 'tab-bar
+    (activities-mode +1)
+    (activities-tabs-mode +1)))
+
 (use-package tabspaces
   :vc (:url "https://github.com/mclear-tools/tabspaces.git")
   :config
@@ -80,8 +106,8 @@
 
   (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces)
 
- :hook
- (on-init-ui-hook . tabspaces-mode))
+  (with-eval-after-load 'tab-bar
+    (tabspaces-mode +1)))
 
 (provide 'my-workspace)
 ;;; my-workspace.el ends here
