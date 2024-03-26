@@ -44,7 +44,7 @@
   :config
   (-snocq popper-reference-buffers
           "^\\*TeX \\(?:Help\\|errors\\)"
-          " output\\*$")
+          "^\\*.* output\\*$")
 
   (setq TeX-master t)
 

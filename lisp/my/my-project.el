@@ -41,7 +41,9 @@
 
 (use-package vc-dir
   :config
-  (-snocq popper-reference-buffers "^.*\/\\*vc-dir\\*$"))
+  (-snocq popper-reference-buffers
+          "\\*vc-dir\\*"
+          "^.*\/\\*vc-dir\\*$"))
 
 (use-package vc-git
   :config

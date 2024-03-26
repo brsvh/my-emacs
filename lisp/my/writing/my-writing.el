@@ -52,6 +52,11 @@
   (outline-mode-hook . electric-pair-local-mode)
   (text-mode-hook . electric-pair-local-mode))
 
+(use-package replace
+  :config
+  (-snocq popper-reference-buffers
+          "\\*Occur\\*"))
+
 (use-package pangu-spacing
   :vc (:url "https://github.com/coldnew/pangu-spacing.git")
   :config
