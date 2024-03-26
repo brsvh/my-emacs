@@ -1,0 +1,6 @@
+#+startup: noindent fnadjust
+
+#+title: Project TODO
+#+author: Burgess Chang
+#+maintainer: Burgess Chang
+#+email: (concat "bsc" at-sign "brsvh" dot "org")

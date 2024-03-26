@@ -129,6 +129,12 @@
   :vc (:url "https://github.com/radian-software/el-patch.git")
   :demand t)
 
+(use-package emacsql
+  :vc (:url "https://github.com/magit/emacsql.git"))
+
+(use-package emacsql-sqlite
+  :vc (:url "https://github.com/magit/emacsql.git"))
+
 (use-package f
   :vc (:url "https://github.com/rejeep/f.el.git")
   :demand t)

@@ -124,7 +124,10 @@
 
 ;; Org Roam:
 
-
+(use-package org-roam
+  :vc (:url "https://github.com/org-roam/org-roam.git")
+  :config
+  (setq org-roam-directory (my-path* org-directory "roam/")))
 
 (provide 'my-org)
 ;;; my-org.el ends here
