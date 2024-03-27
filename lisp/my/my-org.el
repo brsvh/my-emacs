@@ -41,7 +41,7 @@
   (setq org-auto-align-tags nil
         org-hide-emphasis-markers nil
         org-pretty-entities t
-       > org-special-ctrl-a/e t
+        org-special-ctrl-a/e t
         org-startup-with-inline-images t
         org-tags-column 0)
 

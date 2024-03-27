@@ -90,7 +90,7 @@ let
       (setq parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/"
             parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
             parinfer-rust-auto-download nil)
-    	(require 'parinfer-rust parinfer-rust-library 'noerror))
+    	      (require 'parinfer-rust parinfer-rust-library 'noerror))
 
     ${config.programs.my-emacs.localConfig}
 
