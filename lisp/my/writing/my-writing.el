@@ -53,7 +53,7 @@
   (text-mode-hook . electric-pair-local-mode))
 
 (use-package replace
-  :config
+  :preface
   (-snocq popper-reference-buffers
           "\\*Occur\\*"))
 
@@ -71,6 +71,8 @@
   :ensure pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
+  :preface
+  (-snocq popper-reference-buffers "^\\*Outline*")
   :config
   (define-advice pdf-view-mode
     (:around (func &rest args) ensure-epdfinfo)
@@ -82,13 +84,11 @@
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (pdf-tools-install)
-
-  (-snocq popper-reference-buffers "^\\*Outline*"))
+  (pdf-tools-install))
 
 (use-package pdf-annot
   :ensure pdf-tools
-  :config
+  :preface
   (-snocq popper-reference-buffers
           "\\(?:^\\*Contents\\|'s annots\\*$\\)"
           "^\\*Edit Annotation "))

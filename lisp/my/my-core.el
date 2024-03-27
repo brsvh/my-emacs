@@ -130,10 +130,11 @@
   :demand t)
 
 (use-package emacsql
-  :vc (:url "https://github.com/magit/emacsql.git"))
+  :vc (:url "https://github.com/magit/emacsql.git")
+  :demand t)
 
 (use-package emacsql-sqlite
-  :vc (:url "https://github.com/magit/emacsql.git"))
+  :demand t)
 
 (use-package f
   :vc (:url "https://github.com/rejeep/f.el.git")
@@ -154,6 +155,10 @@
   :ensure persist
   :config
   (setq persist--directory-location (my-state-path "persist")))
+
+(use-package popper
+  :ensure popper
+  :demand t)
 
 (use-package promise
   :vc (:url "https://github.com/chuntaro/emacs-promise.git"))

@@ -38,6 +38,10 @@
     "Default keymap for C-c commands.")
 
   (keymap-set ctl-x-map "C-a" ctl-x-ctl-a-map)
+  :after tab-bar
+  :preface
+  (-snocq popper-reference-buffers
+          "\\*Activities\\*")
   :keymap-set
   (:ctl-x-ctl-a-map
    ("C-a" . activities-resume)
@@ -49,16 +53,13 @@
    ("b" . activities-switch-buffer)
    ("g" . activities-revert)
    ("l" . activities-list))
-  :config
-  (-snocq popper-reference-buffers
-          "\\*Activities\\*")
-
-  (with-eval-after-load 'tab-bar
-    (activities-mode +1)
-    (activities-tabs-mode +1)))
+  :hook
+  (tab-bar-mode-hook . activities-mode)
+  (tab-bar-mode-hook . activities-tabs-mode))
 
 (use-package tabspaces
   :vc (:url "https://github.com/mclear-tools/tabspaces.git")
+  :after tab-bar
   :config
   (setq tabspaces-use-filtered-buffers-as-default nil)
 
@@ -106,8 +107,8 @@
 
   (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces)
 
-  (with-eval-after-load 'tab-bar
-    (tabspaces-mode +1)))
+  :hook
+  (tab-bar-mode-hook . tabspaces-mode))
 
 (provide 'my-workspace)
 ;;; my-workspace.el ends here

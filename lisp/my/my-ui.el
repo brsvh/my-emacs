@@ -93,23 +93,22 @@
   ("<remap> <switch-to-buffer-other-frame>" . consult-buffer-other-frame))
 
 (use-package winner
-  :keymap-set
-  (:ctl-c-map
-   ("<left>" . winner-undo)
-   ("<right>" . winner-undo))
-  :config
+  :preface
   (-snocq winner-boring-buffers
           "*Backtrace*"
           "*Compile-Log*"
           "*Error*"
           "*Help*"
           "*Warnings*")
+  :keymap-set
+  (:ctl-c-map
+   ("<left>" . winner-undo)
+   ("<right>" . winner-undo))
   :hook
-  (on-init-ui-hook . winner-mode))
+  (on-init-ui-hook . winner-mode)
+  :demand t)
 
 (use-package popper
-  :ensure popper
-  :demand t
   :keymap-set
   ("C-`" . popper-toggle)
   ("C-~" . popper-cycle)
@@ -144,7 +143,7 @@
     (setq popper-mode-line
           '(:eval (let ((face (if (doom-modeline--active)
                                   'doom-modeline-emphasis
-                                'doom-modeline-bar)))
+                                'mode-line-inactive)))
                     (if (and (bound-and-true-p doom-modeline-icon)
                              (bound-and-true-p doom-modeline-mode))
                         (format " %s "
@@ -386,6 +385,13 @@
 
 (use-package embark
   :ensure embark
+  :preface
+  (-snocq popper-reference-buffers
+        "\\`\\*Embark Collect \\(Live\\|Completions\\)\\*")
+
+  (-snocq winner-boring-buffers
+          "*Embark Collect Live*"
+          "*Embark Collect Compiletions*")
   :keymap-set
   (("C-." . embark-act)
    ("C-;" . embark-dwim)
@@ -393,14 +399,6 @@
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
-  (-snocq popper-reference-buffers
-          "\\`\\*Embark Collect \\(Live\\|Completions\\)\\*")
-
-  (with-eval-after-load 'winner
-    (-snocq winner-boring-buffers
-            "*Embark Collect Live*"
-            "*Embark Collect Compiletions*"))
-
   (setq embark-verbose-indicator-display-action
         '(display-buffer-reuse-window display-buffer-below-selected)))
 

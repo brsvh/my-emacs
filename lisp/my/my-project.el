@@ -40,13 +40,12 @@
   (setq project-list-file (my-state-path "projects.el")))
 
 (use-package vc-dir
-  :config
+  :preface
   (-snocq popper-reference-buffers
-          "\\*vc-dir\\*"
-          "^.*\/\\*vc-dir\\*$"))
+          'vc-dir-mode))
 
 (use-package vc-git
-  :config
+  :preface
   (-snocq popper-reference-buffers "^\\*vc-git \: .*\\*$"))
 
 (use-package projectile

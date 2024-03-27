@@ -34,12 +34,13 @@
   (emacs-lisp-mode-hook . flymake-mode))
 
 (use-package pp
+  :preface
+  (-snocq popper-reference-buffers
+          "\\*Pp Macroexpand Output\\*")
   :keymap-set
   (:emacs-lisp-mode-map
-    ("C-c C-v" . pp-macroexpand-last-sexp))
-  :config
-  (-snocq popper-reference-buffers
-          "\\*Pp Macroexpand Output\\*"))
+    ("C-c C-v" . pp-macroexpand-last-sexp)))
+
 
 (provide 'my-programming-emacs-lisp)
 ;;; my-programming-emacs-lisp.el ends here
