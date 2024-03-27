@@ -33,13 +33,13 @@
 
 (use-package activities
   :ensure activities
+  :defer nil
   :preface
   (defvar ctl-x-ctl-a-map (make-keymap)
     "Default keymap for C-c commands.")
 
   (keymap-set ctl-x-map "C-a" ctl-x-ctl-a-map)
-  :after tab-bar
-  :preface
+
   (-snocq popper-reference-buffers
           "\\*Activities\\*")
   :keymap-set
@@ -53,13 +53,18 @@
    ("b" . activities-switch-buffer)
    ("g" . activities-revert)
    ("l" . activities-list))
-  :hook
-  (tab-bar-mode-hook . activities-mode)
-  (tab-bar-mode-hook . activities-tabs-mode))
+  :init
+  (with-eval-after-load 'tab-bar
+    (activities-mode +1)
+    (activities-tabs-mode +1)))
+
 
 (use-package tabspaces
   :vc (:url "https://github.com/mclear-tools/tabspaces.git")
-  :after tab-bar
+  :defer nil
+  :init
+  (with-eval-after-load 'tab-bar
+    (tabspaces-mode +1))
   :config
   (setq tabspaces-use-filtered-buffers-as-default nil)
 
@@ -105,10 +110,7 @@
                  (remove #'consult--source-workspace
                          consult-buffer-sources)))))
 
-  (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces)
-
-  :hook
-  (tab-bar-mode-hook . tabspaces-mode))
+  (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces))
 
 (provide 'my-workspace)
 ;;; my-workspace.el ends here

@@ -93,20 +93,19 @@
   ("<remap> <switch-to-buffer-other-frame>" . consult-buffer-other-frame))
 
 (use-package winner
-  :preface
+  :keymap-set
+  (:ctl-c-map
+   ("<left>" . winner-undo)
+   ("<right>" . winner-undo))
+  :config
   (-snocq winner-boring-buffers
           "*Backtrace*"
           "*Compile-Log*"
           "*Error*"
           "*Help*"
           "*Warnings*")
-  :keymap-set
-  (:ctl-c-map
-   ("<left>" . winner-undo)
-   ("<right>" . winner-undo))
   :hook
-  (on-init-ui-hook . winner-mode)
-  :demand t)
+  (on-init-ui-hook . winner-mode))
 
 (use-package popper
   :keymap-set
@@ -388,10 +387,6 @@
   :preface
   (-snocq popper-reference-buffers
         "\\`\\*Embark Collect \\(Live\\|Completions\\)\\*")
-
-  (-snocq winner-boring-buffers
-          "*Embark Collect Live*"
-          "*Embark Collect Compiletions*")
   :keymap-set
   (("C-." . embark-act)
    ("C-;" . embark-dwim)
@@ -400,7 +395,12 @@
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
   (setq embark-verbose-indicator-display-action
-        '(display-buffer-reuse-window display-buffer-below-selected)))
+        '(display-buffer-reuse-window display-buffer-below-selected))
+
+  (with-eval-after-load 'winner
+    (-snocq winner-boring-buffers
+            "*Embark Collect Live*"
+            "*Embark Collect Compiletions*")))
 
 (use-package embark-consult
   :ensure embark-consult

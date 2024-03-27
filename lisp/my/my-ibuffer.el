@@ -32,11 +32,12 @@
 (use-my lib)
 
 (use-package ibuffer
-  :preface
-  (-snocq winner-boring-buffers
-          "*Ibuffer*")
   :keymap-set
-  ("<remap> <list-buffers>" . ibuffer))
+  ("<remap> <list-buffers>" . ibuffer)
+  :config
+  (with-eval-after-load 'winner
+    (-snocq winner-boring-buffers
+            "*Ibuffer*")))
 
 (use-package nerd-icons-ibuffer
   :vc (:url "https://github.com/seagle0128/nerd-icons-ibuffer.git")
