@@ -131,20 +131,19 @@
         "type": "github"
       }
     },
-    "nix-straight": {
-      "flake": false,
+    "nix-filter": {
       "locked": {
-        "lastModified": 1694361489,
-        "narHash": "sha256-kjDp+j6OtrmqbtjQB5uuOtjS08+kgJQuxFqhWE1Y9Rw=",
-        "owner": "nix-community",
-        "repo": "nix-straight.el",
-        "rev": "748be99b84be0b130e946288099806a0f16d6e57",
+        "lastModified": 1710156097,
+        "narHash": "sha256-1Wvk8UP7PXdf8bCCaEoMnOT1qe5/Duqgj+rL8sRQsSM=",
+        "owner": "numtide",
+        "repo": "nix-filter",
+        "rev": "3342559a24e85fc164b295c3444e8a139924675b",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
-        "ref": "master",
-        "repo": "nix-straight.el",
+        "owner": "numtide",
+        "ref": "main",
+        "repo": "nix-filter",
         "type": "github"
       }
     },
@@ -221,7 +220,7 @@
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",
         "gitignore": "gitignore",
-        "nix-straight": "nix-straight",
+        "nix-filter": "nix-filter",
         "nixpkgs": [
           "nixpkgs-unstable"
         ],

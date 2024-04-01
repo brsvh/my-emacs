@@ -1,4 +1,4 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-interlude.el --- Interlude of My Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -29,47 +29,7 @@
 
 ;;; Code:
 
-(require 'my-prelude)
+;; This file is fake, it will be override by `my-emacs' homeModules.
 
-(use-my core)
-
-(use-my mule)
-
-(use-my security)
-
-
-
-(use-my editor)
-
-(use-my project)
-
-(use-my org)
-
-(use-my ui)
-
-(use-my workspace)
-
-(use-my interlude)
-
-
-
-(use-my gtd)
-
-(use-my programming)
-
-(use-my writing)
-
-
-
-(use-my dired)
-
-(use-my eshell)
-
-(use-my ibuffer)
-
-
-
-(use-my postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-interlude)
+;;; my-interlude.el ends here

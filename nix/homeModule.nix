@@ -14,6 +14,9 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
+{ nix-filter
+, ...
+}:
 { config
 , lib
 , pkgs
@@ -24,8 +27,32 @@ with lib;
 let
   dependencies = import ./dependencies.nix pkgs;
 
-  localFile = pkgs.writeText "my-emacs-local-file" ''
-    ;;; local.el --- Local File -*- lexical-binding: t; -*-
+  etc-files = nix-filter {
+    root = ../etc;
+  };
+
+  lisp-files = nix-filter {
+    root = ../lisp;
+    exclude =
+      [
+        "my/"
+      ];
+  };
+
+  site-lisp-files = nix-filter {
+    root = ../site-lisp;
+  };
+
+  my = nix-filter {
+    root = ../lisp/my;
+    exclude =
+      [
+        "my-interlude.el"
+      ];
+  };
+
+  my-interlude = pkgs.writeText "my-emacs-interlude-file" ''
+    ;;; my-interlude.el --- Interlude of My Emacs -*- lexical-binding: t; -*-
 
     ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -94,7 +121,8 @@ let
 
     ${config.programs.my-emacs.localConfig}
 
-    ;;; local.el ends here
+    (provide 'my-interlude)
+    ;;; my-interlude.el ends here
   '';
 in
 {
@@ -113,7 +141,7 @@ in
         Relative path in string to user-emacs-directory from the
         home directory
       '';
-      default = ".config/emacs";
+      default = "${config.xdg.configHome}/emacs";
       example = ".emacs.d";
     };
 
@@ -162,52 +190,52 @@ in
         file = listToAttrs (
           [
             {
-              name = "${config.programs.my-emacs.directory}/.dir-locals.el";
-              value = {
-                source = ../.dir-locals.el;
-              };
-            }
-            {
               name = "${config.programs.my-emacs.directory}/early-init.el";
               value = {
-                source = ../lisp/early-init.el;
+                source = "${lisp-files}/early-init.el";
               };
             }
             {
               name = "${config.programs.my-emacs.directory}/etc";
               value = {
-                source = ../etc;
+                source = etc-files;
                 recursive = true;
               };
             }
             {
               name = "${config.programs.my-emacs.directory}/init.el";
               value = {
-                source = ../lisp/init.el;
+                source = "${lisp-files}/init.el";
               };
             }
             {
               name = "${config.programs.my-emacs.directory}/lisp";
               value = {
-                source = ../lisp;
+                source = lisp-files;
                 recursive = true;
               };
             }
             {
-              name = "${config.programs.my-emacs.directory}/local.el";
+              name = "${config.programs.my-emacs.directory}/lisp/my";
               value = {
-                source = localFile;
+                source = my;
+                recursive = true;
+              };
+            }
+            {
+              name = "${config.programs.my-emacs.directory}/lisp/my/my-interlude.el";
+              value = {
+                source = my-interlude;
               };
             }
             {
               name = "${config.programs.my-emacs.directory}/site-lisp";
               value = {
-                source = ../site-lisp;
+                source = site-lisp-files;
                 recursive = true;
               };
             }
-          ]
-        );
+          ]);
 
         packages = dependencies ++ config.programs.my-emacs.extraPackages;
       };

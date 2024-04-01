@@ -334,18 +334,6 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   (run-hooks 'my-init-hook))
 
 ;;;###autoload
-(defcustom my-local-file (my-config-path "local.el")
-  "My local file."
-  :group 'my
-  :type 'file)
-
-;;;###autoload
-(defun my-load-local-file (&rest _)
-  "Load `my-local-file' if it is exists."
-  (when (file-exists-p my-local-file)
-    (load my-local-file nil 'nomessage)))
-
-;;;###autoload
 (defun my/server-start ()
     "Allow this Emacs process to be a server for client processes."
     (interactive)

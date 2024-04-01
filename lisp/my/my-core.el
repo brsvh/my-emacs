@@ -161,7 +161,8 @@
   :demand t)
 
 (use-package promise
-  :vc (:url "https://github.com/chuntaro/emacs-promise.git"))
+  :vc (:url "https://github.com/chuntaro/emacs-promise.git")
+  :demand t)
 
 (use-package s
   :vc (:url "https://github.com/magnars/s.el.git")

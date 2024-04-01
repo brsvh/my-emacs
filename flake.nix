@@ -91,9 +91,8 @@
         };
       };
     };
-    nix-straight = {
-      url = "github:nix-community/nix-straight.el/master";
-      flake = false;
+    nix-filter = {
+      url = "github:numtide/nix-filter/main";
     };
     nixpkgs = {
       follows = "nixpkgs-unstable";
@@ -145,7 +144,7 @@
     { devshell
     , emacs-overlay
     , flake-parts
-    , nix-straight
+    , nix-filter
     , nixpkgs
     , pre-commit
     , self
@@ -167,7 +166,12 @@
 
           flake = {
             homeModules = {
-              my-emacs = ./nix/homeModule.nix;
+              my-emacs = {
+                imports =
+                  [
+                    (import ./nix/homeModule.nix { nix-filter = nix-filter.lib; })
+                  ];
+              };
             };
           };
 
