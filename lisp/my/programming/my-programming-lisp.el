@@ -31,11 +31,17 @@
 
 (use-package parinfer-rust-mode
   :ensure parinfer-rust-mode
-  :commands parinfer-rust-mode)
+  :commands parinfer-rust-mode
+  :config
+  (define-advice parinfer-rust-mode-enable
+    (:before (&rest _) inhibit-troublesome-modes)
+    "Disable all `parinfer-rust-troublesome-modes' to inhibit warnings."
+    (dolist (mode parinfer-rust-troublesome-modes)
+      (apply mode '(-1)))))
 
 (use-package lisp-mode
   :hook
   (lisp-data-mode-hook . parinfer-rust-mode))
 
 (provide 'my-programming-lisp)
-;;; my-programming-emacs-lisp.el ends here
+;;; my-programming-lisp.el ends here
