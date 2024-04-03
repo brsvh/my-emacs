@@ -60,7 +60,7 @@
 
 
 (use-package tabspaces
-  :vc (:url "https://github.com/mclear-tools/tabspaces.git")
+  :ensure tabspaces
   :defer nil
   :init
   (with-eval-after-load 'tab-bar

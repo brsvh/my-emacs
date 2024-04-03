@@ -30,7 +30,7 @@
 ;;; Code:
 
 (use-package parinfer-rust-mode
-  :vc (:url "https://github.com/justinbarclay/parinfer-rust-mode.git")
+  :ensure parinfer-rust-mode
   :commands parinfer-rust-mode)
 
 (use-package lisp-mode

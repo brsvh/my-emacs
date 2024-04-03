@@ -99,6 +99,10 @@
 
   (add-to-list 'package-archives
                '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/")
+               'append)
+
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/")
                'append))
 
 (provide 'my-prelude)

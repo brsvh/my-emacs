@@ -40,7 +40,7 @@
             "*Ibuffer*")))
 
 (use-package nerd-icons-ibuffer
-  :vc (:url "https://github.com/seagle0128/nerd-icons-ibuffer.git")
+  :ensure nerd-icons-ibuffer
   :config
   (setq nerd-icons-ibuffer-icon t
         nerd-icons-ibuffer-color-icon t
@@ -51,7 +51,7 @@
   (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
 
 (use-package ibuffer-project
-  :vc (:url "https://github.com/muffinmad/emacs-ibuffer-project.git")
+  :ensure ibuffer-project
   :hook
   (ibuffer-hook . (lambda ()
                     (setq ibuffer-filter-groups

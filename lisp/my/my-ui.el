@@ -39,7 +39,7 @@
   (on-init-ui-hook . my-theme-setup))
 
 (use-package nerd-icons
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el.git")
+  :ensure nerd-icons
   :demand t)
 
 
@@ -153,7 +153,7 @@
   (on-first-buffer-hook . popper-echo-mode))
 
 (use-package switch-window
-  :vc (:url "https://github.com/dimitri/switch-window.git")
+  :ensure switch-window
   :keymap-set
   ("<remap> <other-window>" . switch-window)
   ("<remap> <delete-other-windows>" . switch-window-then-maximize)
@@ -244,7 +244,7 @@
    my--reset-modus-themes-line-number-face))
 
 (use-package solaire-mode
-  :vc (:url "https://github.com/hlissner/emacs-solaire-mode.git")
+  :ensure solaire-mode
   :config
   (-snocq solaire-mode-themes-to-face-swap "^modus-")
   :hook
@@ -261,7 +261,7 @@
 ;; Mode line:
 
 (use-package doom-modeline
-  :vc (:url "https://github.com/seagle0128/doom-modeline.git")
+  :ensure doom-modeline
   :config
   (setq doom-modeline-bar-width 0)
 
@@ -408,7 +408,7 @@
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package frameshot
-  :vc (:url "https://github.com/tarsius/frameshot.git")
+  :ensure frameshot
   :keymap-set
   (:ctl-c-5-map
    ("s" . frameshot-take)))
@@ -439,7 +439,7 @@
   (on-first-buffer-hook . global-anzu-mode))
 
 (use-package hl-todo
-  :vc (:url "https://github.com/tarsius/hl-todo.git")
+  :ensure hl-todo
   :hook
   (on-first-buffer-hook . global-hl-todo-mode))
 
@@ -449,7 +449,7 @@
   (find-file-hook . rainbow-mode))
 
 (use-package page-break-lines
-  :vc (:url "https://github.com/purcell/page-break-lines.git")
+  :ensure page-break-lines
   :hook
   (on-init-ui-hook . global-page-break-lines-mode))
 

@@ -32,7 +32,7 @@
 (use-my lib)
 
 (use-package rg
-  :vc (:url "https://github.com/dajva/rg.el.git")
+  :ensure rg
   :demand t)
 
 (use-package project

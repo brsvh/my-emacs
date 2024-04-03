@@ -126,18 +126,11 @@
   :demand t)
 
 (use-package el-patch
-  :vc (:url "https://github.com/radian-software/el-patch.git")
-  :demand t)
-
-(use-package emacsql
-  :vc (:url "https://github.com/magit/emacsql.git")
-  :demand t)
-
-(use-package emacsql-sqlite
+  :ensure el-patch
   :demand t)
 
 (use-package f
-  :vc (:url "https://github.com/rejeep/f.el.git")
+  :ensure f
   :demand t)
 
 (use-package gnu-elpa-keyring-update
@@ -160,16 +153,8 @@
   :ensure popper
   :demand t)
 
-(use-package promise
-  :vc (:url "https://github.com/chuntaro/emacs-promise.git")
-  :demand t)
-
 (use-package s
-  :vc (:url "https://github.com/magnars/s.el.git")
-  :demand t)
-
-(use-package shrink-path
-  :vc (:url "https://gitlab.com/bennya/shrink-path.el.git")
+  :ensure s
   :demand t)
 
 (use-package subr+

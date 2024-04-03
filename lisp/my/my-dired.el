@@ -69,7 +69,7 @@
   :demand t)
 
 (use-package diredfl
-  :vc (:url "https://github.com/purcell/diredfl.git")
+  :ensure diredfl
   :hook
   (dired-mode-hook . diredfl-mode))
 
@@ -81,8 +81,8 @@
    (")" . dired-git-info-mode)))
 
 (use-package nerd-icons-dired
+  :ensure nerd-icons-dired
   :when (display-graphic-p)
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons-dired.git")
   :hook
   (dired-mode-hook . nerd-icons-dired-mode))
 

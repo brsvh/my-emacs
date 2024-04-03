@@ -92,7 +92,7 @@
   (org-agenda-finalize-hook . org-modern-mode))
 
 (use-package org-side-tree
-  :vc (:url "https://github.com/localauthor/org-side-tree.git")
+  :ensure org-side-tree
   :after org
   :commands
   (org-side-tree)
@@ -125,7 +125,7 @@
 ;; Org Roam:
 
 (use-package org-roam
-  :vc (:url "https://github.com/org-roam/org-roam.git")
+  :ensure org-roam
   :config
   (setq org-roam-directory (my-path* org-directory "roam/")))
 

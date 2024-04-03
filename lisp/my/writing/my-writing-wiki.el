@@ -30,7 +30,7 @@
 ;;; Code:
 
 (use-package mediawiki
-  :vc (:url "https://github.com/hexmode/mediawiki-el.git"))
+  :ensure mediawiki)
 
 (provide 'my-writing-wiki)
 ;;; my-writing-wiki.el ends here

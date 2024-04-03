@@ -32,7 +32,7 @@
 (reformatter-define my-nix-format :program "nixfmt")
 
 (use-package nix-ts-mode
-  :vc (:url "https://github.com/remi-gelinas/nix-ts-mode.git")
+  :ensure nix-ts-mode
   :config
   (add-hook 'nix-ts-mode-hook #'my-nix-format-on-save-mode))
 

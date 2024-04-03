@@ -32,7 +32,7 @@
 (require 'my-core)
 
 (use-package mwim
-  :vc (:url "https://github.com/alezost/mwim.el.git")
+  :ensure mwim
   :keymap-set
   ("<remap> <move-beginning-of-line>" . mwim-beginning-of-code-or-line)
   ("<remap> <move-end-of-line>" . mwim-end-of-code-or-line))

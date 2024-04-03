@@ -58,7 +58,7 @@
           "\\*Occur\\*"))
 
 (use-package pangu-spacing
-  :vc (:url "https://github.com/coldnew/pangu-spacing.git")
+  :ensure pangu-spacing
   :config
   (setq pangu-spacing-real-insert-separtor t))
 
