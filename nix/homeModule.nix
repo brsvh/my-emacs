@@ -14,41 +14,25 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-{ nix-filter
-, ...
-}:
-{ config
-, lib
-, pkgs
-, ...
-}:
+{ nix-filter, ... }:
+{ config, lib, pkgs, ... }:
 with builtins;
 with lib;
 let
   dependencies = import ./dependencies.nix pkgs;
 
-  etc-files = nix-filter {
-    root = ../etc;
-  };
+  etc-files = nix-filter { root = ../etc; };
 
   lisp-files = nix-filter {
     root = ../lisp;
-    exclude =
-      [
-        "my/"
-      ];
+    exclude = [ "my/" ];
   };
 
-  site-lisp-files = nix-filter {
-    root = ../site-lisp;
-  };
+  site-lisp-files = nix-filter { root = ../site-lisp; };
 
   my = nix-filter {
     root = ../lisp/my;
-    exclude =
-      [
-        "my-interlude.el"
-      ];
+    exclude = [ "my-interlude.el" ];
   };
 
   my-interlude = pkgs.writeText "my-emacs-interlude-file" ''
@@ -87,28 +71,15 @@ let
       :no-require t
       :init
       (-snocq treesit-extra-load-path "${
-        pkgs.linkFarm "treesit-grammars"
-          (
-            map
-              (
-                drv: {
-                  name = "lib${
-                    removeSuffix "-grammar" (getName drv)
-                  }${
-                    pkgs.stdenv.targetPlatform.extensions.sharedLibrary
-                  }";
-                  path = "${drv}/parser";
-                }
-              )
-              (
-                pipe
-                  pkgs.tree-sitter-grammars
-                  [
-                    (filterAttrs (name: _: name != "recurseForDerivations"))
-                    attrValues
-                  ]
-              )
-          )
+        pkgs.linkFarm "treesit-grammars" (map (drv: {
+          name = "lib${
+              removeSuffix "-grammar" (getName drv)
+            }${pkgs.stdenv.targetPlatform.extensions.sharedLibrary}";
+          path = "${drv}/parser";
+        }) (pipe pkgs.tree-sitter-grammars [
+          (filterAttrs (name: _: name != "recurseForDerivations"))
+          attrValues
+        ]))
       }"))
 
     (use-package parinfer-rust-mode
@@ -124,8 +95,7 @@ let
     (provide 'my-interlude)
     ;;; my-interlude.el ends here
   '';
-in
-{
+in {
   options.programs.my-emacs = {
     enable = mkOption {
       type = types.bool;
@@ -170,12 +140,7 @@ in
     };
 
     windowSystem = mkOption {
-      type = types.enum
-        [
-          "none"
-          "pgtk"
-          "x11"
-        ];
+      type = types.enum [ "none" "pgtk" "x11" ];
       default = "none";
       description = ''
         What display server protocol the Emacs configuration will
@@ -184,85 +149,75 @@ in
     };
   };
 
-  config = mkIf config.programs.my-emacs.enable
-    {
-      home = {
-        file = listToAttrs (
-          [
-            {
-              name = "${config.programs.my-emacs.directory}/early-init.el";
-              value = {
-                source = "${lisp-files}/early-init.el";
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/etc";
-              value = {
-                source = etc-files;
-                recursive = true;
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/init.el";
-              value = {
-                source = "${lisp-files}/init.el";
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/lisp";
-              value = {
-                source = lisp-files;
-                recursive = true;
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/lisp/my";
-              value = {
-                source = my;
-                recursive = true;
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/lisp/my/my-interlude.el";
-              value = {
-                source = my-interlude;
-              };
-            }
-            {
-              name = "${config.programs.my-emacs.directory}/site-lisp";
-              value = {
-                source = site-lisp-files;
-                recursive = true;
-              };
-            }
-          ]);
-
-        packages = dependencies ++ config.programs.my-emacs.extraPackages;
-      };
-
-      programs = {
-        emacs = {
-          enable = true;
-          package =
-            if config.programs.my-emacs.windowSystem == "none"
-            then pkgs.emacs-git-nox
-            else
-              if config.programs.my-emacs.windowSystem == "pgtk"
-              then pkgs.emacs-pgtk
-              else
-                if config.programs.my-emacs.windowSystem == "x11"
-                then pkgs.emacs-git
-                else pkgs.emacs-git;
-        };
-      };
-
-      services = {
-        emacs = {
-          client = {
-            enable =
-              config.programs.my-emacs.serviceIntegration.enable;
+  config = mkIf config.programs.my-emacs.enable {
+    home = {
+      file = listToAttrs ([
+        {
+          name = "${config.programs.my-emacs.directory}/early-init.el";
+          value = { source = "${lisp-files}/early-init.el"; };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/etc";
+          value = {
+            source = etc-files;
+            recursive = true;
           };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/init.el";
+          value = { source = "${lisp-files}/init.el"; };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/lisp";
+          value = {
+            source = lisp-files;
+            recursive = true;
+          };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/lisp/my";
+          value = {
+            source = my;
+            recursive = true;
+          };
+        }
+        {
+          name =
+            "${config.programs.my-emacs.directory}/lisp/my/my-interlude.el";
+          value = { source = my-interlude; };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/site-lisp";
+          value = {
+            source = site-lisp-files;
+            recursive = true;
+          };
+        }
+      ]);
+
+      packages = dependencies ++ config.programs.my-emacs.extraPackages;
+    };
+
+    programs = {
+      emacs = {
+        enable = true;
+        package = if config.programs.my-emacs.windowSystem == "none" then
+          pkgs.emacs-git-nox
+        else if config.programs.my-emacs.windowSystem == "pgtk" then
+          pkgs.emacs-pgtk
+        else if config.programs.my-emacs.windowSystem == "x11" then
+          pkgs.emacs-git
+        else
+          pkgs.emacs-git;
+      };
+    };
+
+    services = {
+      emacs = {
+        client = {
+          enable = config.programs.my-emacs.serviceIntegration.enable;
         };
       };
     };
+  };
 }

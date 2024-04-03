@@ -1,6 +1,5 @@
 pkgs:
-with pkgs;
-[
+with pkgs; [
   autoconf
   automake
   fd
@@ -10,7 +9,7 @@ with pkgs;
   libpng
   mediainfo
   multimarkdown
-  nixpkgs-fmt
+  nixfmt
   parinfer-rust
   pkg-config
   poppler

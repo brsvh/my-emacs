@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(reformatter-define my-nix-format :program "nixpkgs-fmt")
+(reformatter-define my-nix-format :program "nixfmt")
 
 (use-package nix-ts-mode
   :vc (:url "https://github.com/remi-gelinas/nix-ts-mode.git")
