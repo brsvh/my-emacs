@@ -61,7 +61,6 @@
 
 (use-package tabspaces
   :ensure tabspaces
-  :defer nil
   :init
   (with-eval-after-load 'tab-bar
     (tabspaces-mode +1))
