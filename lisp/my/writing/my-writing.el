@@ -95,6 +95,8 @@
 
 (use-my writing-markdown)
 
+(use-my writing-mermaid)
+
 (use-my writing-org)
 
 (use-my writing-tex)

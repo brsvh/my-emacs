@@ -8,6 +8,7 @@ with pkgs; [
   imagemagick
   libpng
   mediainfo
+  mermaid-cli
   multimarkdown
   nixfmt
   parinfer-rust
