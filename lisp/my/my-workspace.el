@@ -61,10 +61,8 @@
 
 (use-package tabspaces
   :ensure tabspaces
+  :after tab-bar
   :init
-  (with-eval-after-load 'tab-bar
-    (tabspaces-mode +1))
-  :config
   (setq tabspaces-use-filtered-buffers-as-default nil)
 
   (setq tabspaces-default-tab "Default")
@@ -109,7 +107,9 @@
                  (remove #'consult--source-workspace
                          consult-buffer-sources)))))
 
-  (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces))
+  (add-hook 'tabspaces-mode-hook #'my--consult-tabspaces)
+
+  (tabspaces-mode +1))
 
 (provide 'my-workspace)
 ;;; my-workspace.el ends here
