@@ -18,7 +18,11 @@
   description = "my-emacs - Personal GNU Emacs configuration.";
 
   nixConfig = {
-    experimental-features = [ "flakes" "nix-command" "repl-flake" ];
+    experimental-features = [
+      "flakes"
+      "nix-command"
+      "repl-flake"
+    ];
 
     extra-substituters = [ "https://nix-community.cachix.org" ];
 
@@ -85,8 +89,18 @@
     };
   };
 
-  outputs = { devshell, emacs-overlay, flake-parts, git-hooks, nix-filter
-    , nixpkgs, self, treefmt, ... }@inputs:
+  outputs =
+    {
+      devshell,
+      emacs-overlay,
+      flake-parts,
+      git-hooks,
+      nix-filter,
+      nixpkgs,
+      self,
+      treefmt,
+      ...
+    }@inputs:
     with builtins;
     with nixpkgs.lib;
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -100,56 +114,69 @@
       flake = {
         homeModules = {
           my-emacs = {
-            imports = [
-              (import ./nix/homeModule.nix { nix-filter = nix-filter.lib; })
-            ];
+            imports = [ (import ./nix/homeModule.nix { nix-filter = nix-filter.lib; }) ];
           };
         };
       };
 
-      perSystem = { config, final, pkgs, ... }: {
-        devshells = {
-          default = {
-            name = "my-emacs:default";
+      perSystem =
+        {
+          config,
+          final,
+          pkgs,
+          ...
+        }:
+        {
+          devshells = {
+            default = {
+              name = "my-emacs:default";
 
-            devshell = {
-              startup = {
-                pre-commit-hook = {
-                  text = config.pre-commit.installationScript;
+              devshell = {
+                startup = {
+                  pre-commit-hook.text = config.pre-commit.installationScript;
                 };
               };
             };
           };
-        };
 
-        overlayAttrs = emacs-overlay.overlays.default final pkgs;
+          overlayAttrs = emacs-overlay.overlays.default final pkgs;
 
-        packages =
-          let inherit (final) emacs-git emacs-git-nox emacs-pgtk symlinkJoin;
-          in {
-            dependencies = symlinkJoin rec {
-              name = "${pname}-${version}";
-              paths = import ./nix/dependencies.nix pkgs;
-              pname = "my-emacs-dependencies";
-              version = "unstable";
+          packages =
+            let
+              inherit (final)
+                emacs-git
+                emacs-git-nox
+                emacs-pgtk
+                symlinkJoin
+                ;
+            in
+            {
+              dependencies = symlinkJoin rec {
+                name = "${pname}-${version}";
+                paths = import ./nix/dependencies.nix pkgs;
+                pname = "my-emacs-dependencies";
+                version = "unstable";
+              };
+
+              nogui = emacs-git-nox;
+              x11 = emacs-git;
+              pgtk = emacs-pgtk;
             };
 
-            nogui = emacs-git-nox;
-            x11 = emacs-git;
-            pgtk = emacs-pgtk;
+          pre-commit = {
+            check.enable = true;
+            settings.hooks.nixfmt = {
+              enable = true;
+              package = pkgs.nixfmt-rfc-style;
+            };
           };
 
-        pre-commit = {
-          check.enable = true;
-          settings.hooks.nixfmt.enable = true;
+          treefmt = {
+            flakeFormatter = true;
+            projectRootFile = "flake.nix";
+            programs.nixfmt-rfc-style.enable = true;
+          };
         };
-
-        treefmt = {
-          flakeFormatter = true;
-          projectRootFile = "flake.nix";
-          programs.nixfmt.enable = true;
-        };
-      };
 
       systems = [ "x86_64-linux" ];
     };

@@ -1,5 +1,4 @@
-pkgs:
-with pkgs; [
+pkgs: with pkgs; [
   autoconf
   automake
   fd
@@ -10,7 +9,7 @@ with pkgs; [
   mediainfo
   mermaid-cli
   multimarkdown
-  nixfmt
+  nixfmt-rfc-style
   parinfer-rust
   pkg-config
   poppler

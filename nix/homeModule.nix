@@ -15,7 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
 { nix-filter, ... }:
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
 with lib;
 let
@@ -71,15 +76,19 @@ let
       :no-require t
       :init
       (-snocq treesit-extra-load-path "${
-        pkgs.linkFarm "treesit-grammars" (map (drv: {
-          name = "lib${
-              removeSuffix "-grammar" (getName drv)
-            }${pkgs.stdenv.targetPlatform.extensions.sharedLibrary}";
-          path = "${drv}/parser";
-        }) (pipe pkgs.tree-sitter-grammars [
-          (filterAttrs (name: _: name != "recurseForDerivations"))
-          attrValues
-        ]))
+        pkgs.linkFarm "treesit-grammars" (
+          map
+            (drv: {
+              name = "lib${removeSuffix "-grammar" (getName drv)}${pkgs.stdenv.targetPlatform.extensions.sharedLibrary}";
+              path = "${drv}/parser";
+            })
+            (
+              pipe pkgs.tree-sitter-grammars [
+                (filterAttrs (name: _: name != "recurseForDerivations"))
+                attrValues
+              ]
+            )
+        )
       }"))
 
     (use-package parinfer-rust-mode
@@ -95,7 +104,8 @@ let
     (provide 'my-interlude)
     ;;; my-interlude.el ends here
   '';
-in {
+in
+{
   options.programs.my-emacs = {
     enable = mkOption {
       type = types.bool;
@@ -140,7 +150,11 @@ in {
     };
 
     windowSystem = mkOption {
-      type = types.enum [ "none" "pgtk" "x11" ];
+      type = types.enum [
+        "none"
+        "pgtk"
+        "x11"
+      ];
       default = "none";
       description = ''
         What display server protocol the Emacs configuration will
@@ -154,7 +168,9 @@ in {
       file = listToAttrs ([
         {
           name = "${config.programs.my-emacs.directory}/early-init.el";
-          value = { source = "${lisp-files}/early-init.el"; };
+          value = {
+            source = "${lisp-files}/early-init.el";
+          };
         }
         {
           name = "${config.programs.my-emacs.directory}/etc";
@@ -165,7 +181,9 @@ in {
         }
         {
           name = "${config.programs.my-emacs.directory}/init.el";
-          value = { source = "${lisp-files}/init.el"; };
+          value = {
+            source = "${lisp-files}/init.el";
+          };
         }
         {
           name = "${config.programs.my-emacs.directory}/lisp";
@@ -182,9 +200,10 @@ in {
           };
         }
         {
-          name =
-            "${config.programs.my-emacs.directory}/lisp/my/my-interlude.el";
-          value = { source = my-interlude; };
+          name = "${config.programs.my-emacs.directory}/lisp/my/my-interlude.el";
+          value = {
+            source = my-interlude;
+          };
         }
         {
           name = "${config.programs.my-emacs.directory}/site-lisp";
@@ -201,14 +220,15 @@ in {
     programs = {
       emacs = {
         enable = true;
-        package = if config.programs.my-emacs.windowSystem == "none" then
-          pkgs.emacs-git-nox
-        else if config.programs.my-emacs.windowSystem == "pgtk" then
-          pkgs.emacs-pgtk
-        else if config.programs.my-emacs.windowSystem == "x11" then
-          pkgs.emacs-git
-        else
-          pkgs.emacs-git;
+        package =
+          if config.programs.my-emacs.windowSystem == "none" then
+            pkgs.emacs-git-nox
+          else if config.programs.my-emacs.windowSystem == "pgtk" then
+            pkgs.emacs-pgtk
+          else if config.programs.my-emacs.windowSystem == "x11" then
+            pkgs.emacs-git
+          else
+            pkgs.emacs-git;
       };
     };
 
