@@ -141,6 +141,27 @@ in
       '';
     };
 
+    mail = {
+      aliases = mkOption {
+        type = types.str;
+        default = "";
+        description = ''
+          The aliases of mail commands.
+
+          The content typically should be in same format as the
+          .mailrc file used by the Mail or mailx program.
+        '';
+      };
+
+      signature = mkOption {
+        type = types.str;
+        default = "";
+        description = ''
+          The signature of mail.
+        '';
+      };
+    };
+
     serviceIntegration = mkOption {
       type = types.bool;
       default = false;
@@ -177,6 +198,18 @@ in
           value = {
             source = etc-files;
             recursive = true;
+          };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/etc/mail/mailrc";
+          value = {
+            text = config.programs.my-emacs.mail.aliases;
+          };
+        }
+        {
+          name = "${config.programs.my-emacs.directory}/etc/mail/signature";
+          value = {
+            text = config.programs.my-emacs.mail.signature;
           };
         }
         {
