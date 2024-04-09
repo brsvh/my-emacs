@@ -74,7 +74,7 @@
   (setq tabspaces-session t
         tabspaces-session-file (my-state-path* "tabspaces/sessons.eld"))
 
-  (setq tabspaces-session-auto-restore t)
+  (setq tabspaces-session-auto-restore nil)
 
   (defvar consult--source-workspace
     (list :name     "Workspace Buffer"
