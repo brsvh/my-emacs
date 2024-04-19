@@ -198,10 +198,10 @@
 
           packages =
             let
-              inherit (final) emacs-unstable-pgtk;
+              inherit (final) my-emacs;
             in
             {
-              default = emacs-unstable-pgtk;
+              default = my-emacs;
             };
 
           pre-commit = {

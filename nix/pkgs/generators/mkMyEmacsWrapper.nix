@@ -14,16 +14,30 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
-let
-  inherit (prev) callPackage;
-in
 {
-  mkMyEmacs = callPackage ./generators/mkMyEmacs.nix { };
-
-  mkMyEmacsWrapper = callPackage ./generators/mkMyEmacsWrapper.nix { };
-
-  my-emacs = callPackage ./my-emacs.nix { };
-
-  my-emacs-init-directory = callPackage ./my-emacs-init-directory.nix { };
+  lndir,
+  makeWrapper,
+  stdenv,
+}:
+emacs: init-directory:
+stdenv.mkDerivation {
+  inherit (emacs) meta name;
+  buildInputs = [
+    emacs
+    lndir
+    makeWrapper
+  ];
+  dontBuild = true;
+  dontConfigure = true;
+  dontPatch = true;
+  dontUnpack = true;
+  installPhase = ''
+    runHook preInstall
+    mkdir $out
+    ${lndir}/bin/lndir -silent ${emacs} $out
+    mv $out/bin/emacs $out/bin/origin-emacs-wrapper
+    makeWrapper $out/bin/origin-emacs-wrapper $out/bin/emacs \
+      --add-flags "--init-directory=${init-directory}"
+    runHook postInstall
+  '';
 }

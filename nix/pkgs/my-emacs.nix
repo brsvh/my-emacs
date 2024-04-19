@@ -14,16 +14,15 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
-let
-  inherit (prev) callPackage;
-in
 {
-  mkMyEmacs = callPackage ./generators/mkMyEmacs.nix { };
-
-  mkMyEmacsWrapper = callPackage ./generators/mkMyEmacsWrapper.nix { };
-
-  my-emacs = callPackage ./my-emacs.nix { };
-
-  my-emacs-init-directory = callPackage ./my-emacs-init-directory.nix { };
+  emacs-unstable-pgtk,
+  lib,
+  mkMyEmacs,
+  pkgs,
+}:
+with lib;
+makeOverridable mkMyEmacs {
+  emacsPackage = emacs-unstable-pgtk;
+  extraEmacsPackages = import ../extra-emacs-packages.nix;
+  extraPackages = import ../extra-packages.nix pkgs;
 }

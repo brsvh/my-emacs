@@ -14,16 +14,4 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
-let
-  inherit (prev) callPackage;
-in
-{
-  mkMyEmacs = callPackage ./generators/mkMyEmacs.nix { };
-
-  mkMyEmacsWrapper = callPackage ./generators/mkMyEmacsWrapper.nix { };
-
-  my-emacs = callPackage ./my-emacs.nix { };
-
-  my-emacs-init-directory = callPackage ./my-emacs-init-directory.nix { };
-}
+pkgs: with pkgs; [ nixfmt-rfc-style ]

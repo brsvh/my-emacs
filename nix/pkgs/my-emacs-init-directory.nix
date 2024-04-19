@@ -14,16 +14,18 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
-let
-  inherit (prev) callPackage;
-in
-{
-  mkMyEmacs = callPackage ./generators/mkMyEmacs.nix { };
+{ lndir, runCommandLocal }:
+runCommandLocal "my-emacs-init-directory"
+  {
+    buildInputs = [ lndir ];
+    src = ../../.;
+  }
+  ''
+    mkdir -p  $out/{etc,lisp,site-lisp};
+    ${lndir}/bin/lndir -silent $src/etc $out/etc
+    ${lndir}/bin/lndir -silent $src/lisp $out/lisp
+    ${lndir}/bin/lndir -silent $src/site-lisp $out/site-lisp
 
-  mkMyEmacsWrapper = callPackage ./generators/mkMyEmacsWrapper.nix { };
-
-  my-emacs = callPackage ./my-emacs.nix { };
-
-  my-emacs-init-directory = callPackage ./my-emacs-init-directory.nix { };
-}
+    ln -s $src/lisp/early-init.el $out/early-init.el
+    ln -s $src/lisp/init.el $out/init.el
+  ''
