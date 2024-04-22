@@ -190,18 +190,19 @@
 
           overlayAttrs =
             let
-              emacs = emacs-overlay.overlays.emacs final pkgs;
-              emacs-packages = emacs-overlay.overlays.package final pkgs;
+              emacs = emacs-overlay.overlays.default final pkgs;
               my-emacs = import ./nix/pkgs final pkgs;
             in
-            emacs // emacs-packages // my-emacs;
+            emacs // my-emacs;
 
           packages =
             let
               inherit (final) my-emacs;
             in
             {
-              default = my-emacs;
+              default = my-emacs.default;
+              nogui = my-emacs.nogui;
+              x11 = my-emacs.x11;
             };
 
           pre-commit = {
