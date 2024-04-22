@@ -169,12 +169,24 @@
             default = {
               commands = [
                 {
-                  package = pkgs.git;
                   category = "development";
+                  package = pkgs.git;
                 }
                 {
-                  package = pkgs.nixUnstable;
                   category = "development";
+                  package = pkgs.nixUnstable;
+                }
+                {
+                  category = "editor";
+                  name = "emacs";
+                  package = final.my-emacs.nogui;
+                }
+              ];
+
+              env = [
+                {
+                  name = "EDITOR";
+                  value = "emacs";
                 }
               ];
 
