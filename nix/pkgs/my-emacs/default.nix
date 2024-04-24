@@ -25,9 +25,11 @@ let
 
   mkMyEmacsInitDirectory = callPackage ./make-my-emacs-init-directory.nix { };
 
+  getPlainEmacs = drv: (emacsPackagesFor drv).emacsWithPackages extraEmacsPackages;
+
   default =
     let
-      vanilla =
+      vanillaEmacs =
         if branch == "master" then
           emacs-pgtk
         else if branch == "unstable" then
@@ -35,23 +37,23 @@ let
         else
           emacs-gtk;
 
-      emacs = (emacsPackagesFor vanilla).emacsWithPackages extraEmacsPackages;
+      plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory emacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs;
     in
     mkMyEmacs {
       inherit
-        emacs
         extraEmacsPackages
         extraPackages
         initDirectory
-        vanilla
+        plainEmacs
+        vanillaEmacs
         ;
     };
 
   nogui =
     let
-      vanilla =
+      vanillaEmacs =
         if branch == "master" then
           emacs-git-nox
         else if branch == "unstable" then
@@ -59,23 +61,23 @@ let
         else
           emacs-nox;
 
-      emacs = (emacsPackagesFor vanilla).emacsWithPackages extraEmacsPackages;
+      plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory emacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs;
     in
     mkMyEmacs {
       inherit
-        emacs
         extraEmacsPackages
         extraPackages
         initDirectory
-        vanilla
+        plainEmacs
+        vanillaEmacs
         ;
     };
 
   x11 =
     let
-      vanilla =
+      vanillaEmacs =
         if branch == "master" then
           emacs-git
         else if branch == "unstable" then
@@ -83,17 +85,17 @@ let
         else
           emacs;
 
-      emacs = (emacsPackagesFor vanilla).emacsWithPackages extraEmacsPackages;
+      plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory emacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs;
     in
     mkMyEmacs {
       inherit
-        emacs
         extraEmacsPackages
         extraPackages
         initDirectory
-        vanilla
+        plainEmacs
+        vanillaEmacs
         ;
     };
 in

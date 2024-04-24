@@ -7,20 +7,24 @@
 }:
 with lib;
 {
-  emacs,
   extraEmacsPackages,
   extraPackages,
   initDirectory,
+  plainEmacs,
+  vanillaEmacs,
   ...
 }:
 stdenv.mkDerivation {
-  inherit (emacs) meta;
+  inherit (vanillaEmacs) meta;
 
-  name = "my-" + emacs.name;
+  name = "my-" + vanillaEmacs.name;
+
+  allowSubstitutes = false;
+  preferLocalBuild = true;
 
   buildInputs = [
     initDirectory
-    emacs
+    plainEmacs
     lndir
     makeWrapper
   ];
@@ -31,7 +35,7 @@ stdenv.mkDerivation {
     runHook preInstall
 
     mkdir $out
-    ${lndir}/bin/lndir -silent ${emacs} $out
+    ${lndir}/bin/lndir -silent ${plainEmacs} $out
 
     mv $out/bin/emacs $out/bin/emacs-unwrapped
 
