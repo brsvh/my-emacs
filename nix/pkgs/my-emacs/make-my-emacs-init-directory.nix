@@ -1,22 +1,47 @@
-{ runCommandLocal }:
+{ lib, stdenv }:
 emacs:
-runCommandLocal "my-emacs-init-directory"
-  {
-    buildInputs = [ emacs ];
-    src = ../../../.;
-  }
-  ''
-    mkdir -p  $out/{etc,lisp,site-lisp};
+with builtins;
+with lib;
+stdenv.mkDerivation {
+  name = "my-emacs-init-directory";
 
-    cp -r $src/etc $out/etc;
+  allowSubstitutes = false;
+  preferLocalBuild = true;
 
-    cp -r $src/lisp $out/lisp;
-    find $out/lisp -type f -name "*.el" -exec ${emacs}/bin/emacs --batch -f batch-byte-compile {} \;
-    ln -s $src/lisp/early-init.el $out/early-init.el;
-    ln -s $src/lisp/early-init.elc $out/early-init.elc;
-    ln -s $src/lisp/init.el $out/init.el;
-    ln -s $src/lisp/init.elc $out/init.elc;
+  buildInputs = [ emacs ];
 
-    cp -r $src/site-lisp $out/site-lisp;
-    find $out/lisp -type f -name "*.el" -exec ${emacs}/bin/emacs --batch -f batch-byte-compile {} \;
-  ''
+  src = ../../../.;
+
+  phases = [
+    "unpackPhase"
+    "buildPhase"
+    "installPhase"
+  ];
+
+  unpackPhase = ''
+    :
+  '';
+
+  buildPhase = ''
+    mkdir -p $TMPDIR;
+
+    cp -r $src/{etc,lisp,site-lisp} $TMPDIR/;
+
+    chmod -R u+w $TMPDIR;
+
+    mv $TMPDIR/lisp/{early-,}init.el $TMPDIR/;
+
+    find $TMPDIR -type f -name "*.el" -exec ${emacs}/bin/emacs --batch -f batch-byte-compile {} \;
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out;
+
+    cp $TMPDIR/{early-,}init.el{,c} $out/;
+    cp -r $TMPDIR/{etc,lisp,site-lisp} $out/;
+
+    runHook postInstall
+  '';
+}
