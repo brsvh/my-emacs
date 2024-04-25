@@ -228,8 +228,7 @@
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "systems": "systems",
-        "treefmt": "treefmt",
-        "tsangertype-fonts": "tsangertype-fonts"
+        "treefmt": "treefmt"
       }
     },
     "systems": {
@@ -266,33 +265,6 @@
         "owner": "numtide",
         "ref": "main",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "tsangertype-fonts": {
-      "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt": [
-          "treefmt"
-        ]
-      },
-      "locked": {
-        "lastModified": 1714030763,
-        "narHash": "sha256-KIH/KTTI4oKuCqwesIcDi7PYA9iXpWNJ9tSwhPo996A=",
-        "owner": "brsvh",
-        "repo": "tsangertype-fonts-overlays",
-        "rev": "09005b0c8529fc0930d13572ee068576cdac8b1c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "brsvh",
-        "ref": "main",
-        "repo": "tsangertype-fonts-overlays",
         "type": "github"
       }
     }
