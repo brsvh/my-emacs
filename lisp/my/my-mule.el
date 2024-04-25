@@ -1,4 +1,4 @@
-;;; init.el --- Init File -*- lexical-binding: t; -*-
+;;; my-mule.el --- Multilingual environment of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,11 +25,23 @@
 
 ;;; Commentary:
 
-;; This file is the first loaded file after Emacs is started.
+;; Enable my Emacs to support multiple language environments, currently
+;; supporting:
+;;  - English
 
 ;;; Code:
 
-(require 'my-play)
+(require 'my-core)
 
-(provide 'init)
-;;; init.el ends here
+(setup mule-cmds
+  (:init
+    (set-default-coding-systems 'utf-8)
+    (set-language-environment "utf-8")
+    (prefer-coding-system 'utf-8)))
+
+(setup emacs
+  (:option
+    word-wrap-by-category t))
+
+(provide 'my-mule)
+;;; my-mule.el ends here
