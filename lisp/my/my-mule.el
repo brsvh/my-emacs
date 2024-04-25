@@ -28,6 +28,7 @@
 ;; Enable my Emacs to support multiple language environments, currently
 ;; supporting:
 ;;  - English
+;;  - Chinese
 
 ;;; Code:
 
@@ -38,6 +39,14 @@
     (set-default-coding-systems 'utf-8)
     (set-language-environment "utf-8")
     (prefer-coding-system 'utf-8)))
+
+(setup mule-fonts
+  (:init
+    (set-frame-font "IBM Plex Mono 11" nil t)
+    (set-fontset-font t 'cjk-misc "LXGW WenKai Mono 11")
+    (set-fontset-font t 'han "LXGW WenKai Mono 11")
+    (set-fontset-font t 'latin "IBM Plex Mono 11")
+    (set-fontset-font t 'symbol "Symbols Nerd Font Mono 11")))
 
 (setup emacs
   (:option
