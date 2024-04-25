@@ -14,4 +14,19 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-pkgs: with pkgs; [ nixfmt-rfc-style ]
+pkgs: with pkgs; [
+  ibm-plex
+  lxgw-wenkai
+  (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+  nixfmt-rfc-style
+  tsangertype-font-xuansan01-w01
+  tsangertype-font-xuansan01-w02
+  tsangertype-font-xuansan01-w03
+  tsangertype-font-xuansan01-w04
+  tsangertype-font-xuansan01-w05
+  tsangertype-font-jinkai05-w01
+  tsangertype-font-jinkai05-w02
+  tsangertype-font-jinkai05-w03
+  tsangertype-font-jinkai05-w04
+  tsangertype-font-jinkai05-w05
+]

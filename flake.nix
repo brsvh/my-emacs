@@ -18,6 +18,8 @@
   description = "my-emacs - Personal GNU Emacs configuration.";
 
   nixConfig = {
+    allowUnfree = true;
+
     experimental-features = [
       "flakes"
       "nix-command"
@@ -132,6 +134,20 @@
         };
       };
     };
+    tsangertype-fonts = {
+      url = "github:brsvh/tsangertype-fonts-overlays/main";
+      inputs = {
+        flake-parts = {
+          follows = "flake-parts";
+        };
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+        treefmt = {
+          follows = "treefmt";
+        };
+      };
+    };
   };
 
   outputs =
@@ -142,6 +158,7 @@
       git-hooks,
       nixpkgs,
       treefmt,
+      tsangertype-fonts,
       ...
     }:
     with builtins;
@@ -161,10 +178,22 @@
         {
           config,
           final,
+          inputs',
           pkgs,
           ...
         }:
         {
+          _module = {
+            args = {
+              nixpkgs = {
+                config = {
+                  allowUnfree = true;
+                };
+              };
+              pkgs = inputs'.nixpkgs.legacyPackages.extend tsangertype-fonts.overlays.default;
+            };
+          };
+
           devshells = {
             default = {
               commands = [
