@@ -1,4 +1,4 @@
-;;; init.el --- Init File -*- lexical-binding: t; -*-
+;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,11 +25,20 @@
 
 ;;; Commentary:
 
-;; This file is the first loaded file after Emacs is started.
+;; The schedule of my Play.
 
 ;;; Code:
 
-(require 'my-play)
+(require 'my-prelude)
 
-(provide 'init)
-;;; init.el ends here
+
+
+(require 'my-core)
+(require 'my-mule)
+
+
+
+(require 'my-postlude)
+
+(provide 'my-play)
+;;; my-play.el ends here

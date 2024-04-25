@@ -1,10 +1,10 @@
-;;; init.el --- Init File -*- lexical-binding: t; -*-
+;;; my-postlude.el --- Postlude of My Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
 ;; Author: Burgess Chang <bsc@brsvh.org>
 ;; Keywords: local
-;; Package-Requires: ((emacs "29.1"))
+;; Package-Requires: ((emacs "29.1") (my-lib "0.1.0"))
 ;; URL: https://github.com/brsvh/my-emacs
 ;; Version: 0.1.50
 
@@ -25,11 +25,23 @@
 
 ;;; Commentary:
 
-;; This file is the first loaded file after Emacs is started.
+;; The postlude of my Emacs configuration, ensure something that need to
+;; be set at the very end of initialization.
 
 ;;; Code:
 
-(require 'my-play)
+(require 'my-core)
 
-(provide 'init)
-;;; init.el ends here
+(defun my-postlude--load-custom-file (&rest _)
+  "Load `custom-file'."
+  (when (file-exists-p custom-file)
+    (load custom-file nil 'nomessage)))
+
+
+
+(progn
+  ;; Load customizations.
+  (my-postlude--load-custom-file))
+
+(provide 'my-postlude)
+;;; my-postlude.el ends here

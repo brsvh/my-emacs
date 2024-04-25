@@ -1,4 +1,5 @@
 {
+  callPackage,
   emacs,
   emacs-git,
   emacs-git-nox,
@@ -9,7 +10,6 @@
   emacs-unstable-nox,
   emacs-unstable-pgtk,
   emacsPackagesFor,
-  callPackage,
   lib,
   newScope,
   pkgs,
