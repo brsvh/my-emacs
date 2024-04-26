@@ -182,5 +182,40 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   :group 'my
   :type 'file)
 
+;;;###autoload
+(defgroup my-fonts nil
+  "Fonts for my Emacs configuraiton."
+  :group 'my)
+
+;;;###autoload
+(defcustom my-font-name ""
+  "Name of my default font."
+  :group 'my-fonts
+  :type 'string)
+
+;;;###autoload
+(defcustom my-font-size ""
+  "Name of my default font."
+  :group 'my-fonts
+  :type 'string)
+
+;;;###autoload
+(defcustom my-latin-font-name ""
+  "Name of my latin font."
+  :group 'my-fonts
+  :type 'string)
+
+;;;###autoload
+(defcustom my-chinese-font-name ""
+  "Name of my chinese font."
+  :group 'my-fonts
+  :type 'string)
+
+;;;###autoload
+(defcustom my-symbol-font-name ""
+  "Name of my symbol font."
+  :group 'my-fonts
+  :type 'string)
+
 (provide 'my-lib)
 ;;; my-lib.el ends here

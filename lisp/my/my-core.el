@@ -38,14 +38,6 @@
 ;;;
 ;; `setup` keywords:
 
-(setup-define :init
-  (lambda (&rest body)
-    (macroexp-progn body))
-  :documentation "BODY to run before NAME has been loaded."
-  :debug '(form)
-  :after-loaded nil
-  :indent 1)
-
 (setup-define :after
   (lambda (&rest features)
     (let ((body `(require ',(setup-get 'feature))))
