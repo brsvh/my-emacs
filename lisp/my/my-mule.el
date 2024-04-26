@@ -35,22 +35,37 @@
 (require 'my-core)
 
 (setup mule-cmds
-  (:init
-    (set-default-coding-systems 'utf-8)
-    (set-language-environment "utf-8")
-    (prefer-coding-system 'utf-8)))
-
-(setup mule-fonts
-  (:init
-    (set-frame-font "IBM Plex Mono 11" nil t)
-    (set-fontset-font t 'cjk-misc "LXGW WenKai Mono 11")
-    (set-fontset-font t 'han "LXGW WenKai Mono 11")
-    (set-fontset-font t 'latin "IBM Plex Mono 11")
-    (set-fontset-font t 'symbol "Symbols Nerd Font Mono 11")))
+  (set-default-coding-systems 'utf-8)
+  (set-language-environment "utf-8")
+  (prefer-coding-system 'utf-8))
 
 (setup emacs
-  (:option
-    word-wrap-by-category t))
+  (:option my-font-name "IBM Plex Mono"
+           my-font-size 13
+           my-chinese-font-name "LXGW WenKai Mono"
+           my-latin-font-name "IBM Plex Mono"
+           my-symbol-font-name "Symbols Nerd Font Mono")
+  (set-face-attribute 'default
+                      nil
+                      :font (font-spec :family my-font-name
+                                       :size my-font-size))
+  (set-fontset-font t
+                    'cjk-misc
+                    (font-spec :family my-chinese-font-name
+                               :size my-font-size))
+  (set-fontset-font t
+                    'han
+                    (font-spec :family my-chinese-font-name
+                               :size my-font-size))
+  (set-fontset-font t
+                    'latin
+                    (font-spec :family my-latin-font-name
+                               :size my-font-size))
+  (set-fontset-font t
+                    'symbol
+                    (font-spec :family my-symbol-font-name
+                               :size my-font-size))
+  (:option word-wrap-by-category t))
 
 (provide 'my-mule)
 ;;; my-mule.el ends here
