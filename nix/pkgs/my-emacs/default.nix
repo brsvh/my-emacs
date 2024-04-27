@@ -43,7 +43,7 @@ let
 
   emacsPackagesFor' =
     drv:
-    (emacsPackagesFor drv).overrideScope' (
+    (emacsPackagesFor drv).overrideScope (
       finalEpkg: prevEpkg:
       let
         manualPackages = prevEpkg.manualPackages // {
