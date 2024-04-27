@@ -14,14 +14,17 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
+with builtins;
 let
-  mkMyEmacsScope = final.callPackage ./my-emacs { };
+  recipe = (fromJSON (readFile ./flake.lock)).nodes.flake-compat;
+
+  source = fetchTree {
+    inherit (recipe.locked)
+      repo
+      rev
+      type
+      owner
+      ;
+  };
 in
-rec {
-  my-emacs = mkMyEmacsScope { };
-
-  my-emacs-stable = mkMyEmacsScope { branch = null; };
-
-  my-emacs-unstable = mkMyEmacsScope { branch = "unstable"; };
-}
+(import source { src = ./.; }).shellNix

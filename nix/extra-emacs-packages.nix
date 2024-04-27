@@ -1,4 +1,4 @@
-# Copyright (C) 2023-2024 Burgess Chang
+# Copyright (C) 2022-2024 Burgess Chang
 
 # This file is part of my-emacs.
 
@@ -23,3 +23,4 @@ with epkgs;
 ])
 ++ (with manualPackages; [ my.on ])
 ++ (with melpaPackages; [ magit ])
+++ (with nongnuPackages; [ apheleia ])
