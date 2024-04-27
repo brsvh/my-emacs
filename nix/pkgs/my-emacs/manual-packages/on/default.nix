@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
 {
-  emacs,
   fetchgit,
   lib,
-  stdenv,
   trivialBuild,
 }:
 trivialBuild rec {
@@ -34,6 +32,7 @@ trivialBuild rec {
 
   meta = with lib; {
     description = "utility hooks and functions from Doom Emacs";
+    homepage = "https://gitlab.com/ajgrf/on.el";
     license = licenses.mit;
   };
 }
