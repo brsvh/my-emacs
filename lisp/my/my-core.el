@@ -38,6 +38,14 @@
 ;;;
 ;; `setup` keywords:
 
+(setup-define :eval-when
+  (lambda (timing &rest body)
+    `(cl-eval-when ,timing ,@body))
+  :documentation "Control when BODY is evaluated by TIMING.
+Usage see `cl-eval-when'."
+  :debug '(sexp body)
+  :indent 1)
+
 (setup-define :init
   (lambda (&rest body)
     (macroexp-progn body))
@@ -60,8 +68,8 @@ See https://www.emacswiki.org/emacs/SetupEl#h5o-10."
   (lambda (key definition)
     `(keymap-set ,(setup-get 'map) ,key ,definition))
   :documentation "Set KEY to DEFINITION.
-See `keymap-set`."
-  :debug '(form sexp)
+See `keymap-set'."
+  :debug '(key sexp)
   :repeatable t)
 
 (setup-define :keymap-set-into
@@ -71,7 +79,24 @@ See `keymap-set`."
           `(:with-map ,feature-or-map (:keymap-set ,@body)))
       `(:with-feature ,feature-or-map (:keymap-set ,@body))))
   :documentation "Set keys to definition into FEATURE-OR-MAP."
-  :debug '(sexp &rest form sexp))
+  :debug '(sexp &rest key sexp))
+
+(setup-define :keymap-unset
+  (lambda (key remove)
+    `(keymap-set ,(setup-get 'map) ,key ,remove))
+  :documentation "Unset or REMOVE definition of KEY.
+See `keymap-unset'."
+  :debug '(key boolean)
+  :repeatable t)
+
+(setup-define :keymap-unset-into
+  (lambda (feature-or-map &rest body)
+    (if (string-match-p "-map\\'" (symbol-name feature-or-map))
+        (progn
+          `(:with-map ,feature-or-map (:keymap-unset ,@body)))
+      `(:with-feature ,feature-or-map (:keymap-unset ,@body))))
+  :documentation "Set keys to definition into FEATURE-OR-MAP."
+  :debug '(sexp &rest key boolean))
 
 
 ;;;

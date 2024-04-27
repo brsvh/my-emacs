@@ -31,6 +31,8 @@
 
 ;;; Code:
 
+(require 'my-core)
+
 
 
 ;;;
