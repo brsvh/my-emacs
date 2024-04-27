@@ -32,14 +32,14 @@
 
 (require 'cl-lib)
 (require 'my-lib)
+(require 'setup)
 
 
 
 ;;;
 ;; `setup` keywords:
-(cl-eval-when (compile eval load)
 
-(require 'setup)
+(cl-eval-when (compile eval load)
 
 (setup-define :after
   (lambda (&rest features)
@@ -116,7 +116,9 @@ See `keymap-unset'."
   :debug '(sexp &rest key boolean))
 
 ) ;; cl-eval-when ends here
+
 
+
 ;;;
 ;; Keymaps:
 
@@ -138,6 +140,15 @@ See `keymap-unset'."
   (:with-map ctl-c-v-map
     (:keymap-set "g" ctl-c-v-g-map))
   (:keymap-set-into global-map "C-c" ctl-c-map))
+
+;;;
+;; Third-Party libraries:
+
+(setup transient
+  (:option
+    transient-history-file (my-state-path "transient/history.el")
+    transient-levels-file (my-state-path "transient/levels.el")
+    transient-values-file (my-state-path "transient/values.el")))
 
 (provide 'my-core)
 ;;; my-core.el ends here
