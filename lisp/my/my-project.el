@@ -43,10 +43,10 @@
 
 (setup magit
   (:option magit-define-global-key-bindings nil)
-  (:with-map my-ctl-c-v-g-map
-    (:keymap-set
-      "d" #'magit-dispatch
-      "s" #'magit-status)))
+  (:autoload magit-dispatch magit-status)
+  (:keymap-set-into my-ctl-c-v-g-map
+    "d" #'magit-dispatch
+    "s" #'magit-status))
 
 (provide 'my-project)
 ;;; my-project.el ends here

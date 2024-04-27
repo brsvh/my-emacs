@@ -30,13 +30,40 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'my-lib)
-(require 'setup)
 
 
 
 ;;;
 ;; `setup` keywords:
+(cl-eval-when (compile eval load)
+
+(require 'setup)
+
+(setup-define :after
+  (lambda (&rest features)
+    (let ((body `(require ',(setup-get 'feature))))
+      (dolist (feature (nreverse features))
+        (setq body `(with-eval-after-load ',feature ,body)))
+      body))
+  :documentation "Load the current feature after FEATURES.
+See https://www.emacswiki.org/emacs/SetupEl#h5o-10."
+  :indent 1)
+
+(setup-define :autoload
+  (lambda (func)
+    (let ((fn (if (memq (car-safe func) '(quote function))
+                  (cadr func)
+                func)))
+      `(unless (fboundp (quote ,fn))
+         (autoload (function ,fn)
+                   ,(symbol-name (setup-get 'feature))
+                   nil
+                   t))))
+  :documentation "Autoload FUNC if not already bound."
+  :repeatable t
+  :signature '(FUNC ...))
 
 (setup-define :eval-when
   (lambda (timing &rest body)
@@ -52,16 +79,6 @@ Usage see `cl-eval-when'."
   :documentation "BODY to run before NAME has been loaded."
   :debug '(form)
   :after-loaded nil
-  :indent 1)
-
-(setup-define :after
-  (lambda (&rest features)
-    (let ((body `(require ',(setup-get 'feature))))
-      (dolist (feature (nreverse features))
-        (setq body `(with-eval-after-load ',feature ,body)))
-      body))
-  :documentation "Load the current feature after FEATURES.
-See https://www.emacswiki.org/emacs/SetupEl#h5o-10."
   :indent 1)
 
 (setup-define :keymap-set
@@ -98,6 +115,7 @@ See `keymap-unset'."
   :documentation "Set keys to definition into FEATURE-OR-MAP."
   :debug '(sexp &rest key boolean))
 
+) ;; cl-eval-when ends here
 
 ;;;
 ;; Keymaps:
@@ -116,10 +134,10 @@ See `keymap-unset'."
 
 (setup my-maps
   (:with-map ctl-c-map
-    (:keymap-set "v" ctl-c-v-map)
-    (:with-map ctlc-c-v-map
-      (:keymap-set "g" ctl-c-v-g-map)))
-  (:keymap-set-into gloabl-map "C-c" ctl-c-map))
+    (:keymap-set "v" ctl-c-v-map))
+  (:with-map ctl-c-v-map
+    (:keymap-set "g" ctl-c-v-g-map))
+  (:keymap-set-into global-map "C-c" ctl-c-map))
 
 (provide 'my-core)
 ;;; my-core.el ends here
