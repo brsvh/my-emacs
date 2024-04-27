@@ -14,12 +14,15 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-epkgs:
-with epkgs;
-(with elpaPackages; [
-  diff-hl
-  setup
-  transient
-])
-++ (with manualPackages; [ my.on ])
-++ (with melpaPackages; [ magit ])
+{
+  emacs,
+  passedPackages,
+  pkgs,
+  trivialBuild,
+}:
+let
+  inherit (pkgs) callPackage;
+in
+{
+  on = callPackage ./on { inherit trivialBuild; };
+}

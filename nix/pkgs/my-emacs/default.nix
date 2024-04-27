@@ -25,6 +25,22 @@ let
 
   mkMyEmacsInitDirectory = callPackage ./make-my-emacs-init-directory.nix { };
 
+  emacsPackagesFor' =
+    drv:
+    (emacsPackagesFor drv).overrideScope' (
+      finalEpkg: prevEpkg:
+      let
+        manualPackages = prevEpkg.manualPackages // {
+          my = callPackage ./manual-packages {
+            inherit (prevEpkg) trivialBuild;
+            emacs = drv;
+            passedPackages = prevEpkg;
+          };
+        };
+      in
+      prevEpkg.overide { inherit manualPackages; }
+    );
+
   getPlainEmacs = drv: (emacsPackagesFor drv).emacsWithPackages extraEmacsPackages;
 
   default =

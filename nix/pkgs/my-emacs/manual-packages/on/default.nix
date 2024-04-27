@@ -14,12 +14,26 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-epkgs:
-with epkgs;
-(with elpaPackages; [
-  diff-hl
-  setup
-  transient
-])
-++ (with manualPackages; [ my.on ])
-++ (with melpaPackages; [ magit ])
+{
+  emacs,
+  fetchgit,
+  lib,
+  stdenv,
+  trivialBuild,
+}:
+trivialBuild rec {
+  pname = "on.el";
+
+  version = "0.1.0";
+
+  src = fetchgit {
+    url = "https://gitlab.com/ajgrf/on.el.git";
+    rev = "3cf623e1a4331e259ef92e49154ed0551f300436";
+    hash = "sha256-gtSVCpQwv4Ui9VpW7SXnsXIkfHN/6laMLqHTezDcMZg=";
+  };
+
+  meta = with lib; {
+    description = "utility hooks and functions from Doom Emacs";
+    license = licenses.mit;
+  };
+}

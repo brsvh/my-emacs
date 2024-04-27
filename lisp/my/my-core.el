@@ -38,6 +38,14 @@
 ;;;
 ;; `setup` keywords:
 
+(setup-define :init
+  (lambda (&rest body)
+    (macroexp-progn body))
+  :documentation "BODY to run before NAME has been loaded."
+  :debug '(form)
+  :after-loaded nil
+  :indent 1)
+
 (setup-define :after
   (lambda (&rest features)
     (let ((body `(require ',(setup-get 'feature))))
@@ -47,6 +55,46 @@
   :documentation "Load the current feature after FEATURES.
 See https://www.emacswiki.org/emacs/SetupEl#h5o-10."
   :indent 1)
+
+(setup-define :keymap-set
+  (lambda (key definition)
+    `(keymap-set ,(setup-get 'map) ,key ,definition))
+  :documentation "Set KEY to DEFINITION.
+See `keymap-set`."
+  :debug '(form sexp)
+  :repeatable t)
+
+(setup-define :keymap-set-into
+  (lambda (feature-or-map &rest body)
+    (if (string-match-p "-map\\'" (symbol-name feature-or-map))
+        (progn
+          `(:with-map ,feature-or-map (:keymap-set ,@body)))
+      `(:with-feature ,feature-or-map (:keymap-set ,@body))))
+  :documentation "Set keys to definition into FEATURE-OR-MAP."
+  :debug '(sexp &rest form sexp))
+
+
+;;;
+;; Keymaps:
+
+(defvar my-ctl-c-map (make-keymap)
+  "Default keymap for my commands.")
+(defvaralias 'ctl-c-map 'my-ctl-c-map)
+
+(defvar my-ctl-c-v-map (make-keymap)
+  "Default keymap for version control commands.")
+(defvaralias 'ctl-c-v-map 'my-ctl-c-v-map)
+
+(defvar my-ctl-c-v-g-map (make-keymap)
+  "Default keymap for version control (Git) commands.")
+(defvaralias 'ctl-c-v-g-map 'my-ctl-c-v-g-map)
+
+(setup my-maps
+  (:with-map ctl-c-map
+    (:keymap-set "v" ctl-c-v-map)
+    (:with-map ctlc-c-v-map
+      (:keymap-set "g" ctl-c-v-g-map)))
+  (:keymap-set-into gloabl-map "C-c" ctl-c-map))
 
 (provide 'my-core)
 ;;; my-core.el ends here
