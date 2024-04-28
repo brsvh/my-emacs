@@ -39,7 +39,7 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
-    mkdir -p $TMPDIR;
+    mkdir -p $TMPDIR/native-lisp;
 
     cp -r $src/{etc,lisp,site-lisp} $TMPDIR/;
 
@@ -49,7 +49,9 @@ stdenv.mkDerivation {
 
     mkdir -p $TMPDIR/.local;
 
-    find $TMPDIR -type f -name "*.el" -exec ${emacs}/bin/emacs -q --no-site-file --eval "(progn (setq gc-cons-threshold most-positive-fixnum load-prefer-newer t) (dolist (dir '(\"$TMPDIR/lisp\" \"$TMPDIR/site-lisp\")) (push dir load-path) (let ((default-directory dir)) (normal-top-level-add-subdirs-to-load-path))) (setq my-cache-directory \"$TMPDIR/.local\" my-config-directory \"$TMPDIR/.local\" my-data-directory \"$TMPDIR/.local\" my-state-directory \"$TMPDIR/.local\" my-prelude--inhibit-update-load-path t)) " --batch -f batch-byte-compile {} \;
+    find $TMPDIR -type f -name "*.el" -exec ${emacs}/bin/emacs --debug-init --no-init-file --no-site-file --eval "(progn (setq gc-cons-threshold most-positive-fixnum load-prefer-newer t) (dolist (dir '(\"$TMPDIR/lisp\" \"$TMPDIR/site-lisp\")) (push dir load-path) (let ((default-directory dir)) (normal-top-level-add-subdirs-to-load-path))) (setq my-cache-directory \"$TMPDIR/.local\" my-config-directory \"$TMPDIR/.local\" my-data-directory \"$TMPDIR/.local\" my-state-directory \"$TMPDIR/.local\" my-prelude--inhibit-update-load-path t)) " --batch -f batch-byte-compile {} \;
+
+    find $TMPDIR -type f -name "*.el" -exec ${emacs}/bin/emacs --debug-init --no-init-file --no-site-file --eval "(progn (setq gc-cons-threshold most-positive-fixnum load-prefer-newer t) (dolist (dir '(\"$TMPDIR/lisp\" \"$TMPDIR/site-lisp\")) (push dir load-path) (let ((default-directory dir)) (normal-top-level-add-subdirs-to-load-path))) (push "\"$TMPDIR/native-lisp/\"" native-comp-eln-load-path) (setq my-cache-directory \"$TMPDIR/.local\" my-config-directory \"$TMPDIR/.local\" my-data-directory \"$TMPDIR/.local\" my-state-directory \"$TMPDIR/.local\" my-prelude--inhibit-update-load-path t)) " --batch -f batch-native-compile {} \;
   '';
 
   installPhase = ''
@@ -58,7 +60,7 @@ stdenv.mkDerivation {
     mkdir -p $out;
 
     cp $TMPDIR/{early-,}init.el{,c} $out/;
-    cp -r $TMPDIR/{etc,lisp,site-lisp} $out/;
+    cp -r $TMPDIR/{etc,lisp,native-lisp,site-lisp} $out/;
 
     runHook postInstall
   '';
