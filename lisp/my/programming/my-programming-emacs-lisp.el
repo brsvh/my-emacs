@@ -1,4 +1,4 @@
-;;; my-project.el --- Project management of My Emacs -*- lexical-binding: t -*-
+;;; my-programming-emacs-lisp.el --- Porgramming with Emacs Lisp -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,31 +25,16 @@
 
 ;;; Commentary:
 
-;; This file dictates management of my projects, including how to
-;; organize the files and content within the project, how to handle
-;; version control.
+;; This file has enhanced my Emacs Lisp programming experience.
 
 ;;; Code:
 
 (require 'my-core)
 
-(cl-eval-when (compile)
-  (require 'magit))
+(setup elisp-mode
+  (:hook #'flymake-mode)
+  (:with-map emacs-lisp-mode-map
+    (:keymap-set "C-c C-v" #'pp-macroexpand-last-sexp)))
 
-
-
-;;;
-;; VCS:
-
-;;;
-;; Git VCS:
-
-(setup magit
-  (:set-default magit-define-global-key-bindings nil)
-  (:with-map ctl-c-v-g-map
-    (:keymap-set
-     "d" #'magit-dispatch
-     "s" #'magit-status)))
-
-(provide 'my-project)
-;;; my-project.el ends here
+(provide 'my-programming-emacs-lisp)
+;;; my-programming-emacs-lisp.el ends here

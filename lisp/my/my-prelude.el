@@ -45,11 +45,13 @@
   (expand-file-name "site-lisp/" user-emacs-directory)
   "Directory beneath which third-party Emacs Lisp files are placed.")
 
-(defconst my-prelude--eln-path
+(defconst my-prelude--eln-load-path
   (let ((base (if (not (memq system-type '(ms-dos windows-nt cygwin)))
-                 (or (getenv "XDG_CACHE_HOME") "~/.cache/")
+                  (or (getenv "XDG_CACHE_HOME") "~/.cache/")
                 user-emacs-directory)))
-    (expand-file-name "emacs/eln-cache/" base))
+    (list
+     (expand-file-name "emacs/eln-cache/" base)
+     (expand-file-name "native-lisp/" user-emacs-directory)))
   "Directory to look for natively-compiled *.eln files.")
 
 (defvar my-prelude--frame-alist '((menu-bar-lines . nil)
@@ -79,30 +81,27 @@
 
 
 (progn
-  ;; Remove the default user Emacs Lisp Native Compilation file storage
-  ;; path, e.g. (expand-file-name "eln-cache/" user-emacs-directory).
-  (setq native-comp-eln-load-path (cdr native-comp-eln-load-path))
-
-  ;; Set a customized path for user Emacs Lisp Native Compilation file
+  ;; Add customized paths for user Emacs Lisp Native Compilation file
   ;; storage.
-  (push my-prelude--eln-path native-comp-eln-load-path)
+  (dolist (path (reverse my-prelude--eln-load-path))
+    (setq native-comp-eln-load-path
+          (cons path native-comp-eln-load-path)))
 
   ;; Let my Emacs Lisp files can be find.
   (unless my-prelude--inhibit-update-load-path
     (my-prelude--update-load-path))
 
+  ;; Activate `benchmark-init' as early as possible to capture loading
+  ;; information during the startup process.
+  (require 'benchmark-init)
+
+  ;; Deactivate `benchmark-init' at the very end of `after-init-hook'. 
+  (add-hook 'after-init-hook #'benchmark-init/deactivate 100)
+
   (require 'my-lib)
 
   ;; Inhibit save customizations to `user-init-file`.
   (setq custom-file my-custom-file)
-
-  ;; TODO I use Nix to manage all Emacs Lisp packages which obtain from
-  ;;      ELPAs, and my `user-emacs-directory' is located within the Nix
-  ;;      Store.  Nevertheless, I still expect to be able to install
-  ;;      additional Emacs Lisp packages through `package'.  Return here
-  ;;      to fix the `package-user-dir' when appropriate.  However, for
-  ;;      now, prevent the initialization of `package' at early init.
-  (setq package-enable-at-startup nil)
 
   (with-eval-after-load 'package
     (eval-when-compile (defvar package-archives))
@@ -115,7 +114,7 @@
     ;; Add NonGNU Devel ELPA.
     (add-to-list 'package-archives
                  '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/")
-      'append))
+                 'append))
 
   ;; Reset frame layout.
   (setq default-frame-alist
