@@ -40,11 +40,11 @@
   (prefer-coding-system 'utf-8))
 
 (setup emacs
-  (:option my-font-name "IBM Plex Mono"
-           my-font-size 13
-           my-chinese-font-name "LXGW WenKai Mono"
-           my-latin-font-name "IBM Plex Mono"
-           my-symbol-font-name "Symbols Nerd Font Mono")
+  (:set my-font-name "IBM Plex Mono"
+        my-font-size 13
+        my-chinese-font-name "LXGW WenKai Mono"
+        my-latin-font-name "IBM Plex Mono"
+        my-symbol-font-name "Symbols Nerd Font Mono")
   (set-face-attribute 'default
                       nil
                       :font (font-spec :family my-font-name
@@ -65,7 +65,7 @@
                     'symbol
                     (font-spec :family my-symbol-font-name
                                :size my-font-size))
-  (:option word-wrap-by-category t))
+  (:set-default word-wrap-by-category t))
 
 (provide 'my-mule)
 ;;; my-mule.el ends here

@@ -17,10 +17,18 @@
 epkgs:
 with epkgs;
 (with elpaPackages; [
+  dash
   diff-hl
   setup
   transient
 ])
 ++ (with manualPackages; [ my.on ])
-++ (with melpaPackages; [ magit ])
-++ (with nongnuPackages; [ apheleia ])
+++ (with melpaPackages; [
+  apheleia
+  benchmark-init
+  f
+  magit
+  mwim
+  smartparens
+])
+++ (with nongnuPackages; [ ])
