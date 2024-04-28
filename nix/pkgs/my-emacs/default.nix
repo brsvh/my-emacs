@@ -29,17 +29,44 @@
   lib,
   newScope,
   pkgs,
+  parinfer-rust,
+  tree-sitter-grammars,
 }:
 with lib;
 {
   branch ? "master",
-  extraEmacsPackages ? (import ../../extra-emacs-packages.nix),
-  extraPackages ? (import ../../extra-packages.nix pkgs),
+  extraConfig ? "",
+  extraBinaries ? [ ],
+  extraEmacsPackages ? (epkgs: [ ]),
+  extraLibraries ? [ ],
 }:
 let
   mkMyEmacs = callPackage ./make-my-emacs.nix { };
 
   mkMyEmacsInitDirectory = callPackage ./make-my-emacs-init-directory.nix { };
+
+  dependencies =
+    epkgs:
+    (with epkgs; [ elpaPackages.setup ])
+    ++ ((import ../../extra-emacs-packages.nix) epkgs)
+    ++ (extraEmacsPackages epkgs);
+
+  binaries =
+    with pkgs;
+    [
+      fd
+      ripgrep
+    ]
+    ++ (import ../../extra-binaries.nix pkgs)
+    ++ extraBinaries;
+
+  libraries =
+    [ parinfer-rust ]
+    ++ (pipe tree-sitter-grammars [
+      (filterAttrs (name: _: name != "recurseForDerivations"))
+      attrValues
+    ])
+    ++ (import ../../extra-libraries.nix pkgs);
 
   emacsPackagesFor' =
     drv:
@@ -57,7 +84,7 @@ let
       prevEpkg.override { inherit manualPackages; }
     );
 
-  getPlainEmacs = drv: (emacsPackagesFor' drv).emacsWithPackages extraEmacsPackages;
+  getPlainEmacs = drv: (emacsPackagesFor' drv).emacsWithPackages dependencies;
 
   default =
     let
@@ -71,13 +98,13 @@ let
 
       plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory plainEmacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs extraConfig;
     in
     mkMyEmacs {
       inherit
-        extraEmacsPackages
-        extraPackages
+        binaries
         initDirectory
+        libraries
         plainEmacs
         vanillaEmacs
         ;
@@ -95,13 +122,13 @@ let
 
       plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory plainEmacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs extraConfig;
     in
     mkMyEmacs {
       inherit
-        extraEmacsPackages
-        extraPackages
+        binaries
         initDirectory
+        libraries
         plainEmacs
         vanillaEmacs
         ;
@@ -119,13 +146,13 @@ let
 
       plainEmacs = (getPlainEmacs vanillaEmacs);
 
-      initDirectory = mkMyEmacsInitDirectory plainEmacs;
+      initDirectory = mkMyEmacsInitDirectory plainEmacs extraConfig;
     in
     mkMyEmacs {
       inherit
-        extraEmacsPackages
-        extraPackages
+        binaries
         initDirectory
+        libraries
         plainEmacs
         vanillaEmacs
         ;

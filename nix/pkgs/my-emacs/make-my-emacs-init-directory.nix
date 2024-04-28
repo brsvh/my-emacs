@@ -14,10 +14,78 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-{ lib, stdenv }:
-emacs:
+{
+  lib,
+  linkFarm,
+  stdenv,
+  pkgs,
+  writeText,
+}:
+emacs: config:
 with builtins;
 with lib;
+let
+  my-interlude = writeText "my-interlude.el" ''
+    ;;; my-interlude.el --- Interlude of My Emacs -*- lexical-binding: t; -*-
+
+    ;; Copyright (C) 2022-2024 Burgess Chang
+
+    ;; Author: Burgess Chang <bsc@brsvh.org>
+    ;; Keywords: local
+    ;; Package-Requires: ((emacs "29.1"))
+    ;; URL: https://github.com/brsvh/my-emacs
+    ;; Version: 0.1.0
+
+    ;; This file is part of my-emacs.
+
+    ;; my-emacs is free software: you can redistribute it and/or modify it
+    ;; under the terms of the GNU General Public License as published by the
+    ;; Free Software Foundation, either version 3 of the License, or (at
+    ;; your option) any later version.
+
+    ;; my-emacs is distributed in the hope that it will be useful, but
+    ;; WITHOUT ANY WARRANTY; without even the implied warranty of
+    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    ;; General Public License for more details.
+
+    ;; You should have received a copy of the GNU General Public License
+    ;; along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
+
+    ;;; Commentary:
+
+    ;; This file is loaded during my Emacs initialization.
+
+    ;;; Code:
+
+    (require 'my-core)
+    (require 'parinfer-rust "${pkgs.parinfer-rust}/lib/libparinfer_rust.so" 'noerror)    
+
+    (add-to-list 'treesit-extra-load-path "${
+      linkFarm "treesit-grammars" (
+        map
+          (drv: {
+            name = "lib${removeSuffix "-grammar" (getName drv)}${stdenv.targetPlatform.extensions.sharedLibrary}";
+            path = "${drv}/parser";
+          })
+          (
+            pipe pkgs.tree-sitter-grammars [
+              (filterAttrs (name: _: name != "recurseForDerivations"))
+              attrValues
+            ]
+          )
+      )
+    }")
+
+    (setq parinfer-rust-auto-download nil
+          parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
+          parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/")
+
+    ${config}
+
+    (provide 'my-interlude)
+    ;;; my-interlude.el ends here
+  '';
+in
 stdenv.mkDerivation {
   name = "my-emacs-init-directory";
 
@@ -46,6 +114,7 @@ stdenv.mkDerivation {
     chmod -R u+w $TMPDIR;
 
     mv $TMPDIR/lisp/{early-,}init.el $TMPDIR/;
+    cat ${my-interlude} > $TMPDIR/lisp/my/my-interlude.el  
 
     mkdir -p $TMPDIR/.local;
 

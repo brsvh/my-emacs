@@ -1,4 +1,4 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-interlude.el --- Interlude of My Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,30 +25,11 @@
 
 ;;; Commentary:
 
-;; The schedule of my Play.
+;; This file is loaded during my Emacs initialization.
+
+;; NOTE: This file is fake, it will be override in derivation making.
 
 ;;; Code:
 
-(require 'my-prelude)
-
-
-
-(require 'my-core)
-(require 'my-editor)
-(require 'my-mule)
-(require 'my-project)
-
-
-
-(require 'my-interlude)
-
-
-
-(require 'my-programming)
-
-
-
-(require 'my-postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-interlude)
+;;; my-interlude.el ends here
