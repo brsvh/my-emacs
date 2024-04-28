@@ -29,6 +29,8 @@ with epkgs;
   f
   magit
   mwim
+  nix-ts-mode
+  rainbow-delimiters
   smartparens
 ])
 ++ (with nongnuPackages; [ ])

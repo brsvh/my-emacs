@@ -35,6 +35,7 @@
 
 (require 'my-core)
 (require 'my-programming-emacs-lisp)
+(require 'my-programming-nix)
 
 (cl-eval-when (compile)
   (require 'apheleia)
@@ -49,6 +50,7 @@
   (:hook
    #'display-line-numbers-mode ;; Show line numbers of buffer.
    #'hl-line-mode              ;; Hightlight current line of buffer.
+   #'rainbow-delimiters-mode   ;; Colorful brackets highlighting.
    ))
 
 
