@@ -23,12 +23,11 @@
 }:
 with lib;
 {
-  extraEmacsPackages,
-  extraPackages,
+  binaries,
   initDirectory,
+  libraries,
   plainEmacs,
   vanillaEmacs,
-  ...
 }:
 stdenv.mkDerivation {
   inherit (vanillaEmacs) meta;
@@ -45,6 +44,8 @@ stdenv.mkDerivation {
     makeWrapper
   ];
 
+  runtimeInputs = [ ];
+
   phases = [ "installPhase" ];
 
   installPhase = ''
@@ -56,7 +57,8 @@ stdenv.mkDerivation {
     mv $out/bin/emacs $out/bin/emacs-unwrapped
 
     makeWrapper $out/bin/emacs-unwrapped $out/bin/emacs \
-      --prefix PATH : ${makeBinPath extraPackages} \
+      --prefix PATH : ${makeBinPath binaries} \
+      --prefix LD_LIBRARY_PATH : ${makeLibraryPath libraries} \
       --add-flags "--init-directory=${initDirectory}"
 
     runHook postInstall

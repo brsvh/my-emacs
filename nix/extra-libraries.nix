@@ -14,18 +14,4 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-final: prev:
-let
-  inherit (prev) callPackage lib;
-
-  mkMyEmacsScope = callPackage ./my-emacs { };
-in
-rec {
-  my-emacs = my-emacs-master;
-
-  my-emacs-master = lib.makeOverridable mkMyEmacsScope { branch = "master"; };
-
-  my-emacs-stable = my-emacs-master.override { branch = null; };
-
-  my-emacs-unstable = my-emacs-master.override { branch = "unstable"; };
-}
+pkgs: with pkgs; [ ]
