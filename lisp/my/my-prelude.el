@@ -41,6 +41,10 @@
   (expand-file-name "lisp/" user-emacs-directory)
   "Directory beneath which my Emacs Lisp files are placed.")
 
+(defconst my-native-lisp-directory
+  (expand-file-name "native-lisp/" user-emacs-directory)
+  "Directory beneath which third-party Emacs Lisp files are placed.")
+
 (defconst my-site-lisp-directory
   (expand-file-name "site-lisp/" user-emacs-directory)
   "Directory beneath which third-party Emacs Lisp files are placed.")
@@ -51,7 +55,7 @@
                 user-emacs-directory)))
     (list
      (expand-file-name "emacs/eln-cache/" base)
-     (expand-file-name "native-lisp/" user-emacs-directory)))
+     my-native-lisp-directory))
   "Directory to look for natively-compiled *.eln files.")
 
 (defvar my-prelude--frame-alist '((menu-bar-lines . nil)
@@ -95,7 +99,7 @@
   ;; information during the startup process.
   (require 'benchmark-init)
 
-  ;; Deactivate `benchmark-init' at the very end of `after-init-hook'. 
+  ;; Deactivate `benchmark-init' at the very end of `after-init-hook'.
   (add-hook 'after-init-hook #'benchmark-init/deactivate 100)
 
   (require 'my-lib)
