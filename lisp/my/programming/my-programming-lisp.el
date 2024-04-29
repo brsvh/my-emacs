@@ -1,4 +1,4 @@
-;;; my-programming-emacs-lisp.el --- Porgramming with Emacs Lisp -*- lexical-binding: t -*-
+;;; my-programming-lisp.el --- Porgramming with Lisp -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; This file has enhanced my Emacs Lisp programming experience.
+;; This file has enhanced my Lisp programming experience.
 
 ;;; Code:
 
@@ -37,31 +37,12 @@
 
 
 ;;;
-;; Diagnostics:
-
-(setup elisp-mode
-  (:with-hook emacs-lisp-mode-hook
-    (:hook flymake-mode)))
-
-
-
-;;;
-;; Expansion:
-
-(setup elisp-mode  
-  (:with-map emacs-lisp-mode-map
-    (:keymap-set "C-c C-v" #'pp-macroexpand-last-sexp)))
-
-
-
-;;;
 ;; Parens editing:
 
-(setup elisp-mode
-  (:with-hook emacs-lisp-mode-hook
-    (:hook parinfer-rust-mode)))
+(setup lisp-mode
+  (:hook parinfer-rust-mode))
 
 
 
-(provide 'my-programming-emacs-lisp)
-;;; my-programming-emacs-lisp.el ends here
+(provide 'my-programming-lisp)
+;;; my-programming-lisp.el ends here
