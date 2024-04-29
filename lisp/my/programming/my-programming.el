@@ -39,12 +39,16 @@
 
 (cl-eval-when (compile)
   (require 'apheleia)
+  (require 'rainbow-delimiters)
   (require 'smartparens))
 
 
 
 ;;;
 ;; Appearance:
+
+(setup rainbow-delimiters
+  (:autoload rainbow-delimiters-mode))
 
 (setup prog-mode
   (:hook

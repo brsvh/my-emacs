@@ -31,6 +31,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'dash)
 (require 'my-lib)
 (require 'on)
 (require 'setup)
@@ -100,6 +101,20 @@ Usage see `cl-eval-when'."
     :documentation "Add FUNCTION to `on-first-input-hook'."
     :ensure '(func)
     :repeatable t)
+
+  (setup-define :first-ui
+    (lambda (function)
+      `(add-hook 'on-init-ui-hook ,function))
+    :documentation "Add FUNCTION to `on-init-ui-hook'."
+    :ensure '(func)
+    :repeatable t)
+
+  (setup-define :gui
+    (lambda (&rest body)
+      `(when (display-graphic-p)
+         ,@body))
+    :documentation "Evaluate body when `display-graphic-p' is non-nil."
+    :debug '(form))
 
   (setup-define :init
     (lambda (&rest body)
@@ -218,6 +233,30 @@ These forms are supported:
                each element of VAL."
     :debug '(sexp form)
     :repeatable t)
+
+  (setup-define :snoc
+    (lambda (symbol elem &rest elements)
+      `(:set ,symbol (funcall #'-snoc ,symbol ,elem ,@elements)))
+    :documentation "Append ELEM and ELEMENTS to the end of SYMBOL."
+    :debug '(sexp sexp form))
+
+  (setup-define :snoc-local
+    (lambda (symbol elem &rest elements)
+      `(add-hook ',(setup-get 'hook)
+                 (lambda ()
+                   (setq-local ,symbol (funcall #'-snoc
+                                                ,symbol
+                                                ,elem
+                                                ,@elements)))))
+    :documentation "Append ELEM and ELEMENTS to the end of SYMBOL."
+    :debug '(sexp sexp form))
+
+  (setup-define :tui
+    (lambda (&rest body)
+      `(unless (display-graphic-p)
+         ,@body))
+    :documentation "Evaluate body when `display-graphic-p' is nil."
+    :debug '(form))
   
   )
 
@@ -246,6 +285,10 @@ These forms are supported:
 
 ;;;
 ;; Third-Party libraries:
+
+(setup svg-lib
+  (:set-default
+   svg-lib-icons-dir (my-data-path "svg-icons/")))
 
 (setup transient
   (:set-default
