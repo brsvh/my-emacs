@@ -17,6 +17,7 @@
 epkgs:
 with epkgs;
 (with elpaPackages; [
+  consult
   dash
   diff-hl
   modus-themes

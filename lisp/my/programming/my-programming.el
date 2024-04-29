@@ -45,6 +45,12 @@
   (require 'rainbow-delimiters)
   (require 'smartparens))
 
+(defun my-inhibit-parinfer-rust-troublesome-modes (&rest _)
+  "Disable all `parinfer-rust-troublesome-modes' to inhibit warnings."
+  (dolist (mode parinfer-rust-troublesome-modes)
+    (when (fboundp mode)
+      (apply mode '(-1)))))
+
 
 
 ;;;
@@ -85,12 +91,11 @@
   (:also-load smartparens-config))
 
 (setup parinfer-rust-mode
-  (:advice parinfer-rust-mode-enable
-    (:before (&rest _) inhibit-troublesome-modes)
-    "Disable all `parinfer-rust-troublesome-modes' to inhibit warnings."
-    (dolist (mode parinfer-rust-troublesome-modes)
-      (when (fboundp mode)
-        (apply mode '(-1))))))
+  (:autoload parinfer-rust-mode parinfer-rust-mode-enable)
+  (:advice-add
+   parinfer-rust-mode-enable
+   :before
+   my-inhibit-parinfer-rust-troublesome-modes))
 
 (setup prog-mode
   (:hook
