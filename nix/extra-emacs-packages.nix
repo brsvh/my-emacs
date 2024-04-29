@@ -24,6 +24,7 @@ with epkgs;
   setup
   svg-lib
   transient
+  yasnippet
 ])
 ++ (with manualPackages; [ my.on ])
 ++ (with melpaPackages; [
@@ -40,4 +41,8 @@ with epkgs;
   smartparens
   svg-tag-mode
 ])
-++ (with nongnuPackages; [ hl-block-mode ])
+++ (with nongnuPackages; [
+  editorconfig
+  hl-block-mode
+  yasnippet-snippets
+])

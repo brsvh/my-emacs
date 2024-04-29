@@ -30,6 +30,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;;;###autoload
 (defgroup my nil
   "Customize my Emacs Configuration."
@@ -279,6 +281,19 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
         ((member my-light-theme custom-enabled-themes)
          (my-load-theme my-dark-theme))
         (t (my-theme-setup))))
+
+
+
+;;;
+;; Trivial functions/commands:
+
+;;;###autoload
+(defun my-silent-message (fn &rest args)
+  "Silencing load message, around FN with original ARGS."
+  (cl-letf (((symbol-function #'message) #'ignore))
+    (apply fn args)))
+
+
 
 (provide 'my-lib)
 ;;; my-lib.el ends here
