@@ -41,6 +41,13 @@
 
 (defun my-theme-is-modus (&rest _)
   "Return non-nil if current theme is belong to Modus Themes, else nil."
+  (member my-theme '(modus-operandi
+                     modus-operandi-tinted
+                     modus-vivendi
+                     modus-vivendi-tinted)))
+
+(defun my-modus-themes-enable-p (&rest _)
+  "Return non-nil if current theme is belong to Modus Themes, else nil."
   (cl-some #'(lambda (theme)
                (member theme '(modus-operandi
                                modus-operandi-tinted
@@ -62,11 +69,12 @@
 
 (setup modus-themes
   (:only-if (my-theme-is-modus))
+  (:set
+   ;; Reload modus themes when its option's values is changed.
+   modus-themes-custom-auto-reload t)
+
   (:when-loaded
     (:set
-     ;; Reload modus themes when its option's values is changed.
-     modus-themes-custom-auto-reload t
-
      ;; Use bold and italic for code syntax highlighting.
      modus-themes-bold-constructs t
      modus-themes-italic-constructs t
@@ -101,14 +109,8 @@
            '(border-mode-line-inactive unspecified))))
 
 (setup hightlight-todo
-  (:with-feature svg-tag-mode
-    (:autoload svg-tag-mode global-svg-tag-mode))
-  (:gui
-   ;; Replace the display of keywords such as TODO with SVG icons.
-   (:first-ui global-svg-tag-mode))
-  (:tui
-   ;; Highlight keywords such as FIXME, TODO, REVIEW.
-   (:first-ui global-hl-todo-mode)))
+  ;; Highlight keywords such as FIXME, TODO, REVIEW.
+  (:first-ui global-hl-todo-mode))
 
 ;; Display ^L page breaks as tidy horizontal lines.
 (setup page-break-lines
