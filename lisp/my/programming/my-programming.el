@@ -35,11 +35,13 @@
 
 (require 'my-core)
 (require 'my-programming-emacs-lisp)
+(require 'my-programming-lisp)
 (require 'my-programming-nix)
 
 (cl-eval-when (compile)
   (require 'apheleia)
   (require 'company)
+  (require 'parinfer-rust-mode)
   (require 'rainbow-delimiters)
   (require 'smartparens))
 
@@ -55,8 +57,19 @@
   (:hook
    #'display-line-numbers-mode ;; Show line numbers of buffer.
    #'hl-line-mode              ;; Hightlight current line of buffer.
-   #'rainbow-delimiters-mode   ;; Colorful brackets highlighting.
-   ))
+   #'rainbow-delimiters-mode)) ;; Colorful brackets highlighting.
+
+
+
+
+;;;
+;; Complete:
+
+(setup company
+  (:autoload company-mode))
+
+(setup prog-mode
+  (:hook company-mode))
 
 
 
@@ -71,11 +84,18 @@
   (:autoload smartparens-mode)
   (:also-load smartparens-config))
 
+(setup parinfer-rust-mode
+  (:advice parinfer-rust-mode-enable
+    (:before (&rest _) inhibit-troublesome-modes)
+    "Disable all `parinfer-rust-troublesome-modes' to inhibit warnings."
+    (dolist (mode parinfer-rust-troublesome-modes)
+      (when (fboundp mode)
+        (apply mode '(-1))))))
+
 (setup prog-mode
   (:hook
    #'electric-indent-local-mode ;; Auto reindentation.
-   #'smartparens-mode           ;; Auto insert paired paren.
-   ))
+   #'smartparens-mode))         ;; Auto insert paired paren.
 
 
 
@@ -84,17 +104,6 @@
 
 (setup apheleia
   (:first-buffer apheleia-global-mode))
-
-
-
-;;;
-;; Complete:
-
-(setup company
-  (:autoload company-mode))
-
-(setup prog-mode
-  (:hook company-mode))
 
 
 

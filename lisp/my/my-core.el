@@ -64,6 +64,15 @@
     :repeatable t
     :signature '(FUNC ...))
 
+  (setup-define :advice
+    (lambda (symbol args &rest body)
+      `(define-advice ,symbol ,args ,@body))
+    :documentation "Add a piece of advice on a function.
+See `define-advice' for more details."
+    :debug '(sexp sexp form)
+    :after-loaded t
+    :indent 1)
+
   (setup-define :eval-when
     (lambda (timing &rest body)
       `(cl-eval-when ,timing ,@body))
