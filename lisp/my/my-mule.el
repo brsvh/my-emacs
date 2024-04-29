@@ -40,27 +40,28 @@
   (prefer-coding-system 'utf-8))
 
 (setup emacs
-  (:set my-font-name "IBM Plex Mono"
-        my-font-size 13
-        my-chinese-font-name "LXGW WenKai Mono"
-        my-latin-font-name "IBM Plex Mono"
-        my-symbol-font-name "Symbols Nerd Font Mono")
-  (set-face-attribute 'default
-                      nil
-                      :font (font-spec :family my-font-name))
-  (set-fontset-font t
-                    'cjk-misc
-                    (font-spec :family my-chinese-font-name))
-  (set-fontset-font t
-                    'han
-                    (font-spec :family my-chinese-font-name))
-  (set-fontset-font t
-                    'latin
-                    (font-spec :family my-latin-font-name))
-  (set-fontset-font t
-                    'symbol
-                    (font-spec :family my-symbol-font-name))
-  (:set-default word-wrap-by-category t))
+  (:gui
+   (:set my-font-name "IBM Plex Mono"
+         my-font-size 13
+         my-chinese-font-name "LXGW WenKai Mono"
+         my-latin-font-name "IBM Plex Mono"
+         my-symbol-font-name "Symbols Nerd Font Mono")
+   (set-face-attribute 'default
+                       nil
+                       :font (font-spec :family my-font-name))
+   (set-fontset-font t
+                     'cjk-misc
+                     (font-spec :family my-chinese-font-name))
+   (set-fontset-font t
+                     'han
+                     (font-spec :family my-chinese-font-name))
+   (set-fontset-font t
+                     'latin
+                     (font-spec :family my-latin-font-name))
+   (set-fontset-font t
+                     'symbol
+                     (font-spec :family my-symbol-font-name))
+   (:set-default word-wrap-by-category t)))
 
 (provide 'my-mule)
 ;;; my-mule.el ends here
