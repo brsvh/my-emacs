@@ -27,9 +27,43 @@
 
 ;; This file is loaded during my Emacs initialization.
 
-;; NOTE: This file is fake, it will be override in derivation making.
+;; NOTE:
+;;
+;; This file is fake, it will be override in Nix derivation making.
 
 ;;; Code:
+
+(require 'my-core)
+
+(cl-eval-when (compile)
+  (require 'parinfer-rust-mode))
+
+(setup treesit-grammars
+  (:snoc
+   treesit-extra-load-path
+   "${
+         linkFarm "treesit-grammars" (
+           map
+             (drv: {
+               name = "lib${removeSuffix "-grammar" (getName drv)}${stdenv.targetPlatform.extensions.sharedLibrary}";
+               path = "${drv}/parser";
+             })
+             (
+               pipe pkgs.tree-sitter-grammars [
+                 (filterAttrs (name: _: name != "recurseForDerivations"))
+                 attrValues
+               ]
+             )
+         )
+       }"))
+
+(setup parinfer-rust
+  (:set
+   parinfer-rust-auto-download nil
+   parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
+   parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/"))
+
+${config}
 
 (provide 'my-interlude)
 ;;; my-interlude.el ends here
