@@ -182,6 +182,11 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   :group 'my
   :type 'file)
 
+
+
+;;;
+;; Fonts:
+
 ;;;###autoload
 (defgroup my-fonts nil
   "Fonts for my Emacs configuraiton."
@@ -216,6 +221,64 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   "Name of my symbol font."
   :group 'my-fonts
   :type 'string)
+
+
+
+;;;
+;; Themes:
+
+;;;###autoload
+(defcustom my-light-theme 'modus-operandi-tinted
+  "Default light theme."
+  :group 'my
+  :type 'symbol)
+
+;;;###autoload
+(defcustom my-dark-theme 'modus-vivendi-tinted
+  "Default dark theme."
+  :group 'my
+  :type 'symbol)
+
+;;;###autoload
+(defcustom my-theme my-light-theme
+  "Default theme."
+  :group 'my
+  :type 'symbol)
+
+;;;###autoload
+(defun my-select-proper-theme (&rest _)
+  "Set `my-theme' to proper variant base on window system type."
+  (if (display-graphic-p)
+      (setq my-theme my-light-theme)
+    (setq my-theme my-dark-theme)))
+
+;;;###autoload
+(defun my-load-theme (theme)
+  "Load THEME."
+  (when (eq theme 'default)
+    (setq theme nil))
+  (unless (eq theme (car custom-enabled-themes))
+    (mapc #'disable-theme custom-enabled-themes)
+    (when theme
+      (if (custom-theme-p theme)
+          (enable-theme theme)
+        (load-theme theme :no-confirm)))))
+
+;;;###autoload
+(defun my-theme-setup (&rest _)
+  "Setup `my-theme'."
+  (my-select-proper-theme)
+  (my-load-theme my-theme))
+
+;;;###autoload
+(defun my/toggle-theme ()
+  "Toggle themes."
+  (interactive)
+  (cond ((member my-light-theme custom-enabled-themes)
+         (my-load-theme my-dark-theme))
+        ((member my-light-theme custom-enabled-themes)
+         (my-load-theme my-dark-theme))
+        (t (my-theme-setup))))
 
 (provide 'my-lib)
 ;;; my-lib.el ends here
