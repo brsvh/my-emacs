@@ -19,7 +19,9 @@ with epkgs;
 (with elpaPackages; [
   dash
   diff-hl
+  modus-themes
   setup
+  svg-lib
   transient
 ])
 ++ (with manualPackages; [ my.on ])
@@ -27,10 +29,13 @@ with epkgs;
   apheleia
   benchmark-init
   f
+  hl-todo
   magit
   mwim
   nix-ts-mode
+  page-break-lines
   rainbow-delimiters
   smartparens
+  svg-tag-mode
 ])
-++ (with nongnuPackages; [ ])
+++ (with nongnuPackages; [ hl-block-mode ])

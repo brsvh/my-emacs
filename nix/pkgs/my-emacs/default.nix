@@ -47,7 +47,10 @@ let
 
   dependencies =
     epkgs:
-    (with epkgs; [ elpaPackages.setup ])
+    (with epkgs; [
+      elpaPackages.setup
+      melpaPackages.parinfer-rust-mode
+    ])
     ++ ((import ../../extra-emacs-packages.nix) epkgs)
     ++ (extraEmacsPackages epkgs);
 
