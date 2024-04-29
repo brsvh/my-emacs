@@ -31,10 +31,20 @@
 
 (require 'my-core)
 
+(cl-eval-when (compile)
+  (require 'my-programming))
+
+
+
+;;;
+;; Major modes:
+
 (setup nix-ts-mode
   (:with-mode nix-ts-mode
     (:file-match
      "\\.nix\\'")))
+
+
 
 (provide 'my-programming-nix)
 ;;; my-programming-nix.el ends here
