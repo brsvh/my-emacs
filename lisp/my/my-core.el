@@ -36,12 +36,35 @@
 (require 'on)
 (require 'setup)
 
+(cl-eval-when (compile)
+  (require 'consult))
+
 
 
 ;;;
 ;; `setup` keywords:
 
 (cl-eval-when (compile eval load)
+
+  (setup-define :advice-add
+    (lambda (symbol where function)
+      `(advice-add ',symbol ,where ,function))
+    :documentation "Add a piece of advice on a function.
+See `advice-add' for more details."
+    :after-loaded t
+    :debug '(sexp sexp function-form)
+    :ensure '(nil nil func)
+    :repeatable t)
+
+  (setup-define :advice-remove
+    (lambda (symbol function)
+      `(advice-remove ',symbol ,function))
+    :documentation "REmove a piece of advice on a function.
+See `advice-remove' for more details."
+    :after-loaded t
+    :debug '(sexp function-form)
+    :ensure '(nil func)
+    :repeatable t)
 
   (setup-define :after
     (lambda (feature &rest body)
@@ -64,7 +87,7 @@
     :repeatable t
     :signature '(FUNC ...))
 
-  (setup-define :advice
+  (setup-define :define-advice
     (lambda (symbol args &rest body)
       `(define-advice ,symbol ,args ,@body))
     :documentation "Add a piece of advice on a function.
@@ -265,9 +288,9 @@ These forms are supported:
       `(unless (display-graphic-p)
          ,@body))
     :documentation "Evaluate body when `display-graphic-p' is nil."
-    :debug '(form))
-  
-  )
+    :debug '(form)))
+
+
 
 
 
@@ -275,17 +298,22 @@ These forms are supported:
 ;; Keymaps:
 
 (defvar ctl-c-map (make-keymap)
-  "Default keymap for my commands.")
+  "Default keymap use to bind my commands.")
+
+(defvar ctl-c-f-map (make-keymap)
+  "Default keymap use to bind my files operating commands.")
 
 (defvar ctl-c-v-map (make-keymap)
-  "Default keymap for version control commands.")
+  "Default keymap use to bind my version controling commands.")
 
 (defvar ctl-c-v-g-map (make-keymap)
-  "Default keymap for version control (Git) commands.")
+  "Default keymap for to bind my version controling (Git) commands.")
 
 (setup my-maps
   (:with-map ctl-c-map
-    (:keymap-set "v" ctl-c-v-map))
+    (:keymap-set
+     "f" ctl-c-f-map
+     "v" ctl-c-v-map))
   (:with-map ctl-c-v-map
     (:keymap-set "g" ctl-c-v-g-map))
   (:keymap-set-into global-map "C-c" ctl-c-map))
