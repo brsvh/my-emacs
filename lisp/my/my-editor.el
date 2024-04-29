@@ -34,14 +34,21 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
-  (require 'mwim))
+  (require 'autorevert)
+  (require 'consult)
+  (require 'editorconfig)
+  (require 'mwim)
+  (require 'my-prelude)
+  (require 'recentf)
+  (require 'saveplace)
+  (require 'yasnippet))
 
 
 
 (defun my-editor-guess-file-mode ()
   "Guess major mode when saving a file in `fundamental-mode'.
 
-Likely, something has changed since the buffer was opened. e.g. A
+Likely, something has changed since the buffer was opened.  e.g. A
 shebang line or file path may exist now."
   (when (eq major-mode 'fundamental-mode)
     (let ((buffer (or (buffer-base-buffer) (current-buffer))))
@@ -53,11 +60,71 @@ shebang line or file path may exist now."
 
 
 ;;;
+;; Appearance:
+
+(setup simple
+  (:first-buffer
+   ;; Display the current column number in Mode Line.
+   column-number-mode
+   ;; Display the current line number in Mode Line.
+   line-number-mode
+   ;; Display the size of current buffer in Mode Line.
+   size-indication-mode))
+
+
+
+;;;
+;; Editorconfig:
+
+(setup editorconfig
+  (:first-file editorconfig-mode))
+
+
+
+;;;
 ;; Files:
+
+(setup autorevert
+  (:first-file global-auto-revert-mode)
+  (:when-loaded
+    (:set auto-revert-verbose nil)))
 
 (setup files
   (:with-hook after-save-hook
-    (:hook #'my-editor-guess-file-mode)))
+    (:hook #'my-editor-guess-file-mode))
+  (:set
+   ;; Enable auto-saving by default.
+   auto-save-default t
+
+   ;; Make auto-saving silent.
+   auto-save-no-message t
+
+   ;; Allow auto-saving whether deletions is big.
+   auto-save-include-big-deletions t
+
+   ;; Change the default location of auto-saved files.
+   (prepend auto-save-file-name-transforms)
+   (list ".*" (my-data-path* "auto-save/") t)
+
+   ;; Change the default list file for store auto-saved files.
+   auto-save-list-file-prefix
+   (my-data-path* "auto-save/lists/" "saves")
+
+   ;; Make backups of file in version-control style.
+   make-backup-files t
+   version-control t
+
+   ;; Create backup of file by copying way.
+   backup-by-copying t
+
+   ;; How many backups will be saved? Maybe 5 is enough for me.
+   delete-old-versions t
+   kept-old-versions 5
+   kept-new-versions 5
+
+   ;; Change the default location of backup files.
+   (prepend backup-directory-alist)
+   (cons "." (my-data-path* "backup/"))))
 
 
 
@@ -69,6 +136,66 @@ shebang line or file path may exist now."
     (:keymap-set
      "<remap> <move-beginning-of-line>" #'mwim-beginning-of-code-or-line
      "<remap> <move-end-of-line>" #'mwim-end-of-code-or-line)))
+
+
+
+;;;
+;; Place:
+
+(setup saveplace
+  (:first-file save-place-mode)
+  (:when-loaded
+    (:set
+     ;; Change the storage location for persisting the editing place.
+     save-place-file (my-state-path "place.el"))))
+
+
+
+;;;
+;; Rencent files:
+
+(setup recentf
+  (:first-file recentf-mode)
+  (:advice-add
+   ;; Silent load.
+   recentf-load-list :around #'my-silent-message
+   ;; Silent cleanup.
+   recentf-cleanup :around #'my-silent-message)
+  (:set
+   ;; Change the storage location for persisting the recent files.
+   recentf-save-file (my-state-path "recent.el"))
+  (:keymap-set-into ctl-c-f-map "r" #'consult-recent-file))
+
+
+
+;;;
+;; Snippets:
+
+(setup yasnippet
+  (:when-loaded
+    (:snoc yas-snippet-dirs (my-path my-etc-directory "snippets/"))
+    (:advice-add yas-load-directory :around #'my-silent-message)))
+
+
+
+;;;
+;; Yank:
+
+(setup consult
+  (:with-map global-map
+    (:keymap-set
+     "<remap> <yank>" #'consult-yank-from-kill-ring
+     "<remap> <yank-pop>" #'consult-yank-pop)))
+
+(setup delsel
+  ;; When typing with a selected region, replace it directly.
+  (:first-buffer delete-selection-mode))
+
+(setup simple
+  (:set
+   ;; Inhibit duplicated contents to clipboard.
+   kill-do-not-save-duplicates t
+   save-interprogram-paste-before-kill t))
 
 
 
