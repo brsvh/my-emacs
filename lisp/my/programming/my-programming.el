@@ -39,6 +39,7 @@
 
 (cl-eval-when (compile)
   (require 'apheleia)
+  (require 'company)
   (require 'rainbow-delimiters)
   (require 'smartparens))
 
@@ -83,6 +84,17 @@
 
 (setup apheleia
   (:first-buffer apheleia-global-mode))
+
+
+
+;;;
+;; Complete:
+
+(setup company
+  (:autoload company-mode))
+
+(setup prog-mode
+  (:hook company-mode))
 
 
 

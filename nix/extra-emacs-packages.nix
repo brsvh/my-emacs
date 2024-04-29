@@ -28,6 +28,7 @@ with epkgs;
 ++ (with melpaPackages; [
   apheleia
   benchmark-init
+  company
   f
   hl-todo
   magit
