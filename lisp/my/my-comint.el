@@ -1,9 +1,9 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-comint.el --- `comint' support of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
 ;; Author: Burgess Chang <bsc@brsvh.org>
-;; Keywords: local
+;; Keywords: extensions
 ;; Package-Requires: ((emacs "29.1"))
 ;; URL: https://github.com/brsvh/my-emacs
 ;; Version: 0.1.50
@@ -25,33 +25,23 @@
 
 ;;; Commentary:
 
-;; The schedule of my Play.
+;; This file improves my common settings for interpreters.
 
 ;;; Code:
 
-(require 'my-prelude)
 (require 'my-core)
 
-
-
-(require 'my-comint)
-(require 'my-editor)
-(require 'my-mule)
-(require 'my-project)
-(require 'my-security)
-(require 'my-ui)
+(cl-eval-when (compile)
+  (require 'comint))
 
 
 
-(require 'my-interlude)
+(setup comint
+  ;; Popup interpreter.
+  (:snoc popper-reference-buffers
+         'comint-mode))
 
 
 
-(require 'my-programming)
-
-
-
-(require 'my-postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-comint)
+;;; my-comint.el ends here
