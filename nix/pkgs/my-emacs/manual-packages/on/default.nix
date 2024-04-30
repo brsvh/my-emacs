@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
 {
-  fetchgit,
+  fetchFromGitLab,
   lib,
   trivialBuild,
 }:
@@ -24,8 +24,9 @@ trivialBuild rec {
 
   version = "0.1.0";
 
-  src = fetchgit {
-    url = "https://gitlab.com/ajgrf/on.el.git";
+  src = fetchFromGitLab {
+    owner = "ajgrf";
+    repo = "on.el";
     rev = "3cf623e1a4331e259ef92e49154ed0551f300436";
     hash = "sha256-gtSVCpQwv4Ui9VpW7SXnsXIkfHN/6laMLqHTezDcMZg=";
   };
