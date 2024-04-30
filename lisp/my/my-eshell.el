@@ -1,9 +1,9 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-eshell.el --- `eshell' support of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
 ;; Author: Burgess Chang <bsc@brsvh.org>
-;; Keywords: local
+;; Keywords: extensions
 ;; Package-Requires: ((emacs "29.1"))
 ;; URL: https://github.com/brsvh/my-emacs
 ;; Version: 0.1.50
@@ -25,35 +25,31 @@
 
 ;;; Commentary:
 
-;; The schedule of my Play.
+;; This file makes my `eshell' more powerful.
 
 ;;; Code:
 
-(require 'my-prelude)
 (require 'my-core)
 
-
-
-(require 'my-comint)
-(require 'my-dired)
-(require 'my-editor)
-(require 'my-eshell)
-(require 'my-mule)
-(require 'my-project)
-(require 'my-security)
-(require 'my-ui)
+(cl-eval-when (compile)
+  (require 'em-alias)
+  (require 'esh-mode)
+  (require 'my-prelude))
 
 
 
-(require 'my-interlude)
+;;;
+;; Common settings:
+
+(setup eshell
+  ;; Popup all `eshell-mode' buffers.
+  (:snoc popper-reference-buffers
+         'eshell-mode)
+  (:set
+   eshell-aliases-file (my-path my-etc-directory "eshell/aliases")
+   eshell-directory-name (my-state-path "eshell/")))
 
 
 
-(require 'my-programming)
-
-
-
-(require 'my-postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-eshell)
+;;; my-eshell.el ends here
