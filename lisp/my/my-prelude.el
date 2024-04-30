@@ -95,6 +95,30 @@
   (unless my-prelude--inhibit-update-load-path
     (my-prelude--update-load-path))
 
+  (require 'cl-lib)
+  (require 'my-lib)
+
+  (cl-eval-when (compile)
+    (require 'gcmh))
+
+  ;; Avoid garbage collection during the initialization to achieve a
+  ;; faster startup.
+  (setq gc-cons-threshold most-positive-fixnum)
+
+  ;; Restore the garbage collection threshold to its default value.
+  (add-hook 'after-init-hook
+            #'(lambda (&rest _)
+                (let ((default (default-value 'gc-cons-threshold)))
+                  (setq gc-cons-threshold default)
+                  (if (fboundp 'gcmh-mode)
+                      nil
+                    (autoload #'gcmh-mode "gcmh" nil t))
+                  (gcmh-mode +1)))
+            100)
+
+  ;; Prevent check mtime of Emacs Lisp Bytecode file to save time.
+  (setq load-prefer-newer noninteractive)
+
   ;; Activate `benchmark-init' as early as possible to capture loading
   ;; information during the startup process.
   (require 'benchmark-init)
@@ -102,23 +126,13 @@
   ;; Deactivate `benchmark-init' at the very end of `after-init-hook'.
   (add-hook 'after-init-hook #'benchmark-init/deactivate 100)
 
-  (require 'my-lib)
-
   ;; Inhibit save customizations to `user-init-file`.
   (setq custom-file my-custom-file)
 
-  (with-eval-after-load 'package
-    (eval-when-compile (defvar package-archives))
-
-    ;; Add GNU Devel ELPA.
-    (add-to-list 'package-archives
-                 '("gnu-devel" . "https://elpa.gnu.org/devel/")
-                 'append)
-
-    ;; Add NonGNU Devel ELPA.
-    (add-to-list 'package-archives
-                 '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/")
-                 'append))
+  ;; Redirect the location of directory containing the user’s Emacs Lisp
+  ;; packages.
+  (setq package-user-dir (my-data-path (format "elpa/%s/" emacs-version))
+        package-quickstart-file (my-path package-user-dir "autoloads.el"))
 
   ;; Reset frame layout.
   (setq default-frame-alist

@@ -32,20 +32,9 @@
 (defvar early-init--file-name-handler-alist file-name-handler-alist
   "The initial value of `file-name-handler-alist'.")
 
-(let ((default-directory user-emacs-directory))
-  ;; Avoid garbage collection during the initialization to achieve a
-  ;; faster startup.
-  (setq gc-cons-threshold most-positive-fixnum)
-
-  ;; Restore the garbage collection threshold to its default value.
-  (add-hook 'after-init-hook
-            #'(lambda (&rest _)
-                (let ((default (default-value 'gc-cons-threshold)))
-                  (setq gc-cons-threshold default)))
-            99)
-
-  ;; Prevent check mtime of Emacs Lisp Bytecode file to save time.
-  (setq load-prefer-newer noninteractive)
+(let ((default-directory user-emacs-directory)
+      (gc-cons-threshold most-positive-fixnum)
+      (load-prefer-newer noninteractive))
 
   ;; Skip consulting the `file-name-handler-alist' to save overhead.
   (setq file-name-handler-alist nil)
@@ -57,7 +46,7 @@
                       (prev file-name-handler-alist))
                   (setq file-name-handler-alist
                         (delete-dups (append default prev)))))
-    98)
+            100)
 
   (load (expand-file-name "lisp/my/my-prelude") nil 'nomessage))
 

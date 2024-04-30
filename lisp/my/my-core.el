@@ -34,17 +34,29 @@
 (require 'dash)
 (require 'my-lib)
 (require 'on)
+(require 'orderless)
 (require 'setup)
 
 (cl-eval-when (compile)
-  (require 'consult))
+  (require 'gcmh)
+  (require 'package)
+  (require 'server))
+
+;; `popper-reference-buffers' is a variable defined in `popper', but it
+;; is evaluated upon starting `popper-mode', modifying its value after
+;; `popper' is loaded will be ineffective.  As my settings for this
+;; variable are distributed across various files, I define it once here
+;; to prevent Emacs complain.  '("\\*Messages\\*$") is its original
+;; default value.
+(defvar popper-reference-buffers '("\\*Messages\\*$")
+  "List of buffers to treat as popups.")
 
 
 
 ;;;
 ;; `setup` keywords:
 
-(cl-eval-when (compile eval load)
+(eval-and-compile
 
   (setup-define :advice-add
     (lambda (symbol where function)
@@ -70,7 +82,6 @@ See `advice-remove' for more details."
     (lambda (feature &rest body)
       `(with-eval-after-load ',feature ,@body))
     :documentation "Eval BODY after FEATURE."
-    :after-loaded t
     :indent 1)
 
   (setup-define :autoload
@@ -290,7 +301,26 @@ These forms are supported:
     :documentation "Evaluate body when `display-graphic-p' is nil."
     :debug '(form)))
 
+
 
+;;;
+;; Essentials:
+
+(setup package
+  (:when-loaded
+    (:snoc
+     package-archives
+     ;; Add GNU Devel ELPA.
+     '("gnu-devel" . "https://elpa.gnu.org/devel/")
+     ;; Add NonGNU Devel ELPA.
+     '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))))
+
+(setup server
+  (:with-hook after-init-hook
+    (:hook my/server-start))
+  (:when-loaded
+    (:set
+     server-auth-dir (my-state-path "server/"))))
 
 
 
@@ -299,6 +329,15 @@ These forms are supported:
 
 (defvar ctl-c-map (make-keymap)
   "Default keymap use to bind my commands.")
+
+(defvar ctl-c-4-map (make-keymap)
+  "Default keymap use to bind my window operating commands.")
+
+(defvar ctl-c-5-map (make-keymap)
+  "Default keymap use to bind my frame operating commands.")
+
+(defvar ctl-c-e-map (make-keymap)
+  "Default keymap use to bind my Emacs operating commands.")
 
 (defvar ctl-c-f-map (make-keymap)
   "Default keymap use to bind my files operating commands.")
@@ -312,6 +351,9 @@ These forms are supported:
 (setup my-maps
   (:with-map ctl-c-map
     (:keymap-set
+     "4" ctl-c-4-map
+     "5" ctl-c-5-map
+     "e" ctl-c-e-map
      "f" ctl-c-f-map
      "v" ctl-c-v-map))
   (:with-map ctl-c-v-map
@@ -321,7 +363,15 @@ These forms are supported:
 
 
 ;;;
-;; Third-Party libraries:
+;; Built-in features:
+
+(setup files
+  (:keymap-set-into ctl-c-e-map "r" #'restart-emacs))
+
+
+
+;;;
+;; Third-Party features:
 
 (setup svg-lib
   (:set-default

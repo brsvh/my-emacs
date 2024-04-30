@@ -32,12 +32,22 @@
 
 (require 'cl-lib)
 
+(cl-eval-when (compile)
+  (require 'server))
+
+(declare-function server-running-p "server")
+
 ;;;###autoload
 (defgroup my nil
   "Customize my Emacs Configuration."
   :prefix "my-"
   :group 'emacs
   :link '(url-link :tag "GitHub" "https://github.com/brsvh/my-emacs"))
+
+
+
+;;;
+;; Common:
 
 ;;;###autoload
 (defmacro my-os-is (os)
@@ -223,6 +233,17 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
   "Name of my symbol font."
   :group 'my-fonts
   :type 'string)
+
+
+
+;;;
+;; Server:
+
+;;;###autoload
+(defun my/server-start ()
+  "Allow this Emacs process to be a server for client processes."
+  (interactive)
+  (unless (server-running-p) (server-start)))
 
 
 
