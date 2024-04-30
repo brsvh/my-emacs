@@ -34,11 +34,14 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
+  (require 'anzu)
   (require 'autorevert)
   (require 'consult)
   (require 'editorconfig)
+  (require 'hl-todo)
   (require 'mwim)
   (require 'my-prelude)
+  (require 'page-break-lines)
   (require 'recentf)
   (require 'saveplace)
   (require 'yasnippet))
@@ -71,6 +74,30 @@ shebang line or file path may exist now."
    ;; Display the size of current buffer in Mode Line.
    size-indication-mode))
 
+(setup hightlight-todo
+  ;; Highlight keywords such as FIXME, TODO, REVIEW.
+  (:first-ui global-hl-todo-mode))
+
+;; Display ^L page breaks as tidy horizontal lines.
+(setup page-break-lines
+  (:first-ui
+   global-page-break-lines-mode))
+
+
+
+;;;
+;; Bookmark:
+
+(setup consult
+  (:autoload consult-bookmark))
+
+(setup bookmark
+  (:with-map global-map
+    (:keymap-set "<remap> <bookmark-bmenu-list>" #'consult-bookmark))
+  (:when-loaded
+    (:set
+     bookmark-default-file (my-data-path "bookmarks.el"))))
+
 
 
 ;;;
@@ -93,6 +120,9 @@ shebang line or file path may exist now."
   (:with-hook after-save-hook
     (:hook #'my-editor-guess-file-mode))
   (:set
+   ;; Move to trash when delete files.
+   delete-by-moving-to-trash t
+
    ;; Enable auto-saving by default.
    auto-save-default t
 
@@ -165,6 +195,14 @@ shebang line or file path may exist now."
    ;; Change the storage location for persisting the recent files.
    recentf-save-file (my-state-path "recent.el"))
   (:keymap-set-into ctl-c-f-map "r" #'consult-recent-file))
+
+
+
+;;;
+;; Search:
+
+(setup anzu
+  (:first-buffer global-anzu-mode))
 
 
 
