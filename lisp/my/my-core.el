@@ -152,13 +152,6 @@ Usage see `cl-eval-when'."
     :ensure '(func)
     :repeatable t)
 
-  (setup-define :gui
-    (lambda (&rest body)
-      `(when (display-graphic-p)
-         ,@body))
-    :documentation "Evaluate body when `display-graphic-p' is non-nil."
-    :debug '(form))
-
   (setup-define :init
     (lambda (&rest body)
       (macroexp-progn body))
@@ -294,11 +287,30 @@ These forms are supported:
     :documentation "Append ELEM and ELEMENTS to the end of SYMBOL."
     :debug '(sexp sexp form))
 
-  (setup-define :tui
+  (setup-define :when-gui
+    (lambda (&rest body)
+      `(when (display-graphic-p)
+         ,@body))
+    :documentation "Evaluate BODY when `display-graphic-p' is non-nil."
+    :debug '(form))
+
+  (setup-define :when-os
+    (lambda (system &rest body)
+      (let ((conditions (mapcar
+                         (lambda (sys)
+                           `(my-os-is ,sys))
+                         system)))
+        `(when (or ,@conditions)
+           ,@body)))
+    :documentation "Evaluate BODY when current OS is memeber of SYSTEM."
+    :debug '(sexp form)
+    :indent 1)
+
+  (setup-define :when-tui
     (lambda (&rest body)
       `(unless (display-graphic-p)
          ,@body))
-    :documentation "Evaluate body when `display-graphic-p' is nil."
+    :documentation "Evaluate BODY when `display-graphic-p' is nil."
     :debug '(form)))
 
 

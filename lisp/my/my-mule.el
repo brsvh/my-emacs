@@ -40,7 +40,7 @@
   (prefer-coding-system 'utf-8))
 
 (setup emacs
-  (:gui
+  (:when-gui
    (:set my-font-name "IBM Plex Mono"
          my-font-size 13
          my-chinese-font-name "LXGW WenKai Mono"

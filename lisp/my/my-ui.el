@@ -382,7 +382,7 @@
 ;; Scrolling:
 
 (setup scroll-bar
-  (:gui
+  (:when-gui
    (scroll-bar-mode -1)))
 
 (setup scroll
