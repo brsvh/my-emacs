@@ -95,7 +95,9 @@
   (:advice-add
    parinfer-rust-mode-enable
    :before
-   my-inhibit-parinfer-rust-troublesome-modes))
+   my-inhibit-parinfer-rust-troublesome-modes)
+  (:when-loaded
+    (:set parinfer-rust-preferred-mode "paren")))
 
 (setup prog-mode
   (:hook
