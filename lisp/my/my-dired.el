@@ -54,8 +54,12 @@
 (setup dired
   (:when-gui
    (:with-hook dired-mode-hook
-     (:hook diredfl-mode              ;; Colorful `dired'.
-            nerd-icons-dired-mode)))) ;; `dired' with Nerd icons.
+     (:hook
+      diredfl-mode          ;; Colorful `dired'.
+      nerd-icons-dired-mode ;; `dired' with Nerd icons.
+      (lambda ()            ;; Inhibit fill column indicator.
+        (when (bound-and-true-p display-fill-column-indicator-mode)
+          (display-fill-column-indicator-mode -1)))))))
 
 
 
