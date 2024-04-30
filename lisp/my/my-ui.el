@@ -368,8 +368,8 @@
       (:set
        popper-mode-line
        '(:eval (let* ((face (if (doom-modeline--active)
-                                'mode-line-inactive
-                              'doom-modeline-bar-inactive)))
+                                'doom-modeline-emphasis
+                              'mode-line-inactive)))
                  (if (and (bound-and-true-p doom-modeline-icon)
                           (bound-and-true-p doom-modeline-mode))
                      (format " %s "
