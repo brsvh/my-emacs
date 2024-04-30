@@ -49,6 +49,8 @@
 ;; Expansion:
 
 (setup elisp-mode
+  (:snoc popper-reference-buffers
+         "\\*Pp Macroexpand Output\\*")
   (:with-map emacs-lisp-mode-map
     (:keymap-set "C-c C-v" #'pp-macroexpand-last-sexp)))
 
