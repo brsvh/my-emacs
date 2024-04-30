@@ -121,7 +121,7 @@ stdenv.mkDerivation {
     chmod -R u+w $TMPDIR;
 
     mv $TMPDIR/lisp/{early-,}init.el $TMPDIR/;
-    cat ${my-interlude} > $TMPDIR/lisp/my/my-interlude.el  
+    cat ${my-interlude} > $TMPDIR/lisp/my/my-interlude.el
 
     mkdir -p $TMPDIR/.local;
 
