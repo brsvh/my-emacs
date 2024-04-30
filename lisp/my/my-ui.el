@@ -46,6 +46,7 @@
   (require 'popper)
   (require 'popper-echo)
   (require 'savehist)
+  (require 'scroll-bar)
   (require 'svg-tag-mode)
   (require 'switch-window)
   (require 'tab-bar)

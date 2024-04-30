@@ -35,8 +35,6 @@
 (cl-eval-when (compile)
   (require 'server))
 
-(declare-function server-running-p "server")
-
 ;;;###autoload
 (defgroup my nil
   "Customize my Emacs Configuration."
@@ -243,6 +241,8 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 (defun my/server-start ()
   "Allow this Emacs process to be a server for client processes."
   (interactive)
+  (eval-and-compile
+    (require 'server))
   (unless (server-running-p) (server-start)))
 
 
