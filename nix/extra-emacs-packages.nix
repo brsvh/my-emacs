@@ -52,6 +52,7 @@ with epkgs;
   nix-ts-mode
   page-break-lines
   rainbow-delimiters
+  rg
   smartparens
   svg-tag-mode
   switch-window

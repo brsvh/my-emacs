@@ -43,6 +43,7 @@
   (require 'my-prelude)
   (require 'page-break-lines)
   (require 'recentf)
+  (require 'rg)
   (require 'saveplace)
   (require 'yasnippet))
 
@@ -203,6 +204,27 @@ shebang line or file path may exist now."
 
 (setup anzu
   (:first-buffer global-anzu-mode))
+
+(setup rg
+  (:autoload
+   rg
+   rg-kill-saved-searches
+   rg-list-searches
+   rg-literal
+   rg-project
+   rg-save-search
+   rg-save-search-as-name
+   rg-dwim)
+  (:with-map ctl-c-s-map
+    (:keymap-set
+     "S" #'rg-save-search-as-name
+     "d" #'rg-dwim
+     "k" #'rg-kill-saved-searches
+     "l" #'rg-list-searches
+     "p" #'rg-project
+     "s" #'rg-save-search
+     "t" #'rg-literal
+     "r" #'rg)))
 
 
 

@@ -19,4 +19,5 @@ pkgs: with pkgs; [
   lxgw-wenkai
   (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
   nixfmt-rfc-style
+  ripgrep
 ]
