@@ -32,7 +32,7 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
-  (require 'my-programming))
+  (require 'nix-ts-mode))
 
 
 
