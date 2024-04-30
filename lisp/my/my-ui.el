@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'consult)
 (require 'my-core)
 (require 'orderless)
 
@@ -105,11 +106,6 @@
                     (substring word 1)
                     (my-orderless-consult-suffix)))))))
 
-(orderless-define-completion-style my-orderless-with-initialism
-  (orderless-matching-styles '(orderless-initialism
-                               orderless-literal
-                               orderless-regexp)))
-
 (defun my-popper-close-with-keyboard-quit (&rest _)
   "Close popper window via `keyboard-quit'."
   (when (and (called-interactively-p 'interactive)
@@ -126,12 +122,36 @@
    (floor (frame-height) 3)
    (floor (frame-height) 3)))
 
+(defun my-tab-bar-local-buffer-p (buffer)
+  "Return whether BUFFER is in the buffres of current tab."
+  (memq buffer (frame-parameter nil 'buffer-list)))
+
 (defun my-theme-is-modus (&rest _)
   "Return non-nil if current theme is belong to Modus Themes, else nil."
   (member my-theme '(modus-operandi
                      modus-operandi-tinted
                      modus-vivendi
                      modus-vivendi-tinted)))
+
+(defvar consult--source-tab-buffer
+  (list :name     "Tab buffer"
+        :narrow   ?b
+        :history  'buffer-name-history
+        :category 'buffer
+        :state    #'consult--buffer-state
+        :default  t
+        :items    #'(lambda ()
+                      (consult--buffer-query
+                       :predicate #'(lambda (buffer)
+                                      (memq buffer
+                                            (frame-parameter nil 'buffer-list)))
+                       :sort 'visibility
+                       :as #'buffer-name))))
+
+(orderless-define-completion-style my-orderless-with-initialism
+  (orderless-matching-styles '(orderless-initialism
+                               orderless-literal
+                               orderless-regexp)))
 
 
 
@@ -442,6 +462,29 @@
   (:with-map global-map
     (:keymap-set
      "<remap> <switch-to-buffer-other-tab>" #'consult-buffer-other-tab))
+  (:with-hook tab-bar-mode-hook
+    (:hook
+     (lambda ()
+       (if (bound-and-true-p tab-bar-mode)
+           ;; Prefer to use `consult--source-tab-buffer' when
+           ;; `tab-bar-mode' is enabled.
+           (progn
+             ;; Hide default source `consult--source-buffer'.
+             (consult-customize consult--source-buffer
+                                :hidden t
+                                :default nil)
+             (:set
+              ;; Use buffer of current Tab as default source.
+              (prepend consult-buffer-sources)
+              'consult--source-tab-buffer))
+         ;; Unset `consult--source-tab-buffer' when `tab-bar-mode' is
+         ;; disabled.
+         (progn
+           (consult-customize consult--source-buffer
+                              :hidden nil
+                              :default t)
+           (:set (remove consult-buffer-sources)
+                 'consult--source-tab-buffer))))))
   (:when-loaded
     (:set
      ;; Only show Tab Bar when have one more Tabs.

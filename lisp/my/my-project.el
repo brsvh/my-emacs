@@ -31,7 +31,6 @@
 
 ;;; Code:
 
-(require 'consult)
 (require 'my-core)
 
 (cl-eval-when (compile)
@@ -46,36 +45,6 @@
   (require 'vc-dir)
   (require 'vc-git)
   (require 'whitespace))
-
-(defvar consult--source-tabspaces
-  (list :name     "Tabspaces Buffer"
-        :narrow   ?w
-        :history  'buffer-name-history
-        :category 'buffer
-        :state    #'consult--buffer-state
-        :default  t
-        :items    (lambda ()
-                    (consult--buffer-query
-                     :predicate #'tabspaces--local-buffer-p
-                     :sort 'visibility
-                     :as #'buffer-name)))
-  "Set workspace buffer list for `consult-buffer'.")
-
-(defun my-consult-buffer-set-proper-source ()
-  "Deactivate isolated buffers when not using tabspaces."
-  (cond (tabspaces-mode
-         (consult-customize consult--source-buffer
-                            :hidden t
-                            :default nil)
-         (add-to-list 'consult-buffer-sources
-                      'consult--source-tabspaces))
-        (t
-         (consult-customize consult--source-buffer
-                            :hidden nil
-                            :default t)
-         (setq consult-buffer-sources
-               (remove 'consult--source-tabspaces
-                       consult-buffer-sources)))))
 
 
 
@@ -125,8 +94,6 @@
 
    ;; But don't auto restore.
    tabspaces-session-auto-restore nil)
-  (:with-hook tabspaces-mode-hook
-    (:hook my-consult-buffer-set-proper-source))
   (:with-hook tab-bar-mode-hook
     (:hook tabspaces-mode)))
 
