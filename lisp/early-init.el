@@ -29,26 +29,12 @@
 
 ;;; Code:
 
-(defvar early-init--file-name-handler-alist file-name-handler-alist
-  "The initial value of `file-name-handler-alist'.")
+;; Prevent check mtime of Emacs Lisp Bytecode file to save time.
+(setq load-prefer-newer noninteractive)
 
-(let ((default-directory user-emacs-directory)
-      (gc-cons-threshold most-positive-fixnum)
-      (load-prefer-newer noninteractive))
-
-  ;; Skip consulting the `file-name-handler-alist' to save overhead.
-  (setq file-name-handler-alist nil)
-
-  ;; Restore the appropriate value of `file-name-handler-alist`.
-  (add-hook 'after-init-hook
-            #'(lambda (&rest _)
-                (let ((default early-init--file-name-handler-alist)
-                      (prev file-name-handler-alist))
-                  (setq file-name-handler-alist
-                        (delete-dups (append default prev)))))
-            100)
-
-  (load (expand-file-name "lisp/my/my-prelude") nil 'nomessage))
+;; Play the prelude of my-emacs.
+(load (expand-file-name "lisp/my/my-prelude" user-emacs-directory)
+      nil 'nomessage)
 
 (provide 'early-init)
 ;;; early-init.el ends here

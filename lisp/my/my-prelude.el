@@ -49,7 +49,7 @@
   (expand-file-name "site-lisp/" user-emacs-directory)
   "Directory beneath which third-party Emacs Lisp files are placed.")
 
-(defconst my-prelude--eln-load-path
+(defconst my-prelude-eln-load-path
   (let ((base (if (not (memq system-type '(ms-dos windows-nt cygwin)))
                   (or (getenv "XDG_CACHE_HOME") "~/.cache/")
                 user-emacs-directory)))
@@ -58,47 +58,63 @@
      my-native-lisp-directory))
   "Directory to look for natively-compiled *.eln files.")
 
-(defvar my-prelude--frame-alist '((menu-bar-lines . nil)
-                                  (tool-bar-lines . nil)
-                                  (vertical-scroll-bars . nil)
-                                  (horizontal-scroll-bars . nil))
+(defvar my-prelude-file-name-handler-alist file-name-handler-alist
+  "The initial value of `file-name-handler-alist'.")
+
+(defvar my-prelude-frame-alist '((menu-bar-lines . nil)
+                                 (tool-bar-lines . nil)
+                                 (vertical-scroll-bars . nil)
+                                 (horizontal-scroll-bars . nil))
   "Frame parameters for setup frame creation.")
 
-(defvar my-prelude--inhibit-update-load-path nil
+(defvar my-prelude-inhibit-update-load-path nil
   "Inhibit update `load-path` if non-nil.")
 
-(defvar my-prelude--load-path
+(defvar my-prelude-load-path
   (list my-lisp-directory my-site-lisp-directory)
   "List of directories to search for self-maintained Emacs Lisp files.")
 
-(defun my-prelude--add-subdirs-to-load-path (dir)
+(defun my-prelude-add-subdirs-to-load-path (dir)
   "Add subdirectories of DIR to `load-path'."
   (let ((default-directory dir))
     (normal-top-level-add-subdirs-to-load-path)))
 
-(defun my-prelude--update-load-path (&rest _)
+(defun my-prelude-reset-gc-threshold ()
+  "Reset `consult--gc-threshold'."
+  (let ((default (default-value 'gc-cons-threshold)))
+    (setq gc-cons-threshold default)))
+
+(defun my-prelude-restore-file-name-handler ()
+  "Restore the appropriate value of `file-name-handler-alist'."
+  (let ((default my-prelude-file-name-handler-alist)
+        (prev file-name-handler-alist))
+    (setq file-name-handler-alist
+          (delete-dups (append default prev)))))
+
+(defun my-prelude-update-load-path (&rest _)
   "Update necessary paths to `load-path'."
-  (dolist (dir (nreverse my-prelude--load-path))
+  (dolist (dir (nreverse my-prelude-load-path))
     (push dir load-path)
-    (my-prelude--add-subdirs-to-load-path dir)))
+    (my-prelude-add-subdirs-to-load-path dir)))
 
 
 
 (progn
   ;; Add customized paths for user Emacs Lisp Native Compilation file
   ;; storage.
-  (dolist (path (reverse my-prelude--eln-load-path))
+  (dolist (path (reverse my-prelude-eln-load-path))
     (setq native-comp-eln-load-path
           (cons path native-comp-eln-load-path)))
 
   ;; Let my Emacs Lisp files can be find.
-  (unless my-prelude--inhibit-update-load-path
-    (my-prelude--update-load-path))
+  (unless my-prelude-inhibit-update-load-path
+    (my-prelude-update-load-path))
 
   (require 'cl-lib)
   (require 'my-lib)
 
   (cl-eval-when (compile)
+    (require 'benchmark-init)
     (require 'gcmh))
 
   ;; Avoid garbage collection during the initialization to achieve a
@@ -106,24 +122,28 @@
   (setq gc-cons-threshold most-positive-fixnum)
 
   ;; Restore the garbage collection threshold to its default value.
-  (add-hook 'after-init-hook
-            #'(lambda (&rest _)
-                (let ((default (default-value 'gc-cons-threshold)))
-                  (setq gc-cons-threshold default)
-                  (if (fboundp 'gcmh-mode)
-                      nil
-                    (autoload #'gcmh-mode "gcmh" nil t))
-                  (gcmh-mode +1)))
-            100)
+  (add-hook 'after-init-hook #'my-prelude-reset-gc-threshold 100)
 
-  ;; Prevent check mtime of Emacs Lisp Bytecode file to save time.
-  (setq load-prefer-newer noninteractive)
+  ;; Activate intelligent garbage collections.
+  (unless (fboundp 'gcmh-mode)
+    (autoload #'gcmh-mode "gcmh" nil t))
+  (add-hook 'after-init-hook #'gcmh-mode 100)
+
+  ;; Skip consulting the `file-name-handler-alist' to save overhead.
+  (setq file-name-handler-alist nil)
+
+  ;; Restore the appropriate value of `file-name-handler-alist`.
+  (add-hook 'after-init-hook #'my-prelude-restore-file-name-handler 100)
 
   ;; Activate `benchmark-init' as early as possible to capture loading
   ;; information during the startup process.
-  (require 'benchmark-init)
+  (unless (fboundp 'benchmark-init/activate)
+    (autoload #'benchmark-init/activate "benchmark-init" nil t))
+  (benchmark-init/activate)
 
   ;; Deactivate `benchmark-init' at the very end of `after-init-hook'.
+  (unless (fboundp 'benchmark-init/deactivate)
+    (autoload #'benchmark-init/deactivate "benchmark-init" nil t))
   (add-hook 'after-init-hook #'benchmark-init/deactivate 100)
 
   ;; Inhibit save customizations to `user-init-file`.
@@ -137,7 +157,7 @@
   ;; Reset frame layout.
   (setq default-frame-alist
         (delete-dups (append default-frame-alist
-                             my-prelude--frame-alist))))
+                             my-prelude-frame-alist))))
 
 (provide 'my-prelude)
 ;;; my-prelude.el ends here
