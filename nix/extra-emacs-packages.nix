@@ -20,10 +20,17 @@ with epkgs;
   consult
   dash
   diff-hl
-  modus-themes
+  embark
+  embark-consult
+  gcmh
+  marginalia
+  orderless
+  popper
+  rainbow-mode
   setup
   svg-lib
   transient
+  vertico
   yasnippet
 ])
 ++ (with manualPackages; [ my.on ])
@@ -31,18 +38,26 @@ with epkgs;
   apheleia
   benchmark-init
   company
+  doom-modeline
   f
+  frameshot
   hl-todo
   magit
+  modus-themes
   mwim
+  nerd-icons
   nix-ts-mode
   page-break-lines
   rainbow-delimiters
   smartparens
   svg-tag-mode
+  switch-window
 ])
 ++ (with nongnuPackages; [
+  anzu
+  edit-indirect
   editorconfig
   hl-block-mode
+  markdown-mode
   yasnippet-snippets
 ])
