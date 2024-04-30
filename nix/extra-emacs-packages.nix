@@ -17,6 +17,7 @@
 epkgs:
 with epkgs;
 (with elpaPackages; [
+  activities
   consult
   dash
   diff-hl
