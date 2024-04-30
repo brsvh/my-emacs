@@ -75,7 +75,7 @@ shebang line or file path may exist now."
    ;; Display the size of current buffer in Mode Line.
    size-indication-mode))
 
-(setup hightlight-todo
+(setup highlight-todo
   ;; Highlight keywords such as FIXME, TODO, REVIEW.
   (:first-ui global-hl-todo-mode))
 
