@@ -34,7 +34,6 @@ stdenv.mkDerivation {
 
   name = "my-" + vanillaEmacs.name;
 
-  allowSubstitutes = false;
   preferLocalBuild = true;
 
   buildInputs = [
