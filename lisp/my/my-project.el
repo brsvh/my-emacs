@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'consult)
 (require 'my-core)
 
 (cl-eval-when (compile)
@@ -40,9 +41,41 @@
   (require 'files)
   (require 'magit)
   (require 'project)
+  (require 'tab-bar)
+  (require 'tabspaces)
   (require 'vc-dir)
   (require 'vc-git)
   (require 'whitespace))
+
+(defvar consult--source-tabspaces
+  (list :name     "Tabspaces Buffer"
+        :narrow   ?w
+        :history  'buffer-name-history
+        :category 'buffer
+        :state    #'consult--buffer-state
+        :default  t
+        :items    (lambda ()
+                    (consult--buffer-query
+                     :predicate #'tabspaces--local-buffer-p
+                     :sort 'visibility
+                     :as #'buffer-name)))
+  "Set workspace buffer list for `consult-buffer'.")
+
+(defun my-consult-buffer-set-proper-source ()
+  "Deactivate isolated buffers when not using tabspaces."
+  (cond (tabspaces-mode
+         (consult-customize consult--source-buffer
+                            :hidden t
+                            :default nil)
+         (add-to-list 'consult-buffer-sources
+                      'consult--source-tabspaces))
+        (t
+         (consult-customize consult--source-buffer
+                            :hidden nil
+                            :default t)
+         (setq consult-buffer-sources
+               (remove 'consult--source-tabspaces
+                       consult-buffer-sources)))))
 
 
 
@@ -52,6 +85,50 @@
 (setup project
   (:when-loaded
     (:set project-list-file (my-state-path "projects.el"))))
+
+(setup tabspaces
+  (:autoload
+   tabspaces-clear-buffers
+   tabspaces-close-workspace
+   tabspaces-kill-buffers-close-workspace
+   tabspaces-mode
+   tabspaces-open-or-create-project-and-workspace
+   tabspaces-remove-current-buffer
+   tabspaces-remove-selected-buffer
+   tabspaces-switch-buffer-and-tab
+   tabspaces-switch-or-create-workspace
+   tabspaces-switch-to-buffer)
+  (:with-map ctl-c-tab-map
+    (:keymap-set
+     "C" #'tabspaces-clear-buffers
+     "R" #'tabspaces-remove-selected-buffer
+     "S" #'tabspaces-switch-buffer-and-tab
+     "b" #'tabspaces-switch-or-create-workspace
+     "d" #'tabspaces-close-workspace
+     "k" #'tabspaces-kill-buffers-close-workspace
+     "o" #'tabspaces-open-or-create-project-and-workspace
+     "r" #'tabspaces-remove-current-buffer
+     "s" #'tabspaces-switch-to-buffer))
+  (:set
+   ;; Inhibit bind default key-bindings of `tabspaces'.
+   tabspaces-keymap-prefix nil
+
+   ;; I prefer to use `consult-buffer'.
+   tabspaces-use-filtered-buffers-as-default nil
+
+   ;; Share *scratch* and *Messages* buffers.
+   tabspaces-include-buffers '("*scratch*" "*Messages*")
+
+   ;; Let `tabspaces' save opened sessions.
+   tabspaces-session t
+   tabspaces-session-file (my-state-path* "tabspaces/sessons.eld")
+
+   ;; But don't auto restore.
+   tabspaces-session-auto-restore nil)
+  (:with-hook tabspaces-mode-hook
+    (:hook my-consult-buffer-set-proper-source))
+  (:with-hook tab-bar-mode-hook
+    (:hook tabspaces-mode)))
 
 
 

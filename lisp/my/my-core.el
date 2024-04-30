@@ -357,6 +357,9 @@ These forms are supported:
 (defvar ctl-c-s-map (make-keymap)
   "Default keymap use to bind my search commands.")
 
+(defvar ctl-c-tab-map (make-keymap)
+  "Default keymap use to bind my tab commands.")
+
 (defvar ctl-c-v-map (make-keymap)
   "Default keymap use to bind my version controling commands.")
 
@@ -366,12 +369,13 @@ These forms are supported:
 (setup my-maps
   (:with-map ctl-c-map
     (:keymap-set
-     "4" ctl-c-4-map
-     "5" ctl-c-5-map
-     "e" ctl-c-e-map
-     "f" ctl-c-f-map
-     "s" ctl-c-s-map
-     "v" ctl-c-v-map))
+     "TAB" ctl-c-tab-map
+     "4"   ctl-c-4-map
+     "5"   ctl-c-5-map
+     "e"   ctl-c-e-map
+     "f"   ctl-c-f-map
+     "s"   ctl-c-s-map
+     "v"   ctl-c-v-map))
   (:with-map ctl-c-v-map
     (:keymap-set "g" ctl-c-v-g-map))
   (:keymap-set-into global-map "C-c" ctl-c-map))

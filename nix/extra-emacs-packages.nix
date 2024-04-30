@@ -56,6 +56,7 @@ with epkgs;
   smartparens
   svg-tag-mode
   switch-window
+  tabspaces
 ])
 ++ (with nongnuPackages; [
   anzu
