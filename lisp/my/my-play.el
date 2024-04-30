@@ -35,6 +35,7 @@
 
 
 (require 'my-comint)
+(require 'my-dired)
 (require 'my-editor)
 (require 'my-mule)
 (require 'my-project)

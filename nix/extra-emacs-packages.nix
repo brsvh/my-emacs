@@ -20,6 +20,7 @@ with epkgs;
   consult
   dash
   diff-hl
+  dired-git-info
   embark
   embark-consult
   gcmh
@@ -38,6 +39,7 @@ with epkgs;
   apheleia
   benchmark-init
   company
+  diredfl
   doom-modeline
   f
   frameshot
@@ -46,6 +48,7 @@ with epkgs;
   modus-themes
   mwim
   nerd-icons
+  nerd-icons-dired
   nix-ts-mode
   page-break-lines
   rainbow-delimiters
