@@ -112,7 +112,7 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 ;;;###autoload
 (defcustom my-cache-directory
   (if (not (my-os-is windows))
-      (my-path* (my-xdg-base-dir-for cache) "emacs/")
+      (my-path* (my-xdg-base-dir-for cache) "my-emacs/")
     user-emacs-directory)
   "Directory beneath which additional volatile files are placed."
   :group 'my
@@ -121,7 +121,7 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 ;;;###autoload
 (defcustom my-config-directory
   (if (not (my-os-is windows))
-      (my-path* (my-xdg-base-dir-for config) "emacs/")
+      (my-path* (my-xdg-base-dir-for config) "my-emacs/")
     user-emacs-directory)
   "Directory beneath which additional config files are placed."
   :type 'directory
@@ -130,7 +130,7 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 ;;;###autoload
 (defcustom my-data-directory
   (if (not (my-os-is windows))
-      (my-path* (my-xdg-base-dir-for data) "emacs/")
+      (my-path* (my-xdg-base-dir-for data) "my-emacs/")
     user-emacs-directory)
   "Directory beneath which additional non-volatile files are placed."
   :group 'my
@@ -139,7 +139,7 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
 ;;;###autoload
 (defcustom my-state-directory
   (if (not (my-os-is windows))
-      (my-path* (my-xdg-base-dir-for state) "emacs/")
+      (my-path* (my-xdg-base-dir-for state) "my-emacs/")
     user-emacs-directory)
   "Directory beneath which additional state files are placed."
   :group 'my
