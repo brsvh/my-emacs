@@ -34,22 +34,84 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
-  (require 'magit))
+  (require 'diff-hl)
+  (require 'diff-hl-flydiff)
+  (require 'diff-hl-margin)
+  (require 'files)
+  (require 'magit)
+  (require 'project)
+  (require 'vc-dir)
+  (require 'vc-git)
+  (require 'whitespace))
+
+
+
+;;;
+;; Core:
+
+(setup project
+  (:when-loaded
+    (:set project-list-file (my-state-path "projects.el"))))
 
 
 
 ;;;
 ;; VCS:
 
+(setup vc-dir
+  ;; Popup all `vc-dir-mode' buffers.
+  (:snoc
+   popper-reference-buffers
+   'vc-dir-mode))
+
 ;;;
-;; Git VCS:
+;; VCS w/Git:
+
+(setup vc-git
+  ;; Popup all `vc-dir-git-mode' buffers.
+  (:snoc popper-reference-buffers
+         'vc-dir-git-mode))
+
+(setup diff-hl-flydiff
+  (:autoload diff-hl-flydiff-mode))
+
+(setup diff-hl-margin
+  (:autoload diff-hl-margin-mode))
+
+(setup diff-hl
+  (:autoload
+   diff-hl-magit-pre-refresh
+   diff-hl-magit-post-refresh
+   diff-hl-mode)
+  (:with-hook find-file-hook
+    (:hook diff-hl-mode))
+  (:with-hook diff-hl-mode-hook
+    (:when-gui
+     (:hook diff-hl-flydiff-mode))   ;; Highlight diff on-the-fly.
+    (:when-tui
+     (:hook diff-hl-margin-mode)))) ;; Highlight diff on the margin.
 
 (setup magit
   (:set-default magit-define-global-key-bindings nil)
   (:with-map ctl-c-v-g-map
     (:keymap-set
      "d" #'magit-dispatch
-     "s" #'magit-status)))
+     "s" #'magit-status))
+  (:when-loaded
+    (:with-hook magit-pre-refresh-hook
+      (:hook diff-hl-magit-pre-refresh))
+    (:with-hook magit-post-refresh-hook
+      (:hook diff-hl-magit-post-refresh))))
+
+(setup whitespace
+  (:autoload whitespace-mode))
+
+(setup magit-diff
+  (:autoload magit-diff-mode)
+  (:with-hook magit-diff-mode-hook
+    (:hook whitespace-mode)))
+
+
 
 (provide 'my-project)
 ;;; my-project.el ends here
