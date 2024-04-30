@@ -42,8 +42,12 @@
   (require 'embark)
   (require 'embark-consult)
   (require 'frameshot)
+  (require 'ibuffer)
+  (require 'ibuffer-project)
   (require 'marginalia)
   (require 'modus-themes)
+  (require 'nerd-icons)
+  (require 'nerd-icons-ibuffer)
   (require 'popper)
   (require 'popper-echo)
   (require 'savehist)
@@ -186,6 +190,39 @@
 
 ;;;
 ;; Buffer:
+
+(setup ibuffer-project
+  (:autoload
+   ibuffer-project-generate-filter-groups
+   ibuffer-do-sort-by-project-file-relative))
+
+(setup nerd-icons-ibuffer
+  (:autoload nerd-icons-ibuffer-mode)
+  (:when-gui
+   (:when-loaded
+     (:set
+      nerd-icons-ibuffer-icon t        ;; Enable icons.
+      nerd-icons-ibuffer-color-icon t  ;; Colorful icons.
+      nerd-icons-ibuffer-icon-size 1.0 ;; Set icon size.
+      nerd-icons-ibuffer-human-readable-size t))))
+
+(setup ibuffer
+  (:autoload ibuffer)
+  (:after winner
+    (:snoc winner-boring-buffers
+           "*Ibuffer*"))
+  (:with-hook ibuffer-mode-hook
+    (:hook
+     nerd-icons-ibuffer-mode
+     (lambda ()
+       (:set ibuffer-filter-groups
+             (ibuffer-project-generate-filter-groups))
+       (unless (eq ibuffer-sorting-mode
+                   'project-file-relative)
+         (ibuffer-do-sort-by-project-file-relative))))))
+
+(setup buff-menu
+  (:keymap-set-into global-map "<remap> <list-buffers>" #'ibuffer))
 
 (setup buffer
   (:with-map global-map

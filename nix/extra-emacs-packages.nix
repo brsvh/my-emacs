@@ -44,11 +44,13 @@ with epkgs;
   f
   frameshot
   hl-todo
+  ibuffer-project
   magit
   modus-themes
   mwim
   nerd-icons
   nerd-icons-dired
+  nerd-icons-ibuffer
   nix-ts-mode
   page-break-lines
   rainbow-delimiters
