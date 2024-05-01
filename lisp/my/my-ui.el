@@ -144,13 +144,14 @@
         :category 'buffer
         :state    #'consult--buffer-state
         :default  t
+        :enabled (lambda () tab-bar-mode)
         :items    #'(lambda ()
                       (consult--buffer-query
                        :predicate #'(lambda (buffer)
                                       (memq buffer
                                             (frame-parameter nil 'buffer-list)))
                        :sort 'visibility
-                       :as #'buffer-name))))
+                       :as #'consult--buffer-pair))))
 
 (orderless-define-completion-style my-orderless-with-initialism
   (orderless-matching-styles '(orderless-initialism
