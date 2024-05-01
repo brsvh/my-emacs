@@ -53,8 +53,23 @@
   (:with-mode gfm-mode
     (:file-match
      "README\\.md\\'"
+     ;; Match README_en.md, README-zh.md, etc.
      "README[_-]\\([a-zA-Z]+\\)\\.md"
+     ;; Match README_zh-Hans.md, README-zh_CN.md, etc.
      "README[_-]\\([a-zA-Z]+[_-][a-zA-Z]+\\)\\.md")))
+
+
+
+;;;
+;; Table:
+
+;; Align variable-pitch font, CJK characters and images in tables.
+(setup valign
+  (:autoload valign-mode)
+  (:with-hook gfm-mode-hook
+    (:hook valign-mode))
+  (:with-hook markdown-mode-hook
+    (:hook valign-mode)))
 
 
 
