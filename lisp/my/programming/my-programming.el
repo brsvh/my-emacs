@@ -30,6 +30,7 @@
 
 ;; Supported programming languages:
 ;;   - Emacs Lisp
+;;   - Nix
 
 ;;; Code:
 
@@ -42,7 +43,11 @@
   (require 'apheleia)
   (require 'company)
   (require 'consult-flymake)
+  (require 'display-line-numbers)
+  (require 'electric)
+  (require 'hl-line)
   (require 'parinfer-rust-mode)
+  (require 'prog-mode)
   (require 'rainbow-delimiters)
   (require 'smartparens))
 
@@ -56,6 +61,12 @@
 
 ;;;
 ;; Appearance:
+
+(setup display-line-numbers
+  (:autoload display-line-numbers-mode))
+
+(setup hl-line
+  (:autoload hl-line-mode))
 
 (setup rainbow-delimiters
   (:autoload rainbow-delimiters-mode))
@@ -120,6 +131,18 @@
   (:hook
    #'electric-indent-local-mode ;; Auto reindentation.
    #'smartparens-mode))         ;; Auto insert paired paren.
+
+
+
+;;;
+;; Fold:
+
+(setup hideshow
+  (:autoload hs-minor-mode))
+
+(setup prog-mode
+  ;; Allow folding and unfolding of code blocks.
+  (:hook hs-minor-mode))
 
 
 
