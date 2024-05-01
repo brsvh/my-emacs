@@ -91,15 +91,6 @@ shebang line or file path may exist now."
    ;; Display the size of current buffer in Mode Line.
    size-indication-mode))
 
-(setup highlight-todo
-  ;; Highlight keywords such as FIXME, TODO, REVIEW.
-  (:first-ui global-hl-todo-mode))
-
-;; Display ^L page breaks as tidy horizontal lines.
-(setup page-break-lines
-  (:first-ui
-   global-page-break-lines-mode))
-
 
 
 ;;;

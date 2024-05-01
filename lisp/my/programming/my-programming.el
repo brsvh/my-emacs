@@ -62,6 +62,12 @@
 ;;;
 ;; Appearance:
 
+(setup hl-todo
+  (:autoload hl-todo-mode))
+
+(setup page-break-lines
+  (:autoload page-break-lines-mode))
+
 (setup display-line-numbers
   (:autoload display-line-numbers-mode))
 
@@ -75,8 +81,9 @@
   (:hook
    #'display-line-numbers-mode ;; Show line numbers of buffer.
    #'hl-line-mode              ;; Highlight current line of buffer.
+   #'hl-todo-mode              ;; Highlight TODO keywords.
+   #'page-break-lines-mode     ;; Display ^L  as tidy horizontal lines.
    #'rainbow-delimiters-mode)) ;; Colorful brackets highlighting.
-
 
 
 
