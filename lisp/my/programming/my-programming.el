@@ -127,7 +127,10 @@
 ;; Format:
 
 (setup apheleia
-  (:first-buffer apheleia-global-mode))
+  (:autoload apheleia-mode))
+
+(setup prog-mode
+  (:hook apheleia-mode))
 
 
 
