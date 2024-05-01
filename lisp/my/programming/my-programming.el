@@ -46,6 +46,8 @@
   (require 'display-line-numbers)
   (require 'electric)
   (require 'hl-line)
+  (require 'hl-todo)
+  (require 'page-break-lines)
   (require 'parinfer-rust-mode)
   (require 'prog-mode)
   (require 'rainbow-delimiters)
@@ -62,17 +64,17 @@
 ;;;
 ;; Appearance:
 
-(setup hl-todo
-  (:autoload hl-todo-mode))
-
-(setup page-break-lines
-  (:autoload page-break-lines-mode))
-
 (setup display-line-numbers
   (:autoload display-line-numbers-mode))
 
 (setup hl-line
   (:autoload hl-line-mode))
+
+(setup hl-todo
+  (:autoload hl-todo-mode))
+
+(setup page-break-lines
+  (:autoload page-break-lines-mode))
 
 (setup rainbow-delimiters
   (:autoload rainbow-delimiters-mode))
