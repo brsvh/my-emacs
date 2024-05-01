@@ -54,6 +54,7 @@ with epkgs;
   nerd-icons-ibuffer
   nix-ts-mode
   page-break-lines
+  pangu-spacing
   rainbow-delimiters
   rg
   smartparens
