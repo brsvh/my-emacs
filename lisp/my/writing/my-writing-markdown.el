@@ -1,4 +1,4 @@
-;;; my-play.el --- Play of My Emacs -*- lexical-binding: t -*-
+;;; my-writing-markdown.el --- Writing with `markdown-mode' -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -25,37 +25,38 @@
 
 ;;; Commentary:
 
-;; The schedule of my Play.
+;; This file provides support for writing in Markdown, including editing
+;; and previewing.
 
 ;;; Code:
 
-(require 'my-prelude)
 (require 'my-core)
 
-
-
-(require 'my-comint)
-(require 'my-dired)
-(require 'my-editor)
-(require 'my-eshell)
-(require 'my-mule)
-(require 'my-project)
-(require 'my-security)
-(require 'my-ui)
-(require 'my-workspace)
+(cl-eval-when (compile)
+  (require 'markdown-mode)
+  (require 'valign))
 
 
 
-(require 'my-interlude)
+;;;
+;; Major modes:
+
+(setup markdown-mode
+  (:autoload gfm-mode markdown-mode)
+  (:with-mode markdown-mode
+    (:file-match
+     "\\.markdown\\'"
+     "\\.md\\'"
+     "\\.mdown\\'"
+     "\\.mkd\\'"
+     "\\.mkdn\\'"))
+  (:with-mode gfm-mode
+    (:file-match
+     "README\\.md\\'"
+     "README[_-]\\([a-zA-Z]+\\)\\.md"
+     "README[_-]\\([a-zA-Z]+[_-][a-zA-Z]+\\)\\.md")))
 
 
 
-(require 'my-programming)
-(require 'my-writing)
-
-
-
-(require 'my-postlude)
-
-(provide 'my-play)
-;;; my-play.el ends here
+(provide 'my-writing-markdown)
+;;; my-writing-markdown.el ends here

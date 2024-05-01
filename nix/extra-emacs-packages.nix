@@ -61,6 +61,7 @@ with epkgs;
   svg-tag-mode
   switch-window
   tabspaces
+  valign
 ])
 ++ (with nongnuPackages; [
   anzu
