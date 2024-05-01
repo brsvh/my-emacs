@@ -45,9 +45,25 @@
   (require 'recentf)
   (require 'rg)
   (require 'saveplace)
+  (require 'simple)
+  (require 'tabify)
   (require 'yasnippet))
 
 
+
+(defun my/current-buffer-delete-trailing-whitespace (&rest _)
+  "Delete trailing whitespaces in current buffer."
+  (interactive)
+  (with-current-buffer (current-buffer)
+    (delete-trailing-whitespace (point-min) (point-max)))
+  (message "All trailing whitespaces in current buffer is deleted :)"))
+
+(defun my/current-buffer-untabify (&rest _)
+  "Convert tab to multiple spaces in current buffer."
+  (interactive)
+  (with-current-buffer (current-buffer)
+    (untabify (point-min) (point-max)))
+  (message "All tabs in current buffer have convert to spaces :)"))
 
 (defun my-editor-guess-file-mode ()
   "Guess major mode when saving a file in `fundamental-mode'.
@@ -98,6 +114,17 @@ shebang line or file path may exist now."
   (:when-loaded
     (:set
      bookmark-default-file (my-data-path "bookmarks.el"))))
+
+
+
+;;;
+;; Editing:
+
+(setup editing
+  (:with-map ctl-c-e-map
+    (:keymap-set
+     "SPC" #'my/current-buffer-delete-trailing-whitespace
+     "TAB" #'my/current-buffer-untabify)))
 
 
 

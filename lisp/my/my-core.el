@@ -349,7 +349,7 @@ These forms are supported:
   "Default keymap use to bind my frame operating commands.")
 
 (defvar ctl-c-e-map (make-keymap)
-  "Default keymap use to bind my Emacs operating commands.")
+  "Default keymap use to bind my editing commands.")
 
 (defvar ctl-c-f-map (make-keymap)
   "Default keymap use to bind my files operating commands.")
@@ -363,6 +363,9 @@ These forms are supported:
 (defvar ctl-c-v-g-map (make-keymap)
   "Default keymap for to bind my version controling (Git) commands.")
 
+(defvar ctl-c-home-map (make-keymap)
+  "Default keymap use to bind my Emacs operating commands.")
+
 (defvar ctl-c-tab-map (make-keymap)
   "Default keymap use to bind my tab commands.")
 
@@ -372,14 +375,15 @@ These forms are supported:
 (setup my-maps
   (:with-map ctl-c-map
     (:keymap-set
-     "4"   ctl-c-4-map
-     "5"   ctl-c-5-map
-     "e"   ctl-c-e-map
-     "f"   ctl-c-f-map
-     "s"   ctl-c-s-map
-     "v"   ctl-c-v-map
-     "TAB" ctl-c-tab-map
-     "C-a" ctl-c-ctl-a-map))
+     "4"      ctl-c-4-map
+     "5"      ctl-c-5-map
+     "e"      ctl-c-e-map
+     "f"      ctl-c-f-map
+     "s"      ctl-c-s-map
+     "v"      ctl-c-v-map
+     "TAB"    ctl-c-tab-map
+     "C-a"    ctl-c-ctl-a-map
+     "<home>" ctl-c-home-map))
   (:with-map ctl-c-v-map
     (:keymap-set "g" ctl-c-v-g-map))
   (:keymap-set-into global-map "C-c" ctl-c-map))
@@ -390,7 +394,7 @@ These forms are supported:
 ;; Built-in features:
 
 (setup files
-  (:keymap-set-into ctl-c-e-map "r" #'restart-emacs))
+  (:keymap-set-into ctl-c-home-map "r" #'restart-emacs))
 
 
 
