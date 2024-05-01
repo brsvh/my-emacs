@@ -41,6 +41,7 @@
 (cl-eval-when (compile)
   (require 'apheleia)
   (require 'company)
+  (require 'consult-flymake)
   (require 'parinfer-rust-mode)
   (require 'rainbow-delimiters)
   (require 'smartparens))
@@ -76,6 +77,22 @@
 
 (setup prog-mode
   (:hook company-mode))
+
+
+
+;;;
+;; Diagnostics:
+
+(setup consult-flymake
+  (:autoload consult-flymake))
+
+(setup flymake
+  (:with-hook flymake-mode-hook
+    (:hook
+     (lambda ()
+       (:with-map flymake-mode-map
+         (:keymap-set
+          "C-c !" #'consult-flymake))))))
 
 
 
