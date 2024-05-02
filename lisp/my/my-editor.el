@@ -85,9 +85,7 @@ shebang line or file path may exist now."
    ;; Display the current column number in Mode Line.
    column-number-mode
    ;; Display the current line number in Mode Line.
-   line-number-mode
-   ;; Display the size of current buffer in Mode Line.
-   size-indication-mode))
+   line-number-mode))
 
 
 
