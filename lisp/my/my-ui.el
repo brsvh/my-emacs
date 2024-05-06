@@ -393,10 +393,7 @@
      doom-modeline-buffer-state-icon nil
 
      ;; Enable word count.
-     doom-modeline-enable-word-count t
-
-     ;; Show current indent method and width.
-     doom-modeline-indent-info t)))
+     doom-modeline-enable-word-count t)))
 
 
 
