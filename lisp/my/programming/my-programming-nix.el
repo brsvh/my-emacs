@@ -32,6 +32,7 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
+  (require 'apheleia-formatters)
   (require 'nix-ts-mode))
 
 
