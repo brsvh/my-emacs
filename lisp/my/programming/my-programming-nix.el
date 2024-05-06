@@ -46,5 +46,15 @@
 
 
 
+;;;
+;; Format:
+
+(setup apheleia
+  (:when-loaded
+    ;; REVIEW Remove this after radian-software/apheleia#300 is merged.
+    (:set (append apheleia-mode-alist) '(nix-ts-mode . nixfmt))))
+
+
+
 (provide 'my-programming-nix)
 ;;; my-programming-nix.el ends here
