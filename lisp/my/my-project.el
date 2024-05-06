@@ -38,6 +38,7 @@
   (require 'diff-hl-flydiff)
   (require 'diff-hl-margin)
   (require 'files)
+  (require 'git-cliff)
   (require 'magit)
   (require 'project)
   (require 'tab-bar)
@@ -109,7 +110,7 @@
    'vc-dir-mode))
 
 ;;;
-;; VCS w/Git:
+;; VCS w/ Git:
 
 (setup vc-git
   ;; Popup all `vc-dir-git-mode' buffers.
@@ -153,7 +154,12 @@
 (setup magit-diff
   (:autoload magit-diff-mode)
   (:with-hook magit-diff-mode-hook
-    (:hook whitespace-mode)))
+    (:hook
+     ;; Show visual spaces.
+     whitespace-mode)))
+
+(setup magit-tag
+  (:when-loaded (:also-load git-cliff)))
 
 
 

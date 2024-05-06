@@ -46,6 +46,7 @@ with epkgs;
   doom-modeline
   f
   frameshot
+  git-cliff
   grip-mode
   hl-todo
   ibuffer-project
