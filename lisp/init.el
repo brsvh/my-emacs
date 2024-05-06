@@ -29,10 +29,6 @@
 
 ;;; Code:
 
-;; Ensure `early-init-file' is required.
-(require 'early-init
-         (expand-file-name "early-init.el" user-emacs-directory))
-
 (require 'my-play)
 
 (provide 'init)

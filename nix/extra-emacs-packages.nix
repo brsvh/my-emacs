@@ -42,7 +42,6 @@ with epkgs;
   company
   diredfl
   doom-modeline
-  esup
   f
   frameshot
   hl-todo
