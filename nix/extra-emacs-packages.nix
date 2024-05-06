@@ -27,6 +27,8 @@ with epkgs;
   gcmh
   marginalia
   orderless
+  org
+  org-modern
   popper
   rainbow-mode
   setup
@@ -54,6 +56,7 @@ with epkgs;
   nerd-icons-dired
   nerd-icons-ibuffer
   nix-ts-mode
+  org-side-tree
   page-break-lines
   pangu-spacing
   rainbow-delimiters
@@ -70,5 +73,6 @@ with epkgs;
   editorconfig
   hl-block-mode
   markdown-mode
+  org-contrib
   yasnippet-snippets
 ])
