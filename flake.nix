@@ -184,20 +184,22 @@
                 }
               ];
 
-              env = [
-                {
-                  name = "EDITOR";
-                  value = "emacs";
-                }
-              ];
-
               devshell = {
+                packages = [ final.my-emacs.instruments ];
+
                 startup = {
                   pre-commit = {
                     text = config.pre-commit.installationScript;
                   };
                 };
               };
+
+              env = [
+                {
+                  name = "EDITOR";
+                  value = "emacs";
+                }
+              ];
             };
           };
 
@@ -215,6 +217,7 @@
             {
               default = my-emacs.default;
               nogui = my-emacs.nogui;
+              tools = my-emacs.instruments;
               x11 = my-emacs.x11;
             };
 

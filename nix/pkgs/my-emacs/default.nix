@@ -27,6 +27,7 @@
   emacs-unstable-pgtk,
   emacsPackagesFor,
   lib,
+  linkFarmFromDrvs,
   newScope,
   pkgs,
   parinfer-rust,
@@ -70,6 +71,8 @@ let
       attrValues
     ])
     ++ (import ../../extra-libraries.nix pkgs);
+
+  instruments = linkFarmFromDrvs "my-emacs-instruments" binaries;
 
   emacsPackagesFor' =
     drv:
@@ -162,5 +165,10 @@ let
     };
 in
 makeScope newScope (self: {
-  inherit default nogui x11;
+  inherit
+    default
+    instruments
+    nogui
+    x11
+    ;
 })
