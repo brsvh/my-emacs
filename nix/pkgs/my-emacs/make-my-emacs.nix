@@ -20,6 +20,7 @@
   makeWrapper,
   runCommandLocal,
   stdenv,
+  symlinkJoin,
 }:
 with lib;
 {
@@ -29,37 +30,44 @@ with lib;
   plainEmacs,
   vanillaEmacs,
 }:
-stdenv.mkDerivation {
-  inherit (vanillaEmacs) meta;
+let
+  wrappedEmacs = stdenv.mkDerivation {
+    inherit (vanillaEmacs) meta;
 
-  name = "my-" + vanillaEmacs.name;
+    name = "my-" + vanillaEmacs.name;
 
-  preferLocalBuild = true;
+    preferLocalBuild = true;
 
-  buildInputs = [
-    initDirectory
-    plainEmacs
-    lndir
-    makeWrapper
-  ];
+    buildInputs = [
+      initDirectory
+      plainEmacs
+      lndir
+      makeWrapper
+    ];
 
-  runtimeInputs = [ ];
+    runtimeInputs = [ ];
 
-  phases = [ "installPhase" ];
+    phases = [ "installPhase" ];
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir $out
-    ${lndir}/bin/lndir -silent ${plainEmacs} $out
+      mkdir $out
+      ${lndir}/bin/lndir -silent ${plainEmacs} $out
 
-    mv $out/bin/emacs $out/bin/emacs-unwrapped
+      mv $out/bin/emacs $out/bin/emacs-unwrapped
 
-    makeWrapper $out/bin/emacs-unwrapped $out/bin/emacs \
-      --prefix PATH : ${makeBinPath binaries} \
-      --prefix LD_LIBRARY_PATH : ${makeLibraryPath libraries} \
-      --add-flags "--init-directory=${initDirectory}"
+      makeWrapper $out/bin/emacs-unwrapped $out/bin/emacs \
+        --prefix PATH : ${makeBinPath binaries} \
+        --prefix LD_LIBRARY_PATH : ${makeLibraryPath libraries} \
+        --add-flags "--init-directory=${initDirectory}"
 
-    runHook postInstall
-  '';
+      runHook postInstall
+    '';
+  };
+in
+symlinkJoin {
+  meta.mainProgram = "emacs";
+  name = "my-emacs";
+  paths = [ wrappedEmacs ] ++ binaries;
 }
