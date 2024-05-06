@@ -17,7 +17,9 @@
 pkgs: with pkgs; [
   ibm-plex
   lxgw-wenkai
+  multimarkdown
   (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
   nixfmt-rfc-style
+  (python3.withPackages (ppkgs: with ppkgs; [ grip ]))
   ripgrep
 ]

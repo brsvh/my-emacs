@@ -33,6 +33,7 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
+  (require 'grip-mode)
   (require 'markdown-mode)
   (require 'valign))
 
@@ -56,7 +57,25 @@
      ;; Match README_en.md, README-zh.md, etc.
      "README[_-]\\([a-zA-Z]+\\)\\.md"
      ;; Match README_zh-Hans.md, README-zh_CN.md, etc.
-     "README[_-]\\([a-zA-Z]+[_-][a-zA-Z]+\\)\\.md")))
+     "README[_-]\\([a-zA-Z]+[_-][a-zA-Z]+\\)\\.md"))
+  (:when-loaded
+    (:set
+     markdown-command "multimarkdown")))
+
+
+;;;
+;; Live preview:
+
+(setup grip-mode
+  (:autoload grip-mode)
+  (:after markdown-mode
+    (:keymap-set-into markdown-mode-command-map "g" #'grip-mode)
+    (let ((credential (auth-source-user-and-password "api.github.com")))
+      (:set
+       grip-github-user (car credential)
+       grip-github-password (cadr credential))))
+  (:when-loaded
+    (:set grip-preview-use-webkit nil)))
 
 
 

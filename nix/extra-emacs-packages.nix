@@ -44,6 +44,7 @@ with epkgs;
   doom-modeline
   f
   frameshot
+  grip-mode
   hl-todo
   ibuffer-project
   magit
