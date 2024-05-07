@@ -24,6 +24,7 @@
 with lib;
 {
   binaries,
+  fonts,
   initDirectory,
   libraries,
   plainEmacs,

@@ -40,6 +40,7 @@ with lib;
   extraConfig ? "",
   extraBinaries ? [ ],
   extraEmacsPackages ? (epkgs: [ ]),
+  extraFonts ? [ ],
   extraLibraries ? [ ],
 }:
 let
@@ -64,6 +65,12 @@ let
     ]
     ++ (import ../../extra-binaries.nix pkgs)
     ++ extraBinaries;
+
+  fonts = [
+    source-code-pro
+    source-sans-pro
+    source-serif-pro
+  ] ++ (import ../../extra-fonts.nix) ++ extraFonts;
 
   libraries =
     [ parinfer-rust ]
@@ -141,6 +148,7 @@ let
     mkMyEmacs {
       inherit
         binaries
+        fonts
         initDirectory
         libraries
         plainEmacs
@@ -165,6 +173,7 @@ let
     mkMyEmacs {
       inherit
         binaries
+        fonts
         initDirectory
         libraries
         plainEmacs
@@ -189,6 +198,7 @@ let
     mkMyEmacs {
       inherit
         binaries
+        fonts
         initDirectory
         libraries
         plainEmacs

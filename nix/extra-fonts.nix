@@ -14,16 +14,8 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
-pkgs:
-with pkgs;
-[
-  git-cliff
-  multimarkdown
-  nixfmt-rfc-style
-  ripgrep
+pkgs: with pkgs; [
+  ibm-plex
+  lxgw-wenkai
+  (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
 ]
-++ (with llvmPackages; [
-  bintools
-  clangUseLLVM
-])
-++ (with python3Packages; [ grip ])
