@@ -27,10 +27,11 @@
   emacs-unstable-pgtk,
   emacsPackagesFor,
   lib,
-  linkFarmFromDrvs,
+  lndir,
   newScope,
   pkgs,
   parinfer-rust,
+  runCommand,
   tree-sitter-grammars,
 }:
 with lib;
@@ -72,7 +73,38 @@ let
     ])
     ++ (import ../../extra-libraries.nix pkgs);
 
-  instruments = linkFarmFromDrvs "my-emacs-instruments" binaries;
+  binSymlinkJoin =
+    args_@{
+      name,
+      paths,
+      preferLocalBuild ? true,
+      allowSubstitutes ? false,
+      postBuild ? "",
+      ...
+    }:
+    let
+      args =
+        removeAttrs args_ [
+          "name"
+          "postBuild"
+        ]
+        // {
+          inherit preferLocalBuild allowSubstitutes;
+          passAsFile = [ "paths" ];
+        };
+    in
+    runCommand name args ''
+      mkdir -p $out/bin
+      for i in $(cat $pathsPath); do
+        ${lndir}/bin/lndir -silent $i/bin $out/bin
+      done
+      ${postBuild}
+    '';
+
+  instruments = binSymlinkJoin {
+    name = "my-emacs-instruments";
+    paths = binaries;
+  };
 
   emacsPackagesFor' =
     drv:
