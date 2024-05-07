@@ -39,6 +39,8 @@
 (cl-eval-when (compile)
   (require 'hl-line)
   (require 'outline)
+  (require 'pdf-loader)
+  (require 'pdf-view)
   (require 'simple)
   (require 'text-mode))
 
@@ -75,6 +77,21 @@
 
 (setup text-mode
   (:hook #'electric-pair-local-mode))
+
+
+
+;;;
+;; PDF:
+
+(setup pdf-loader
+  (:autoload pdf-loader-install))
+
+(setup pdf-view
+  (:autoload pdf-view-mode)
+  (:with-mode pdf-view-mode
+    (:file-match "\\.pdf\\'"))
+  ;; Ensure `pdf-tools'.
+  (:advice-add pdf-view-mode :before #'pdf-loader-install))
 
 
 

@@ -60,6 +60,7 @@ with epkgs;
   org-side-tree
   page-break-lines
   pangu-spacing
+  pdf-tools
   rainbow-delimiters
   rg
   smartparens
