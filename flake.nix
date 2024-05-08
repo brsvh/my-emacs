@@ -175,7 +175,7 @@
                 }
                 {
                   category = "development";
-                  package = pkgs.nixUnstable;
+                  package = pkgs.nixVersions.latest;
                 }
                 {
                   category = "editor";
