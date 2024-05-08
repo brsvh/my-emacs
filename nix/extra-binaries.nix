@@ -21,6 +21,7 @@ with pkgs;
   multimarkdown
   nixfmt-rfc-style
   ripgrep
+  texliveFull
 ]
 ++ (with llvmPackages; [
   bintools

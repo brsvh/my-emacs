@@ -18,6 +18,7 @@ epkgs:
 with epkgs;
 (with elpaPackages; [
   activities
+  auctex
   consult
   dash
   diff-hl
