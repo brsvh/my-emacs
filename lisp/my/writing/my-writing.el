@@ -35,6 +35,7 @@
 
 (require 'my-core)
 (require 'my-writing-markdown)
+(require 'my-writing-tex)
 
 (cl-eval-when (compile)
   (require 'hl-line)
