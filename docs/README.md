@@ -18,7 +18,7 @@ scope provides three versions:
 
 Each derivation is generated in multiple stages:
 
-- Stage 0, select the appropriate base Emacs from emacs-overlay,
+- Stage 0, select the appropriate base Emacs from emacs-overlay[^2],
   depending on the branch and Window System support, referred to as
   `vanillaEmacs`.
 - Stage 1, build a clean Emacs containing all Emacs Lisp packages,
