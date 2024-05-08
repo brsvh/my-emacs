@@ -212,13 +212,21 @@
 
           packages =
             let
-              inherit (final) my-emacs;
+              inherit (final)
+                my-emacs
+                my-emacs-master
+                my-emacs-stable
+                my-emacs-unstable
+                ;
             in
             {
-              default = my-emacs.default;
-              nogui = my-emacs.nogui;
-              tools = my-emacs.instruments;
-              x11 = my-emacs.x11;
+              default = my-emacs-master.default;
+              master = my-emacs-master.default;
+              nogui = my-emacs-master.nogui;
+              stable = my-emacs-stable.default;
+              tools = my-emacs-master.instruments;
+              unstable = my-emacs-unstable.default;
+              x11 = my-emacs-master.x11;
             };
 
           pre-commit = {
