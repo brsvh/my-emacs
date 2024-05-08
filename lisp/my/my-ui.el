@@ -42,6 +42,7 @@
   (require 'embark)
   (require 'embark-consult)
   (require 'frameshot)
+  (require 'help-fns)
   (require 'ibuffer)
   (require 'ibuffer-project)
   (require 'marginalia)
@@ -274,10 +275,16 @@
 ;;;
 ;; Help:
 
+(setup help-fns
+  (:autoload describe-keymap))
+
 (setup help
   (:set
    ;; Better which-key.
-   prefix-help-command #'embark-prefix-help-command))
+   prefix-help-command #'embark-prefix-help-command)
+  (:with-map help-map
+    (:keymap-set
+     "C-k" #'describe-keymap)))
 
 (setup info
   (:with-map global-map
