@@ -67,10 +67,11 @@
    TeX-parse-self t)
   (:set-default
    TeX-master nil)
-  (:snoc TeX-command-list
-         '("XeLaTeX" "xelatex -interaction=nonstopmode %s"
-           TeX-run-command t t
-           :help "Run XeLaTeX")))
+  (:when-loaded
+    (:snoc TeX-command-list
+           '("XeLaTeX" "xelatex -interaction=nonstopmode %s"
+             TeX-run-command t t
+             :help "Run XeLaTeX"))))
 
 
 
