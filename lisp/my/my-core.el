@@ -357,6 +357,12 @@ These forms are supported:
 (defvar ctl-c-m-map (make-keymap)
   "Default keymap use to bind my major mode commands.")
 
+(defvar ctl-c-p-map (make-keymap)
+  "Default keymap use to bind my project operating commands.")
+
+(defvar ctl-c-p-tab-map (make-keymap)
+  "Default keymap use to bind my project Tab operating commands.")
+
 (defvar ctl-c-s-map (make-keymap)
   "Default keymap use to bind my search commands.")
 
@@ -369,9 +375,6 @@ These forms are supported:
 (defvar ctl-c-home-map (make-keymap)
   "Default keymap use to bind my Emacs operating commands.")
 
-(defvar ctl-c-tab-map (make-keymap)
-  "Default keymap use to bind my tab commands.")
-
 (defvar ctl-c-ctl-a-map (make-keymap)
   "Default keymap use to bind my activities commands.")
 
@@ -383,11 +386,13 @@ These forms are supported:
      "e"      ctl-c-e-map
      "f"      ctl-c-f-map
      "m"      ctl-c-m-map
+     "p"      ctl-c-p-map
      "s"      ctl-c-s-map
      "v"      ctl-c-v-map
-     "TAB"    ctl-c-tab-map
      "C-a"    ctl-c-ctl-a-map
      "<home>" ctl-c-home-map))
+  (:with-map ctl-c-p-map
+    (:keymap-set "TAB" ctl-c-p-tab-map))
   (:with-map ctl-c-v-map
     (:keymap-set "g" ctl-c-v-g-map))
   (:keymap-set-into global-map "C-c" ctl-c-map))

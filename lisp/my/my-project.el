@@ -68,7 +68,7 @@
    tabspaces-switch-buffer-and-tab
    tabspaces-switch-or-create-workspace
    tabspaces-switch-to-buffer)
-  (:with-map ctl-c-tab-map
+  (:with-map ctl-c-p-tab-map
     (:keymap-set
      "C" #'tabspaces-clear-buffers
      "R" #'tabspaces-remove-selected-buffer
