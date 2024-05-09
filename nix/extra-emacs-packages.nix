@@ -74,6 +74,7 @@ with epkgs;
   anzu
   edit-indirect
   editorconfig
+  git-modes
   hl-block-mode
   markdown-mode
   org-contrib
