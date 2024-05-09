@@ -61,10 +61,16 @@
          'TeX-output-mode)
   (:advice-add TeX-mode :before #'TeX-load-hack)
   (:set
+   ;; Auto save style infomations.
+   TeX-auto-local ".auto"
    TeX-auto-save t
    TeX-parse-self t)
   (:set-default
-   TeX-master nil))
+   TeX-master nil)
+  (:snoc TeX-command-list
+         '("XeLaTeX" "xelatex -interaction=nonstopmode %s"
+           TeX-run-command t t
+           :help "Run XeLaTeX")))
 
 
 
