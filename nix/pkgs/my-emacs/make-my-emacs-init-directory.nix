@@ -84,8 +84,8 @@ let
     (setup parinfer-rust
       (:set
        parinfer-rust-auto-download nil
-       parinfer-rust-library "${pkgs.parinfer-rust}/lib/libparinfer_rust.so"
-       parinfer-rust-library-directory "${pkgs.parinfer-rust}/lib/"))
+       parinfer-rust-library "${pkgs.parinfer-rust-emacs}/lib/libparinfer_rust.so"
+       parinfer-rust-library-directory "${pkgs.parinfer-rust-emacs}/lib/"))
 
     ${config}
 

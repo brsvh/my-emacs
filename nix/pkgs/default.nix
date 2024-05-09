@@ -28,4 +28,6 @@ rec {
   my-emacs-stable = my-emacs-master.override { branch = null; };
 
   my-emacs-unstable = my-emacs-master.override { branch = "unstable"; };
+
+  parinfer-rust-emacs = callPackage ./parinfer-rust-emacs.nix { };
 }

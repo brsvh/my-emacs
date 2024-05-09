@@ -30,7 +30,7 @@
   lndir,
   newScope,
   pkgs,
-  parinfer-rust,
+  parinfer-rust-emacs,
   runCommand,
   tree-sitter-grammars,
 }:
@@ -73,7 +73,7 @@ let
   ] ++ (import ../../extra-fonts.nix) ++ extraFonts;
 
   libraries =
-    [ parinfer-rust ]
+    [ parinfer-rust-emacs ]
     ++ (pipe tree-sitter-grammars [
       (filterAttrs (name: _: name != "recurseForDerivations"))
       attrValues
