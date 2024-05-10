@@ -44,11 +44,17 @@
   (require 'org-roam)
   (require 'org-roam-capture)
   (require 'org-roam-db)
+  (require 'org-roam-mode)
   (require 'org-roam-node)
   (require 'org-side-tree)
   (require 'ox-publish)
   (require 'valign)
   (require 'window))
+
+(defun my-org-roam-db-fake-sync (fn &rest args)
+  "Fake db sync. around FN with ARGS."
+  (cl-letf (((symbol-function #'org-roam-db-sync) #'ignore))
+    (apply fn args)))
 
 (defun my-org-roam-db-sync-once (&rest _)
   "Sync `org-roam-db-location' once."
@@ -210,7 +216,14 @@
   (:autoload org-roam-capture))
 
 (setup org-roam-db
-  (:autoload org-roam-db-query))
+  (:autoload
+   org-roam-db-autosync-enable
+   org-roam-db-query))
+
+(setup org-roam-mode
+  (:autoload
+   org-roam-mode
+   org-roam-buffer-toggle))
 
 (setup org-roam-node
   (:autoload
@@ -219,19 +232,44 @@
 
 (setup org-roam
   (:set
-   org-roam-directory (my-path org-directory "roam/")
-   org-roam-db-location (my-path org-directory "roam.db"))
-  (:after org
-    ;; Load `org-roam' but don't immediately initialize its database.
-    (cl-letf (((symbol-function #'org-roam-db-sync) #'ignore))
-      (org-roam-db-autosync-enable)))
-  (:advice-add org-roam-db-query :before #'my-org-roam-db-sync-once)
+   org-roam-directory (my-path org-directory "roam/"))
   (:after org
     (:with-map org-mode-map
       (:keymap-set
-       "C-c m r c" #'org-roam-capture
-       "C-c m r f" #'org-roam-node-find
-       "C-c m r i" #'org-roam-node-insert))))
+       "C-c m c"   #'org-roam-capture
+       "C-c m f"   #'org-roam-node-find
+       "C-c m i"   #'org-roam-node-insert
+       "C-c m C-b" #'org-roam-buffer-toggle))))
+
+(setup org-roam-db
+  (:set org-roam-db-location (my-path org-directory "roam.db"))
+  (:advice-add
+   ;; Don't immediately initialize Org Roam database when enable
+   ;; `org-roam-db-autosync-mode'.
+   org-roam-db-autosync-enable :around #'my-org-roam-db-fake-sync
+   ;; Sync `org-roam' db when first query.
+   org-roam-db-query :before #'my-org-roam-db-sync-once)
+  (:after org
+    (org-roam-db-autosync-enable)))
+
+(setup org-roam-mode
+  (:set
+   ;; Show back links, reference links, unreference links in Org Roam
+   ;; buffer.
+   org-roam-mode-sections
+   '((org-roam-backlinks-section :unique t)
+     org-roam-reflinks-section
+     org-roam-unlinked-references-section)
+
+   ;; Display the Org Roam buffer in the right window.
+   (append display-buffer-alist)
+   '("\\*org-roam\\*"
+     (display-buffer-reuse-window display-buffer-in-side-window)
+     (side . right)
+     (slot . 0)
+     (window-width . 0.33)
+     (window-parameters . ((no-other-window . t)
+                           (no-delete-other-windows . t))))))
 
 
 (provide 'my-org)
