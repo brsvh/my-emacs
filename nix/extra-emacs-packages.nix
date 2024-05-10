@@ -14,11 +14,16 @@
 
 # You should have received a copy of the GNU General Public License
 # along with my-emacs.  If not, see <https://www.gnu.org/licenses/>.
+
+# NOTE: All packages related to magit should use the versions available
+#       in MELPA.
 epkgs:
 with epkgs;
 (with elpaPackages; [
   activities
   auctex
+  cl-lib
+  compat
   consult
   dash
   diff-hl
@@ -26,12 +31,16 @@ with epkgs;
   embark
   embark-consult
   gcmh
+  let-alist
   marginalia
   orderless
   org
   org-modern
+  persist
   popper
+  project
   rainbow-mode
+  seq
   setup
   svg-lib
   transient
@@ -48,10 +57,13 @@ with epkgs;
   f
   frameshot
   git-cliff
+  git-commit
+  git-modes
   grip-mode
   hl-todo
   ibuffer-project
   magit
+  magit-section
   modus-themes
   mwim
   nerd-icons
@@ -64,6 +76,8 @@ with epkgs;
   pdf-tools
   rainbow-delimiters
   rg
+  s
+  shrink-path
   smartparens
   svg-tag-mode
   switch-window
@@ -74,9 +88,11 @@ with epkgs;
   anzu
   edit-indirect
   editorconfig
-  git-modes
   hl-block-mode
   markdown-mode
   org-contrib
+  tablist
+  with-editor
+  wgrep
   yasnippet-snippets
 ])
