@@ -33,6 +33,7 @@
 
 (cl-eval-when (compile)
   (require 'elec-pair)
+  (require 'ol)
   (require 'org)
   (require 'org-capture)
   (require 'org-clock)
@@ -72,6 +73,10 @@
 
 (setup org-indent
   (:autoload org-indent-mode))
+
+(setup ol
+  (:autoload org-store-links)
+  (:keymap-set-into ctl-c-a-map "s" #'org-store-links))
 
 
 
