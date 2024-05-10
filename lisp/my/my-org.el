@@ -233,10 +233,13 @@
 (setup org-roam
   (:set
    org-roam-directory (my-path org-directory "roam/"))
+  (:with-map ctl-c-a-map
+    (:keymap-set
+     ;; Capture a note.
+     "n" #'org-roam-capture))
   (:after org
     (:with-map org-mode-map
       (:keymap-set
-       "C-c r c"   #'org-roam-capture
        "C-c r f"   #'org-roam-node-find
        "C-c r i"   #'org-roam-node-insert
        "C-c r b" #'org-roam-buffer-toggle))))
