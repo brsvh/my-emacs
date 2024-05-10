@@ -61,13 +61,18 @@
          'TeX-output-mode)
   (:advice-add TeX-mode :before #'TeX-load-hack)
   (:set
-   ;; Auto save style infomations.
+   ;; Automatically generated AUCTeX style files.
    TeX-auto-local ".auto"
    TeX-auto-save t
    TeX-parse-self t)
   (:set-default
    TeX-master nil)
   (:when-loaded
+    (:option
+     ;; Automatically generated AUCTeX style files.
+     (append TeX-auto-private) (my-data-path "auctex/auto/")
+     ;; Manually generated AUCTeX style files
+     (append TeX-style-private) (my-data-path "auctex/manual/"))
     (:snoc TeX-command-list
            '("XeLaTeX" "xelatex -interaction=nonstopmode %s"
              TeX-run-command t t
