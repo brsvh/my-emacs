@@ -52,8 +52,11 @@ with epkgs;
   apheleia
   benchmark-init
   company
+  consult-org-roam
   diredfl
   doom-modeline
+  emacsql
+  embark-org-roam
   f
   frameshot
   git-cliff
@@ -70,6 +73,7 @@ with epkgs;
   nerd-icons-dired
   nerd-icons-ibuffer
   nix-ts-mode
+  org-roam
   org-side-tree
   page-break-lines
   pangu-spacing
