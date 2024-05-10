@@ -41,10 +41,19 @@
   (require 'org-modern)
   (require 'org-persist)
   (require 'org-registry)
+  (require 'org-roam)
+  (require 'org-roam-capture)
+  (require 'org-roam-db)
+  (require 'org-roam-node)
   (require 'org-side-tree)
   (require 'ox-publish)
   (require 'valign)
   (require 'window))
+
+(defun my-org-roam-db-sync-once (&rest _)
+  "Sync `org-roam-db-location' once."
+  (advice-remove 'org-roam-db-query #'my-org-roam-db-sync-once)
+  (org-roam-db-sync))
 
 
 
@@ -53,9 +62,7 @@
 
 (setup org
   (:autoload org-mode)
-  (:when-loaded
-    (:set
-     org-directory (my-path "~/org"))))
+  (:set org-directory (my-path "~/org")))
 
 (setup org-indent
   (:autoload org-indent-mode))
@@ -161,7 +168,9 @@
 (setup org-id
   (:when-loaded
     (:set
-     org-id-locations-file (my-data-path "org/" "id-locations.el"))))
+     org-id-locations-file (my-data-path "org/" "id-locations.el")
+     ;; Link to entry with ID.
+     org-id-link-to-org-use-id t)))
 
 
 
@@ -195,5 +204,35 @@
 
 
 
+;; Roam:
+
+(setup org-roam-capture
+  (:autoload org-roam-capture))
+
+(setup org-roam-db
+  (:autoload org-roam-db-query))
+
+(setup org-roam-node
+  (:autoload
+   org-roam-node-find
+   org-roam-node-insert))
+
+(setup org-roam
+  (:set
+   org-roam-directory (my-path org-directory "roam/")
+   org-roam-db-location (my-path org-directory "roam.db"))
+  (:after org
+    ;; Load `org-roam' but don't immediately initialize its database.
+    (cl-letf (((symbol-function #'org-roam-db-sync) #'ignore))
+      (org-roam-db-autosync-enable)))
+  (:advice-add org-roam-db-query :before #'my-org-roam-db-sync-once)
+  (:after org
+    (:with-map org-mode-map
+      (:keymap-set
+       "C-c m r c" #'org-roam-capture
+       "C-c m r f" #'org-roam-node-find
+       "C-c m r i" #'org-roam-node-insert))))
+
+
 (provide 'my-org)
 ;;; my-org.el ends here
