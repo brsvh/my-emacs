@@ -54,14 +54,14 @@
   (interactive)
   (with-current-buffer (current-buffer)
     (delete-trailing-whitespace (point-min) (point-max)))
-  (message "All trailing whitespaces in current buffer is deleted :)"))
+  (message "Trailing whitespaces in current buffer are deleted :)"))
 
 (defun my/current-buffer-untabify (&rest _)
   "Convert tab to multiple spaces in current buffer."
   (interactive)
   (with-current-buffer (current-buffer)
     (untabify (point-min) (point-max)))
-  (message "All tabs in current buffer have convert to spaces :)"))
+  (message "Tabs in current buffer have convert to spaces :)"))
 
 (defun my-editor-guess-file-mode ()
   "Guess major mode when saving a file in `fundamental-mode'.
