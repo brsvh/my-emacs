@@ -322,6 +322,9 @@
    ;; Allow nested minibuffer.
    enable-recursive-minibuffers t
 
+   ;; Use compiletion UI when complete in Minibuffer.
+   completion-in-region-function #'consult-completion-in-region
+
    ;; Preferred completion styles:
    ;;
    ;; * substring:          bar    -> foo-bar-baz
