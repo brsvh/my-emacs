@@ -18,6 +18,7 @@ pkgs:
 with pkgs;
 [
   git-cliff
+  graphviz
   multimarkdown
   nixfmt-rfc-style
   ripgrep
