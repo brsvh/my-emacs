@@ -354,9 +354,6 @@ These forms are supported:
 (defvar ctl-c-f-map (make-keymap)
   "Default keymap use to bind my files operating commands.")
 
-(defvar ctl-c-m-map (make-keymap)
-  "Default keymap use to bind my major mode commands.")
-
 (defvar ctl-c-p-map (make-keymap)
   "Default keymap use to bind my project operating commands.")
 
@@ -385,7 +382,6 @@ These forms are supported:
      "5"      ctl-c-5-map
      "e"      ctl-c-e-map
      "f"      ctl-c-f-map
-     "m"      ctl-c-m-map
      "p"      ctl-c-p-map
      "s"      ctl-c-s-map
      "v"      ctl-c-v-map

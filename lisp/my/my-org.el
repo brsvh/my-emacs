@@ -176,7 +176,7 @@
     (:set
      org-id-locations-file (my-data-path "org/" "id-locations.el")
      ;; Link to entry with ID.
-     org-id-link-to-org-use-id t)))
+     org-id-link-to-org-use-id 'create-if-interactive)))
 
 
 
@@ -236,10 +236,10 @@
   (:after org
     (:with-map org-mode-map
       (:keymap-set
-       "C-c m c"   #'org-roam-capture
-       "C-c m f"   #'org-roam-node-find
-       "C-c m i"   #'org-roam-node-insert
-       "C-c m C-b" #'org-roam-buffer-toggle))))
+       "C-c r c"   #'org-roam-capture
+       "C-c r f"   #'org-roam-node-find
+       "C-c r i"   #'org-roam-node-insert
+       "C-c r b" #'org-roam-buffer-toggle))))
 
 (setup org-roam-db
   (:set org-roam-db-location (my-path org-directory "roam.db"))
