@@ -33,6 +33,9 @@
 
 (cl-eval-when (compile)
   (require 'elec-pair)
+  (require 'oc)
+  (require 'oc-basic)
+  (require 'oc-bibtex)
   (require 'ol)
   (require 'org)
   (require 'org-capture)
@@ -147,6 +150,20 @@
 
 
 ;;;
+;; Citation:
+
+(setup org
+  (:also-load oc oc-basic oc-bibtex))
+
+(setup oc
+  (:when-loaded
+    (:set
+     (prepend org-cite-global-bibliography)
+     (my-path org-directory "citations.bib"))))
+
+
+
+;;;
 ;; Clock:
 
 (setup org-clock
@@ -247,10 +264,15 @@
       (:keymap-set
        "C-c r f" #'org-roam-node-find
        "C-c r i" #'org-roam-node-insert
-       "C-c r b" #'org-roam-buffer-toggle))))
+       "C-c r b" #'org-roam-buffer-toggle)))
+  (:after oc
+    (:set
+     ;; Separate store Org Roam citations.
+     (append org-cite-global-bibliography)
+     (my-path org-roam-directory "citations.bib"))))
 
 (setup org-roam-db
-  (:set org-roam-db-location (my-path org-directory "roam.db"))
+  (:set org-roam-db-location (my-path org-roam-directory "roam.db"))
   (:advice-add
    ;; Don't immediately initialize Org Roam database when enable
    ;; `org-roam-db-autosync-mode'.
