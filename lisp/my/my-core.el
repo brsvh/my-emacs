@@ -280,7 +280,6 @@ These forms are supported:
     (lambda (symbol elem &rest elements)
       `(add-hook ',(setup-get 'hook)
                  (lambda ()
-                   (make-local-variable ',symbol)
                    (setq-local ,symbol (funcall #'-snoc
                                                 ,symbol
                                                 ,elem
