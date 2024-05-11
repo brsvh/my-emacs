@@ -54,7 +54,7 @@
                   (or (getenv "XDG_CACHE_HOME") "~/.cache/")
                 user-emacs-directory)))
     (list
-     (expand-file-name "emacs/eln-cache/" base)
+     (expand-file-name "my-emacs/eln-cache/" base)
      my-native-lisp-directory))
   "Directory to look for natively-compiled *.eln files.")
 
