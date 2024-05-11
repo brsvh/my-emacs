@@ -82,6 +82,20 @@
 
 
 ;;;
+;; Major modes:
+
+(setup text-mode
+  (:autoload text-mode)
+  (:with-mode text-mode
+    (:file-match
+     "\\COPYING\\'"
+     "\\COPYING\\.\\([a-zA-Z]+\\)"
+     "\\LICENSE\\'"
+     "\\LICENSE\\.\\([a-zA-Z]+\\)")))
+
+
+
+;;;
 ;; PDF:
 
 (setup pdf-loader
