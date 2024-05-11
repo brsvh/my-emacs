@@ -96,9 +96,6 @@ in
 stdenv.mkDerivation {
   name = "my-emacs-init-directory";
 
-  allowSubstitutes = false;
-  preferLocalBuild = true;
-
   buildInputs = [ emacs ];
 
   src = ../../../.;
