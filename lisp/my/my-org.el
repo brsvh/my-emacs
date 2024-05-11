@@ -75,8 +75,8 @@
   (:autoload org-indent-mode))
 
 (setup ol
-  (:autoload org-store-links)
-  (:keymap-set-into ctl-c-a-map "s" #'org-store-links))
+  (:autoload org-store-link)
+  (:keymap-set-into ctl-c-a-map "s" #'org-store-link))
 
 
 
