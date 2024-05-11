@@ -138,6 +138,7 @@ stdenv.mkDerivation {
 
     cp $TMPDIR/{early-,}init.el{,c} $out/;
     cp -r $TMPDIR/{etc,lisp,native-lisp,site-lisp} $out/;
+    cp $src/.dir-locals.el $out/;
 
     runHook postInstall
   '';
