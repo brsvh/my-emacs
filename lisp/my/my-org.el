@@ -165,11 +165,11 @@
      ;; Auto insert paried '*', '/', '=', and '~'.
      (lambda ()
        (electric-pair-local-mode +1)
-       (:snoc electric-pair-pairs
-              (cons ?* ?*)
-              (cons ?/ ?/)
-              (cons ?= ?=)
-              (cons ?~ ?~))))))
+       (:snoc-local electric-pair-pairs
+                    (cons ?* ?*)
+                    (cons ?/ ?/)
+                    (cons ?= ?=)
+                    (cons ?~ ?~))))))
 
 
 
