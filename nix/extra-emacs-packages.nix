@@ -51,6 +51,9 @@ with epkgs;
 ++ (with melpaPackages; [
   apheleia
   benchmark-init
+  biblio
+  biblio-core
+  bibtex-completion
   company
   consult-org-roam
   diredfl
@@ -74,9 +77,11 @@ with epkgs;
   nerd-icons-ibuffer
   nix-ts-mode
   org-roam
+  org-roam-bibtex
   org-side-tree
   page-break-lines
   pangu-spacing
+  parsebib
   pdf-tools
   rainbow-delimiters
   rg

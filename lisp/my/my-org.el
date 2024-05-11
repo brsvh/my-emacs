@@ -46,6 +46,7 @@
   (require 'org-persist)
   (require 'org-registry)
   (require 'org-roam)
+  (require 'org-roam-bibtex)
   (require 'org-roam-capture)
   (require 'org-roam-db)
   (require 'org-roam-mode)
@@ -234,6 +235,9 @@
 
 ;; Roam:
 
+(setup org-roam-bibtex
+  (:autoload org-roam-bibtex-mode))
+
 (setup org-roam-capture
   (:autoload org-roam-capture))
 
@@ -299,7 +303,10 @@
      (slot . 0)
      (window-width . 0.33)
      (window-parameters . ((no-other-window . t)
-                           (no-delete-other-windows . t))))))
+                           (no-delete-other-windows . t)))))
+  (:with-hook org-roam-mode-hook
+    ;; Show citations.
+    (:hook org-roam-bibtex-mode)))
 
 
 (provide 'my-org)
