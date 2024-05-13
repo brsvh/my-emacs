@@ -41,7 +41,7 @@
 
 (setup elisp-mode
   (:with-hook emacs-lisp-mode-hook
-    (:hook flymake-mode)))
+    (:hook #'flymake-mode)))
 
 
 
@@ -61,7 +61,7 @@
 
 (setup elisp-mode
   (:with-hook emacs-lisp-mode-hook
-    (:hook parinfer-rust-mode)))
+    (:hook #'parinfer-rust-mode)))
 
 
 

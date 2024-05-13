@@ -88,7 +88,7 @@
   (:with-hook LaTeX-mode-hook
     (:hook
      ;; Support labels, references, citations, and index.
-     turn-on-reftex)))
+     #'turn-on-reftex)))
 
 
 

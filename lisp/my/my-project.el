@@ -96,7 +96,7 @@
    ;; But don't auto restore.
    tabspaces-session-auto-restore nil)
   (:with-hook tab-bar-mode-hook
-    (:hook tabspaces-mode)))
+    (:hook #'tabspaces-mode)))
 
 
 
@@ -129,12 +129,12 @@
    diff-hl-magit-post-refresh
    diff-hl-mode)
   (:with-hook find-file-hook
-    (:hook diff-hl-mode))
+    (:hook #'diff-hl-mode))
   (:with-hook diff-hl-mode-hook
     (:when-gui
-     (:hook diff-hl-flydiff-mode))   ;; Highlight diff on-the-fly.
+     (:hook #'diff-hl-flydiff-mode))   ;; Highlight diff on-the-fly.
     (:when-tui
-     (:hook diff-hl-margin-mode)))) ;; Highlight diff on the margin.
+     (:hook #'diff-hl-margin-mode)))) ;; Highlight diff on the margin.
 
 (setup magit
   (:set-default magit-define-global-key-bindings nil)
@@ -144,9 +144,9 @@
      "s" #'magit-status))
   (:when-loaded
     (:with-hook magit-pre-refresh-hook
-      (:hook diff-hl-magit-pre-refresh))
+      (:hook #'diff-hl-magit-pre-refresh))
     (:with-hook magit-post-refresh-hook
-      (:hook diff-hl-magit-post-refresh))))
+      (:hook #'diff-hl-magit-post-refresh))))
 
 (setup whitespace
   (:autoload whitespace-mode))
@@ -156,7 +156,7 @@
   (:with-hook magit-diff-mode-hook
     (:hook
      ;; Show visual spaces.
-     whitespace-mode)))
+     #'whitespace-mode)))
 
 (setup magit-tag
   (:when-loaded (:also-load git-cliff)))

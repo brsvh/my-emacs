@@ -329,7 +329,7 @@ These forms are supported:
 
 (setup server
   (:with-hook after-init-hook
-    (:hook my/server-start))
+    (:hook #'my/server-start))
   (:when-loaded
     (:set
      server-auth-dir (my-state-path "server/"))))

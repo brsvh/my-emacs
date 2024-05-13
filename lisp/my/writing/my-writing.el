@@ -130,10 +130,10 @@
 
 (setup outline
   (:with-hook outline-mode-hook
-    (:hook visual-line-mode)))
+    (:hook #'visual-line-mode)))
 
 (setup text-mode
-  (:hook visual-line-mode))
+  (:hook #'visual-line-mode))
 
 
 

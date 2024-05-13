@@ -96,7 +96,7 @@
   (:autoload company-mode))
 
 (setup prog-mode
-  (:hook company-mode))
+  (:hook #'company-mode))
 
 
 
@@ -109,10 +109,10 @@
 (setup flymake
   (:with-hook flymake-mode-hook
     (:hook
-     (lambda ()
-       (:with-map flymake-mode-map
-         (:keymap-set
-          "C-c !" #'consult-flymake))))))
+     #'(lambda ()
+         (:with-map flymake-mode-map
+           (:keymap-set
+            "C-c !" #'consult-flymake))))))
 
 
 
@@ -151,7 +151,7 @@
 
 (setup prog-mode
   ;; Allow folding and unfolding of code blocks.
-  (:hook hs-minor-mode))
+  (:hook #'hs-minor-mode))
 
 
 
@@ -162,7 +162,7 @@
   (:autoload apheleia-mode))
 
 (setup prog-mode
-  (:hook apheleia-mode))
+  (:hook #'apheleia-mode))
 
 
 

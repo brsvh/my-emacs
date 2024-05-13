@@ -186,7 +186,7 @@
 (setup embark-consult
   (:after embark
     (:with-hook embark-collect-mode-hook
-      (:hook consult-preview-at-point-mode))))
+      (:hook #'consult-preview-at-point-mode))))
 
 
 
@@ -215,13 +215,13 @@
            "*Ibuffer*"))
   (:with-hook ibuffer-mode-hook
     (:hook
-     nerd-icons-ibuffer-mode
-     (lambda ()
-       (:set ibuffer-filter-groups
-             (ibuffer-project-generate-filter-groups))
-       (unless (eq ibuffer-sorting-mode
-                   'project-file-relative)
-         (ibuffer-do-sort-by-project-file-relative))))))
+     #'nerd-icons-ibuffer-mode
+     #'(lambda ()
+         (:set ibuffer-filter-groups
+               (ibuffer-project-generate-filter-groups))
+         (unless (eq ibuffer-sorting-mode
+                     'project-file-relative)
+           (ibuffer-do-sort-by-project-file-relative))))))
 
 (setup buff-menu
   (:keymap-set-into global-map "<remap> <list-buffers>" #'ibuffer))
@@ -509,27 +509,27 @@
      "<remap> <switch-to-buffer-other-tab>" #'consult-buffer-other-tab))
   (:with-hook tab-bar-mode-hook
     (:hook
-     (lambda ()
-       (if (bound-and-true-p tab-bar-mode)
-           ;; Prefer to use `consult--source-tab-buffer' when
-           ;; `tab-bar-mode' is enabled.
+     #'(lambda ()
+         (if (bound-and-true-p tab-bar-mode)
+             ;; Prefer to use `consult--source-tab-buffer' when
+             ;; `tab-bar-mode' is enabled.
+             (progn
+               ;; Hide default source `consult--source-buffer'.
+               (consult-customize consult--source-buffer
+                                  :hidden t
+                                  :default nil)
+               (:set
+                ;; Use buffer of current Tab as default source.
+                (prepend consult-buffer-sources)
+                'consult--source-tab-buffer))
+           ;; Unset `consult--source-tab-buffer' when `tab-bar-mode' is
+           ;; disabled.
            (progn
-             ;; Hide default source `consult--source-buffer'.
              (consult-customize consult--source-buffer
-                                :hidden t
-                                :default nil)
-             (:set
-              ;; Use buffer of current Tab as default source.
-              (prepend consult-buffer-sources)
-              'consult--source-tab-buffer))
-         ;; Unset `consult--source-tab-buffer' when `tab-bar-mode' is
-         ;; disabled.
-         (progn
-           (consult-customize consult--source-buffer
-                              :hidden nil
-                              :default t)
-           (:set (remove consult-buffer-sources)
-                 'consult--source-tab-buffer))))))
+                                :hidden nil
+                                :default t)
+             (:set (remove consult-buffer-sources)
+                   'consult--source-tab-buffer))))))
   (:when-loaded
     (:set
      ;; Only show Tab Bar when have one more Tabs.

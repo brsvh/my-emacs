@@ -86,9 +86,9 @@
 (setup valign
   (:autoload valign-mode)
   (:with-hook gfm-mode-hook
-    (:hook valign-mode))
+    (:hook #'valign-mode))
   (:with-hook markdown-mode-hook
-    (:hook valign-mode)))
+    (:hook #'valign-mode)))
 
 
 
