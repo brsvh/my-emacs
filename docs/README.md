@@ -52,6 +52,10 @@ If you need to run on X11, you can use the x11 version.
 nix run github:brsvh/my-emacs#x11
 ```
 
+And check the [Cheat Sheet] to see which shortcuts I have used.
+
+[Cheat Sheet]: ./cheat-sheet.md
+
 ### Add custom Emacs Lisp package
 
 Create custom Emacs Lisp Packages by adding new derivations in
