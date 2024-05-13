@@ -42,6 +42,7 @@
   (require 'my-prelude)
   (require 'recentf)
   (require 'rg)
+  (require 'rg-ibuffer)
   (require 'saveplace)
   (require 'simple)
   (require 'tabify)
@@ -219,11 +220,13 @@ shebang line or file path may exist now."
 (setup anzu
   (:first-buffer global-anzu-mode))
 
+(setup rg-ibuffer
+  (:autoload rg-list-searches))
+
 (setup rg
   (:autoload
    rg
    rg-kill-saved-searches
-   rg-list-searches
    rg-literal
    rg-project
    rg-save-search
