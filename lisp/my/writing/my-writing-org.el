@@ -172,7 +172,10 @@
 
 (setup citar
   (:when-loaded
-    (:set citar-at-point-function 'embark-act)))
+    (:set
+     citar-at-point-function 'embark-act
+     (prepend citar-bibliography)
+     (my-path org-directory "citations.bib"))))
 
 (setup org
   (:also-load oc oc-basic oc-bibtex)
@@ -185,10 +188,9 @@
 (setup oc
   (:autoload org-cite-insert)
   (:when-loaded
-    (let ((global-bib (my-path org-directory "citations.bib")))
-      (:set
-       (prepend citar-bibliography) global-bib
-       (prepend org-cite-global-bibliography) global-bib)))
+    (:set
+     (prepend org-cite-global-bibliography)
+     (my-path org-directory "citations.bib")))
   (:after org
     (:with-map org-mode-map
       (:keymap-set
@@ -302,12 +304,15 @@
        "C-c r i" #'org-roam-node-insert
        "C-c r b" #'org-roam-buffer-toggle))
     (citar-org-roam-mode +1))
+  ;; Separate store Org Roam citations.
   (:after oc
-    ;; Separate store Org Roam citations.
-    (let ((roam-bib (my-path org-roam-directory "citations.bib")))
-      (:set
-       (append citar-bibliography) roam-bib
-       (append org-cite-global-bibliography) roam-bib))))
+    (:set
+     (append org-cite-global-bibliography)
+     (my-path org-roam-directory "citations.bib")))
+  (:after citar
+    (:set
+     (append citar-bibliography)
+     (my-path org-roam-directory "citations.bib"))))
 
 (setup org-roam-db
   (:set org-roam-db-location (my-path org-roam-directory "roam.db"))
