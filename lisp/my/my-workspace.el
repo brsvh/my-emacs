@@ -62,7 +62,7 @@
    activities-switch)
   (:snoc popper-reference-buffers
          "\\*Activities\\*")
-  (:with-map ctl-c-ctl-a-map
+  (:with-map ctl-c-w-map
     (:keymap-set
      "b"   #'activities-switch-buffer
      "g"   #'activities-revert

@@ -372,11 +372,11 @@ These forms are supported:
 (defvar ctl-c-v-g-map (make-keymap)
   "Default keymap for to bind my version controling (Git) commands.")
 
+(defvar ctl-c-w-map (make-keymap)
+  "Default keymap use to bind my workspace commands.")
+
 (defvar ctl-c-home-map (make-keymap)
   "Default keymap use to bind my Emacs operating commands.")
-
-(defvar ctl-c-ctl-a-map (make-keymap)
-  "Default keymap use to bind my activities commands.")
 
 (setup my-maps
   (:with-map ctl-c-map
@@ -389,7 +389,7 @@ These forms are supported:
      "p"      ctl-c-p-map
      "s"      ctl-c-s-map
      "v"      ctl-c-v-map
-     "C-a"    ctl-c-ctl-a-map
+     "w"      ctl-c-w-map
      "<home>" ctl-c-home-map))
   (:with-map ctl-c-p-map
     (:keymap-set "TAB" ctl-c-p-tab-map))
