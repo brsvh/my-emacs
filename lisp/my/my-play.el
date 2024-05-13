@@ -39,7 +39,6 @@
 (require 'my-editor)
 (require 'my-eshell)
 (require 'my-mule)
-(require 'my-org)
 (require 'my-project)
 (require 'my-security)
 (require 'my-ui)

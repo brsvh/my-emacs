@@ -32,6 +32,8 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
+  (require 'citar)
+  (require 'citar-capf)
   (require 'latex)
   (require 'reftex)
   (require 'tex)
@@ -77,6 +79,22 @@
            '("XeLaTeX" "xelatex -interaction=nonstopmode %s"
              TeX-run-command t t
              :help "Run XeLaTeX"))))
+
+
+
+;;;
+;; Citation:
+
+(setup citar-capf
+  (:autoload citar-capf-setup))
+
+(setup citar
+  (:when-loaded
+    (:set citar-at-point-function 'embark-act)))
+
+(setup tex
+  (:with-hook TeX-mode
+    (:hook #'citar-capf-setup)))
 
 
 

@@ -39,6 +39,7 @@ with epkgs;
   persist
   popper
   project
+  queue
   rainbow-mode
   seq
   setup
@@ -54,6 +55,10 @@ with epkgs;
   biblio
   biblio-core
   bibtex-completion
+  citar
+  citar-embark
+  citar-org-roam
+  citeproc
   company
   consult-org-roam
   diredfl
@@ -88,6 +93,7 @@ with epkgs;
   s
   shrink-path
   smartparens
+  string-inflection
   svg-tag-mode
   switch-window
   tabspaces

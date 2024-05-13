@@ -1,4 +1,4 @@
-;;; my-org.el --- Org support of My Emacs -*- lexical-binding: t -*-
+;;; my-writing-org.el --- Org support of My Emacs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022-2024 Burgess Chang
 
@@ -32,7 +32,12 @@
 (require 'my-core)
 
 (cl-eval-when (compile)
+  (require 'citar)
+  (require 'citar-capf)
+  (require 'citar-embark)
+  (require 'citar-org-roam)
   (require 'elec-pair)
+  (require 'embark)
   (require 'oc)
   (require 'oc-basic)
   (require 'oc-bibtex)
@@ -56,14 +61,14 @@
   (require 'valign)
   (require 'window))
 
-(defun my-org-roam-db-fake-sync (fn &rest args)
+(defun my-writing-org-roam-db-fake-sync (fn &rest args)
   "Fake db sync. around FN with ARGS."
   (cl-letf (((symbol-function #'org-roam-db-sync) #'ignore))
     (apply fn args)))
 
-(defun my-org-roam-db-sync-once (&rest _)
+(defun my-writing-org-roam-db-sync-once (&rest _)
   "Sync `org-roam-db-location' once."
-  (advice-remove 'org-roam-db-query #'my-org-roam-db-sync-once)
+  (advice-remove 'org-roam-db-query #'my-writing-org-roam-db-sync-once)
   (org-roam-db-sync))
 
 
@@ -91,7 +96,7 @@
   (:autoload org-side-tree)
   ;; Show a indented side tree.
   (:with-hook org-side-tree-mode-hook
-    (:hook org-indent-mode)))
+    (:hook #'org-indent-mode)))
 
 (setup valign
   (:autoload valign-mode))
@@ -124,7 +129,7 @@
 (setup org-modern
   (:autoload org-modern-mode)
   (:with-hook org-mode-hook
-    (:hook org-modern-mode))
+    (:hook #'org-modern-mode))
   (:when-loaded
     (:set
      org-modern-star '( "●" "◉" "◎" "⊙" "○")
@@ -132,7 +137,7 @@
      org-modern-table nil))
   ;; Align variable-pitch font, CJK characters and images in tables.
   (:with-hook org-modern-mode-hook
-    (:hook valign-mode)))
+    (:hook #'valign-mode)))
 
 
 
@@ -153,14 +158,41 @@
 ;;;
 ;; Citation:
 
+(setup citar-capf
+  (:autoload citar-capf-setup))
+
+(setup citar-embark
+  (:autoload citar-embark-mode))
+
+(setup citar-org-roam
+  (:autoload citar-org-roam-mode))
+
+(setup embark
+  (:autoload embark-act))
+
+(setup citar
+  (:when-loaded
+    (:set citar-at-point-function 'embark-act)))
+
 (setup org
-  (:also-load oc oc-basic oc-bibtex))
+  (:also-load oc oc-basic oc-bibtex)
+  (:with-hook org-mode-hook
+    (:hook #'citar-capf-setup))
+  (:when-loaded
+    (:after embark
+      (citar-embark-mode +1))))
 
 (setup oc
+  (:autoload org-cite-insert)
   (:when-loaded
-    (:set
-     (prepend org-cite-global-bibliography)
-     (my-path org-directory "citations.bib"))))
+    (let ((global-bib (my-path org-directory "citations.bib")))
+      (:set
+       (prepend citar-bibliography) global-bib
+       (prepend org-cite-global-bibliography) global-bib)))
+  (:after org
+    (:with-map org-mode-map
+      (:keymap-set
+       "C-c c i" #'org-cite-insert))))
 
 
 
@@ -181,13 +213,13 @@
   (:with-hook org-mode-hook
     (:hook
      ;; Auto insert paried '*', '/', '=', and '~'.
-     (lambda ()
-       (electric-pair-local-mode +1)
-       (:snoc-local electric-pair-pairs
-                    (cons ?* ?*)
-                    (cons ?/ ?/)
-                    (cons ?= ?=)
-                    (cons ?~ ?~))))))
+     #'(lambda ()
+         (electric-pair-local-mode +1)
+         (:snoc-local electric-pair-pairs
+                      (cons ?* ?*)
+                      (cons ?/ ?/)
+                      (cons ?= ?=)
+                      (cons ?~ ?~))))))
 
 
 
@@ -268,21 +300,23 @@
       (:keymap-set
        "C-c r f" #'org-roam-node-find
        "C-c r i" #'org-roam-node-insert
-       "C-c r b" #'org-roam-buffer-toggle)))
+       "C-c r b" #'org-roam-buffer-toggle))
+    (citar-org-roam-mode +1))
   (:after oc
-    (:set
-     ;; Separate store Org Roam citations.
-     (append org-cite-global-bibliography)
-     (my-path org-roam-directory "citations.bib"))))
+    ;; Separate store Org Roam citations.
+    (let ((roam-bib (my-path org-roam-directory "citations.bib")))
+      (:set
+       (append citar-bibliography) roam-bib
+       (append org-cite-global-bibliography) roam-bib))))
 
 (setup org-roam-db
   (:set org-roam-db-location (my-path org-roam-directory "roam.db"))
   (:advice-add
    ;; Don't immediately initialize Org Roam database when enable
    ;; `org-roam-db-autosync-mode'.
-   org-roam-db-autosync-enable :around #'my-org-roam-db-fake-sync
+   org-roam-db-autosync-enable :around #'my-writing-org-roam-db-fake-sync
    ;; Sync `org-roam' db when first query.
-   org-roam-db-query :before #'my-org-roam-db-sync-once)
+   org-roam-db-query :before #'my-writing-org-roam-db-sync-once)
   (:after org
     (org-roam-db-autosync-enable)))
 
@@ -306,8 +340,8 @@
                            (no-delete-other-windows . t)))))
   (:with-hook org-roam-mode-hook
     ;; Show citations.
-    (:hook org-roam-bibtex-mode)))
+    (:hook #'org-roam-bibtex-mode)))
 
 
-(provide 'my-org)
-;;; my-org.el ends here
+(provide 'my-writing-org)
+;;; my-writing-org.el ends here
