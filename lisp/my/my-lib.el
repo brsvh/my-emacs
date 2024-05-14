@@ -91,6 +91,12 @@ Allowable concepts (not quoted) are `cache', `config', `data' and
    (file-truename (directory-file-name (my-path b)))))
 
 ;;;###autoload
+(defun my-path? (a b)
+  "Return t if B is under A."
+  (let ((a (my-path a)) (b (my-path b)))
+    (string-prefix-p a b)))
+
+;;;###autoload
 (defun my-dirname (path)
   "Return the parent directory to PATH."
   (let ((s  (file-name-directory (directory-file-name (my-path path)))))
