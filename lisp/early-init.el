@@ -29,12 +29,15 @@
 
 ;;; Code:
 
+;; Avoid garbage collection during the initialization to achieve a
+;; faster startup.
+(setq gc-cons-threshold most-positive-fixnum)
+
 ;; Prevent check mtime of Emacs Lisp Bytecode file to save time.
 (setq load-prefer-newer noninteractive)
 
 ;; Play the prelude of my-emacs.
-(load (expand-file-name "lisp/my/my-prelude" user-emacs-directory)
-      nil 'nomessage)
+(load (expand-file-name "lisp/my/my-prelude" user-emacs-directory) nil t)
 
 (provide 'early-init)
 ;;; early-init.el ends here
