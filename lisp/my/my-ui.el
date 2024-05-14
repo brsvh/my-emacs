@@ -495,7 +495,10 @@
    initial-scratch-message nil
 
    ;; Open *scratch* buffer with `fundamental-mode'.
-   initial-major-mode 'fundamental-mode))
+   initial-major-mode 'fundamental-mode)
+  (:advice-add
+   display-startup-echo-area-message :override #'ignore
+   display-startup-screen            :override #'ignore))
 
 
 
