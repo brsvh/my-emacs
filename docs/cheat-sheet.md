@@ -9,6 +9,8 @@ Here, I describe my custom keybinding settings. There are two guiding principles
 
 | Key                    | Command                                          | Action                                                            | Provider           |
 |------------------------|--------------------------------------------------|-------------------------------------------------------------------|--------------------|
+| <kbd>C-.</kbd>         | `embark-act`                                     | Show context actions at the point                                 | `embark`           |
+| <kbd>C-;</kbd>         | `embark-dwim`                                    | Run the default context action at the point                       | `embark`           |
 | <kbd>C-a</kbd>         | `mwim-beginning-of-code-or-line`                 | Move to the beginning of code or line                             | `mwim`             |
 | <kbd>C-c HOME r</kbd>  | `restart-emacs`                                  | Restart Emacs                                                     | `files`            |
 | <kbd>C-c a n</kbd>     | `org-roam-capture`                               | Capture a note                                                    | `org-roam-capture` |
@@ -27,7 +29,7 @@ Here, I describe my custom keybinding settings. There are two guiding principles
 | <kbd>C-c p TAB r</kbd> | `tabspaces-remove-current-buffer`                | Remove current buffer from current project tab                    | `tabspaces`        |
 | <kbd>C-c p TAB s</kbd> | `tabspaces-switch-to-buffer`                     | Switch to buffer, from current project tab                        | `tabspaces`        |
 | <kbd>C-c s S</kbd>     | `rg-save-search-as-name`                         | Save searched result in current buffer as file                    | `rg`               |
-| <kbd>C-c s d</kbd>     | `rg-dwim`                                        | Run `ripgrep`.                                                    | `rg`               |
+| <kbd>C-c s d</kbd>     | `rg-dwim`                                        | Run `ripgrep`                                                     | `rg`               |
 | <kbd>C-c s k</kbd>     | `rg-kill-saved-searches`                         | Kill all saved `ripgrep` results                                  | `rg`               |
 | <kbd>C-c s l</kbd>     | `rg-list-searches`                               | List all searched `ripgrep` results                               | `rg`               |
 | <kbd>C-c s p</kbd>     | `rg-project`                                     | Run `ripgrep` in current project                                  | `rg`               |
@@ -36,7 +38,18 @@ Here, I describe my custom keybinding settings. There are two guiding principles
 | <kbd>C-c s t</kbd>     | `rg-literal`                                     | Run `ripgrep` with PATTERN                                        | `rg`               |
 | <kbd>C-c v g d</kbd>   | `magit-dispatch`                                 | Git operations for current directory                              | `magit`            |
 | <kbd>C-c v g s</kbd>   | `magit-status`                                   | Git status of current directory                                   | `magit`            |
+| <kbd>C-c w C-d</kbd>   | `activities-discard`                             | Discard the state of a activity                                   | `activities`       |
+| <kbd>C-c w C-k</kbd>   | `activities-kill`                                | Kill an activity                                                  | `activities`       |
+| <kbd>C-c w C-l</kbd>   | `activities-list`                                | List all activities                                               | `activities`       |
+| <kbd>C-c w C-n</kbd>   | `activities-new`                                 | Remember an activity                                              | `activities`       |
+| <kbd>C-c w C-r</kbd>   | `activities-resume`                              | Restore an activity                                               | `activities`       |
+| <kbd>C-c w C-s</kbd>   | `activities-suspend`                             | Suspend an activity                                               | `activities`       |
+| <kbd>C-c w RET</kbd>   | `activities-switch`                              | Switch to an activity                                             | `activities`       |
+| <kbd>C-c w b</kbd>     | `activities-switch-buffer`                       | Switch to the buffer in an activity                               | `activities`       |
+| <kbd>C-c w g</kbd>     | `activities-revert`                              | Reset the state of an activity                                    | `activities`       |
 | <kbd>C-e</kbd>         | `mwim-end-of-code-or-line`                       | Move to the end of code or line                                   | `mwim`             |
+| <kbd>C-h B</kbd>       | `embark-bindings`                                | Select to describe a keybinding from all keybindings              | `embark`           |
+| <kbd>C-h C-k</kbd>     | `describe-keymap`                                | Select to describe a keymap                                       | `help-fns`         |
 | <kbd>C-x r l</kbd>     | `consult-bookmark`                               | List bookmarks                                                    | `consult`          |
 | <kbd>C-y</kbd>         | `consult-yank-from-kill-ring`                    | Paste from kill ring                                              | `consult`          |
 | <kbd>M-y</kbd>         | `consult-yank-pop`                               | Paste and pop from kill ring                                      | `consult`          |
@@ -53,7 +66,7 @@ Here, I describe my custom keybinding settings. There are two guiding principles
 
 | Key              | Command           | Action                                 | Provider |
 |------------------|-------------------|----------------------------------------|----------|
-| <kbd>C-c !</kbd> | `consult-flymake` | Show all diagnostics of current buffer | `consult |
+| <kbd>C-c !</kbd> | `consult-flymake` | Show all diagnostics of current buffer | `consult` |
 
 ### Emacs Lisp (`emacs-lisp-mode`)
 
@@ -69,7 +82,7 @@ Here, I describe my custom keybinding settings. There are two guiding principles
 |-------------|-------------|--------------------------------------------------|-------------|
 | <kbd>C-c C-c g</kbd> | `grip-mode` | Run livepreview server for current Markdown file | `grip-mode` |
 
-### `org-mode`
+### Org (`org-mode`)
 
 | Key                | Command                  | Action                               | Provider        |
 |--------------------|--------------------------|--------------------------------------|-----------------|
