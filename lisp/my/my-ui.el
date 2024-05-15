@@ -583,7 +583,7 @@
                              (2 . (1.20 heavy))
                              (3 . (1.10 bold))
                              (t . (1.05 semibold))))
-
+    (:face internal-border ((t (:inherit fringe))))
     ;; Override the default faces of modus themes.
     (:snoc modus-themes-common-palette-overrides
            ;; Make `tab-bar' more subtle.
