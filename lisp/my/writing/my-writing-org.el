@@ -62,7 +62,7 @@
   (require 'window))
 
 (defun my-writing-org-roam-db-fake-sync (fn &rest args)
-  "Fake db sync. around FN with ARGS."
+  "Fake db sync around FN with ARGS."
   (cl-letf (((symbol-function #'org-roam-db-sync) #'ignore))
     (apply fn args)))
 
@@ -220,6 +220,7 @@
 ;; Clock:
 
 (setup org-clock
+  (:autoload org-clock-kill-emacs-query)
   (:when-loaded
     (:set
      org-clock-persist-file (my-data-path "org/presist" "clock.el"))))
