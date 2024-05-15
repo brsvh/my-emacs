@@ -347,14 +347,6 @@
     ;; Show citations.
     (:hook #'org-roam-bibtex-mode)))
 
-(setup org
-  (:with-hook org-mode-hook
-    (:hook
-     ;; Open Org Roam Buffer when open node.
-     #'(lambda ()
-         (when (my-path? org-roam-directory (buffer-file-name))
-           (org-roam-buffer-toggle))))))
-
 
 (provide 'my-writing-org)
 ;;; my-writing-org.el ends here
