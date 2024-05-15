@@ -42,6 +42,7 @@
 (require 'my-project)
 (require 'my-security)
 (require 'my-ui)
+(require 'my-workflow)
 (require 'my-workspace)
 
 
