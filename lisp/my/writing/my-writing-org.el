@@ -139,6 +139,17 @@
   (:with-hook org-modern-mode-hook
     (:hook #'valign-mode)))
 
+(setup window
+  (:set
+   (append display-buffer-alist)
+   '("\\*Org todo\\*"
+     ;; Prefer to show the select window under the current window.
+     (display-buffer-reuse-window display-buffer-below-selected)
+     ;; Hide Mode Line.
+     (window-parameters (mode-line-format . none))
+     ;; Set height to 1/3 of current frame.
+     (window-height 0.33))))
+
 
 
 ;;;
@@ -151,7 +162,9 @@
      ;; Prefer to show the select window under the current window.
      (display-buffer-reuse-window display-buffer-below-selected)
      ;; Hide Mode Line.
-     (window-parameters (mode-line-format . none)))))
+     (window-parameters (mode-line-format . none))
+     ;; Set height to 2/5 of current frame.
+     (window-height 0.4))))
 
 
 
