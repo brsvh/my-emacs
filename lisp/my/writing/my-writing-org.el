@@ -190,7 +190,12 @@
   (:when-loaded
     (:set
      (prepend org-cite-global-bibliography)
-     (my-path org-directory "citations.bib")))
+     (my-path org-directory "citations.bib")
+
+     ;; Use `citar' as default processor
+     org-cite-activate-processor 'citar
+     org-cite-follow-processor 'citar
+     org-cite-insert-processor 'citar))
   (:after org
     (:with-map org-mode-map
       (:keymap-set
