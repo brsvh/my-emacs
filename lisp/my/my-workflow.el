@@ -36,6 +36,7 @@
   (require 'org)
   (require 'org-agenda)
   (require 'org-capture)
+  (require 'org-modern)
   (require 'window))
 
 
@@ -75,6 +76,28 @@
 
 
 ;;;
+;; Appearance:
+
+(setup org-modern
+  (:autoload org-modern-agenda))
+
+(setup org-agenda
+  (:with-hook org-agenda-finalize-hook
+    (:hook
+     #'org-modern-agenda))
+  (:when-loaded
+    (:set
+     org-agenda-tags-column 0
+     org-agenda-block-separator ?─
+     org-agenda-time-grid '((daily today require-timed)
+                            (800 1000 1200 1400 1600 1800 2000)
+                            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+     org-agenda-current-time-string
+     "◀── now ─────────────────────────────────────────────────")))
+
+
+
+;;;
 ;; Get things done:
 
 (setup org-agenda
@@ -106,6 +129,10 @@
        ,(concat
          "* NEXT %?\n"
          "SCHEDULED: %(org-insert-time-stamp (org-read-date nil t))\n"
+         "CREATED: %U"))
+     `("n" "Note" entry (file+headline "inbox.org" "Note")
+       ,(concat
+         "* TODO %?\n"
          "CREATED: %U")))))
 
 (setup window
