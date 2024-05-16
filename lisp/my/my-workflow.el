@@ -60,8 +60,8 @@
      ;; Collect Events and Meetings.
      (append org-agenda-files) (my-path org-directory "agenda.org")
 
-     ;; Collect tasks of my projects.
-     (append org-agenda-files) (my-path org-directory "projects.org")
+     ;; Collect tasks of my project.
+     (append org-agenda-files) (my-path org-directory "project.org")
 
      ;; My states of task:
      ;; - TODO, tasks planned for today.
