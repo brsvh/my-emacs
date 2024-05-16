@@ -51,6 +51,9 @@
      ;; load first, ensure it has correct value anyway.
      org-directory (my-path "~/org")
 
+     ;; Use timestamps to record the duration of a task.
+     org-log-done 'time
+
      ;; Collect everything.
      (append org-agenda-files) (my-path org-directory "inbox.org")
 
