@@ -61,12 +61,14 @@
      my-native-lisp-directory))
   "Directory to look for natively-compiled *.eln files.")
 
-(defvar my-prelude-frame-alist '((horizontal-scroll-bars . nil)
+(defvar my-prelude-frame-alist '((height . 40)
+                                 (horizontal-scroll-bars . nil)
                                  (internal-border-width . 6)
                                  (menu-bar-lines . nil)
                                  (right-divider-width . 6)
                                  (tool-bar-lines . nil)
-                                 (vertical-scroll-bars . nil))
+                                 (vertical-scroll-bars . nil)
+                                 (width . 120))
   "Frame parameters for setup frame creation.")
 
 (defvar my-prelude-inhibit-update-load-path nil
