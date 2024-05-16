@@ -76,36 +76,45 @@
 
 
 ;;;
-;; Appearance:
-
-(setup org-modern
-  (:autoload org-modern-agenda))
-
-(setup org-agenda
-  (:with-hook org-agenda-finalize-hook
-    (:hook
-     #'org-modern-agenda))
-  (:when-loaded
-    (:set
-     org-agenda-tags-column 0
-     org-agenda-block-separator ?─
-     org-agenda-time-grid '((daily today require-timed)
-                            (800 1000 1200 1400 1600 1800 2000)
-                            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
-     org-agenda-current-time-string
-     "◀── now ─────────────────────────────────────────────────")))
-
-
-
-;;;
-;; Get things done:
+;; Agenda:
 
 (setup org-agenda
   (:autoload org-agenda)
   (:with-map ctl-c-a-map
     (:keymap-set
      ;; Show agenda.
-     "a" #'org-agenda)))
+     "a" #'org-agenda))
+  (:when-loaded
+    (:snoc
+     org-agenda-custom-commands
+     '("c" "Agenda for today"
+       ((agenda ""
+                ((org-agenda-skip-function
+                  '(org-agenda-skip-entry-if 'deadline))
+                 (org-deadline-warning-days 0)))
+        (todo "NEXT"
+              ((org-agenda-skip-function
+                '(org-agenda-skip-entry-if 'deadline))
+               (org-agenda-prefix-format "  %i %-12:c [%e] ")
+               (org-agenda-overriding-header "\nTasks\n")))
+        (agenda nil
+                ((org-agenda-entry-types '(:deadline))
+                 (org-agenda-format-date "")
+                 (org-deadline-warning-days 7)
+                 (org-agenda-skip-function
+                  '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                 (org-agenda-overriding-header "\nDeadlines")))
+        (tags-todo "inbox"
+                   ((org-agenda-prefix-format "  %?-12t% s")
+                    (org-agenda-overriding-header "\nInbox\n")))
+        (tags "CLOSED>=\"<today>\""
+              ((org-agenda-overriding-header
+                "\nCompleted today\n"))))))))
+
+
+
+;;;
+;; Capture:
 
 (setup org-capture
   (:autoload org-capture)
@@ -149,6 +158,28 @@
      (window-parameters (mode-line-format . none))
      ;; Set height to 2/5 of current frame.
      (window-height 0.4))))
+
+
+
+;;;
+;; UI:
+
+(setup org-modern
+  (:autoload org-modern-agenda))
+
+(setup org-agenda
+  (:with-hook org-agenda-finalize-hook
+    (:hook
+     #'org-modern-agenda))
+  (:when-loaded
+    (:set
+     org-agenda-tags-column 0
+     org-agenda-block-separator ?─
+     org-agenda-time-grid '((daily today require-timed)
+                            (800 1000 1200 1400 1600 1800 2000)
+                            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+     org-agenda-current-time-string
+     "◀── now ─────────────────────────────────────────────────")))
 
 
 
