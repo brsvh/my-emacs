@@ -133,6 +133,10 @@
      `("n" "Note" entry (file+headline "inbox.org" "Note")
        ,(concat
          "* TODO %?\n"
+         "CREATED: %U"))
+     `("r" "Read" entry (file+headline "inbox.org" "Reading list")
+       ,(concat
+         "* %?\n"
          "CREATED: %U")))))
 
 (setup window
