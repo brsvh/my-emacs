@@ -186,9 +186,7 @@
 (setup citar
   (:when-loaded
     (:set
-     citar-at-point-function 'embark-act
-     (prepend citar-bibliography)
-     (my-path org-directory "citations.bib"))))
+     citar-at-point-function 'embark-act)))
 
 (setup org
   (:also-load oc oc-basic oc-bibtex)
@@ -202,9 +200,6 @@
   (:autoload org-cite-insert)
   (:when-loaded
     (:set
-     (prepend org-cite-global-bibliography)
-     (my-path org-directory "citations.bib")
-
      ;; Use `citar' as default processor
      org-cite-activate-processor 'citar
      org-cite-follow-processor 'citar
