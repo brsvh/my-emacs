@@ -19,6 +19,7 @@ with pkgs;
 [
   git-cliff
   graphviz
+  mailutils
   multimarkdown
   nixfmt-rfc-style
   ripgrep
