@@ -81,6 +81,8 @@ with epkgs;
   nerd-icons-dired
   nerd-icons-ibuffer
   nix-ts-mode
+  org-category-capture
+  org-project-capture
   org-roam
   org-roam-bibtex
   org-side-tree

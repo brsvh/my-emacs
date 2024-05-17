@@ -40,6 +40,7 @@
   (require 'files)
   (require 'git-cliff)
   (require 'magit)
+  (require 'org-project-capture)
   (require 'project)
   (require 'tab-bar)
   (require 'tabspaces)
@@ -97,6 +98,25 @@
    tabspaces-session-auto-restore nil)
   (:with-hook tab-bar-mode-hook
     (:hook #'tabspaces-mode)))
+
+
+
+;;;
+;; Capture:
+
+(setup org-project-capture
+  (:autoload
+   org-project-capture-per-project
+   org-project-capture-project-todo-completing-read)
+  (:keymap-set-into
+   ctl-c-p-map "c" #'org-project-capture-project-todo-completing-read)
+  (:when-loaded
+    (:set
+     ;; Use `project' as default backend.
+     org-project-capture-default-backend
+     (make-instance 'org-project-capture-project-backend))
+    ;; Capture tasks across individual projects.
+    (org-project-capture-per-project)))
 
 
 
