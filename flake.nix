@@ -77,7 +77,7 @@
       url = "github:numtide/flake-utils/main";
       inputs = {
         systems = {
-          follows = "systems";
+          follows = "nix-systems";
         };
       };
     };
@@ -112,6 +112,9 @@
     nix-filter = {
       url = "github:numtide/nix-filter/main";
     };
+    nix-systems = {
+      url = "github:nix-systems/default/main";
+    };
     nixpkgs = {
       follows = "nixpkgs-unstable";
     };
@@ -120,9 +123,6 @@
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
-    systems = {
-      url = "github:nix-systems/default/main";
     };
     treefmt = {
       url = "github:numtide/treefmt-nix/main";
@@ -140,13 +140,26 @@
       emacs-overlay,
       flake-parts,
       git-hooks,
+      nix-systems,
       nixpkgs,
       treefmt,
       ...
     }:
-    with builtins;
-    with nixpkgs.lib;
+    let
+      lib = nixpkgs.lib // builtins;
+
+      systems = import nix-systems;
+    in
+    with lib;
     flake-parts.lib.mkFlake { inherit inputs; } {
+      inherit systems;
+
+      flake = {
+        nixosModules = {
+          my-emacs = ./nix/nixos/programs/my-emacs.nix;
+        };
+      };
+
       imports = [
         flake-parts.flakeModules.easyOverlay
 
@@ -154,8 +167,6 @@
         git-hooks.flakeModule
         treefmt.flakeModule
       ];
-
-      systems = [ "x86_64-linux" ];
 
       perSystem =
         {
