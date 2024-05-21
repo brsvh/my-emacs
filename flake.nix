@@ -158,6 +158,10 @@
         nixosModules = {
           my-emacs = ./nix/nixos/programs/my-emacs.nix;
         };
+
+        homeModules = {
+          my-emacs = ./nix/home-manager/programs/my-emacs.nix;
+        };
       };
 
       imports = [
