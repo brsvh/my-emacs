@@ -113,7 +113,7 @@
       url = "github:numtide/nix-filter/main";
     };
     nix-systems = {
-      url = "github:nix-systems/default/main";
+      url = "github:nix-systems/x86_64-linux/main";
     };
     nixpkgs = {
       follows = "nixpkgs-unstable";
