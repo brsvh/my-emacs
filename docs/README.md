@@ -1,3 +1,5 @@
+**This project is deprecated, move to https://github.com/brsvh/nixing .**
+
 # My GNU Emacs Configuraiton
 
 [![img](https://img.shields.io/badge/cachix-brsvh-blue.svg)](https://brsvh.cachix.org)
